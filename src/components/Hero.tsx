@@ -19,9 +19,9 @@ const Hero = () => {
         <div className="py-20 md:py-0 flex flex-col gap-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-2 animate-fade-in">
             <img 
-              src="https://iesl.lk/JIY_UIY/uiy/assets/images/logo/logo-light.png" 
+              src="/images/logo-light.png" 
               alt="UIY Logo"
-              className="h-20 sm:h-24 md:h-28 object-contain"
+              className="h-20 sm:h-24 md:h-28 object-contain hidden"
             />
             <div className="inline-block backdrop-blur-sm bg-white/10 py-2 px-4 rounded-full">
               <p className="text-sm font-medium text-white">IESL UIY 2025 Competition</p>

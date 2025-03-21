@@ -31,13 +31,11 @@ const Navbar = () => {
       scrolled ? "bg-white/90 backdrop-blur-md shadow-md py-3" : "bg-transparent"
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full bg-uiy-blue flex items-center justify-center">
-            <span className="text-white font-bold">UIY</span>
-          </div>
+        <a href="/" className="flex items-center gap-2">
+          <img src='/images/logo-light.png' alt="UIY 2025" className="w-auto h-16" />
           <span className={cn(
             "font-display text-xl font-semibold transition-colors",
-            scrolled ? "text-uiy-dark" : "text-uiy-blue"
+            scrolled ? "text-uiy-dark" : "text-white"
           )}>
             UIY 2025
           </span>

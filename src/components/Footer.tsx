@@ -9,9 +9,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-uiy-blue flex items-center justify-center">
-                <span className="text-white font-bold">UIY</span>
-              </div>
+              <img src='/images/logo-light.png' alt="UIY 2025" className="w-auto h-16" />
               <span className="font-display text-xl font-semibold">UIY 2025</span>
             </div>
             
@@ -53,10 +51,10 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Resources</h3>
             <ul className="space-y-3">
-              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">IESL Website</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">Past Winners</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">Competition Rules</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">Contact Support</a></li>
+              <li><a href="https://iesl.lk" className="text-gray-600 hover:text-uiy-blue transition-colors">IESL Website</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors hidden">Past Winners</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors hidden">Competition Rules</a></li>
+              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors hidden">Contact Support</a></li>
             </ul>
           </div>
         </div>
@@ -65,8 +63,8 @@ const Footer = () => {
           <p className="text-gray-500 text-sm">© 2025 Institution of Engineers Sri Lanka. All rights reserved.</p>
           
           <div className="flex gap-4 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-uiy-blue transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-uiy-blue transition-colors">Terms of Service</a>
+            <a href="#" className="text-gray-400 hover:text-uiy-blue transition-colors hidden">Privacy Policy</a>
+            <a href="#" className="text-gray-400 hover:text-uiy-blue transition-colors hidden">Terms of Service</a>
           </div>
         </div>
       </div>

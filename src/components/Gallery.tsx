@@ -11,9 +11,9 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 
 // Placeholder images - in a real application these would be actual event photos
-const galleryImages = [
+const galleryImages1 = [
   {
-    src: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=500",
+    src: "/images/img1.jpg",
     alt: "Students collaborating on a project",
     caption: "Engineering students collaborating on innovative solutions"
   },
@@ -40,6 +40,12 @@ const galleryImages = [
 ];
 
 const Gallery = () => {
+  const galleryImages = Array.from({ length: 5 }).map((_, index) => ({
+    src: `/images/img${index + 1}.jpg`,
+    alt: `Image ${index + 1}`,
+    caption: `Image ${index + 1
+    }`,
+  }));
   return (
     <section id="gallery" className="py-24 bg-uiy-gray">
       <div className="section-container">
@@ -89,6 +95,10 @@ const Gallery = () => {
               <CarouselNext className="relative static right-0 left-auto top-auto translate-y-0 translate-x-0" />
             </div>
           </Carousel>
+        </div>
+
+        <div className="mt-8 flex w-full text-center">
+          <img src="/images/img23.jpg" alt="" className='max-w-[600px] mx-auto' />
         </div>
       </div>
     </section>
