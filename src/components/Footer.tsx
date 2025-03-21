@@ -55,7 +55,6 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">IESL Website</a></li>
               <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">Past Winners</a></li>
-              <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">FAQ</a></li>
               <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">Competition Rules</a></li>
               <li><a href="#" className="text-gray-600 hover:text-uiy-blue transition-colors">Contact Support</a></li>
             </ul>

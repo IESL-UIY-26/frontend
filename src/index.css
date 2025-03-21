@@ -89,6 +89,22 @@
   transform: translateY(0);
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+  opacity: 1; /* Ensure elements remain visible */
+}
+
 /* Timeline styles */
 .timeline-container {
   position: relative;
@@ -132,3 +148,4 @@
     left: 31px;
   }
 }
+

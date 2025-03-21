@@ -51,7 +51,7 @@ const Navbar = () => {
               href={item.href}
               className={cn(
                 "text-sm font-medium transition-all duration-300 hover:text-uiy-blue relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-uiy-blue after:transition-all after:duration-300 hover:after:w-full",
-                scrolled ? "text-uiy-dark" : "text-uiy-dark"
+                scrolled ? "text-uiy-dark" : "text-white"
               )}
             >
               {item.name}
@@ -62,7 +62,10 @@ const Navbar = () => {
         
         {/* Mobile Menu Toggle */}
         <button 
-          className="md:hidden text-uiy-dark focus:outline-none"
+          className={cn(
+            "md:hidden focus:outline-none", 
+            scrolled ? "text-uiy-dark" : "text-white"
+          )}
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -71,10 +74,18 @@ const Navbar = () => {
       
       {/* Mobile Menu */}
       <div className={cn(
-        "fixed inset-0 z-40 bg-white transform transition-transform duration-300 ease-in-out",
+        "fixed inset-0 z-40 bg-white transform transition-transform duration-300 ease-in-out flex",
         isOpen ? "translate-x-0" : "translate-x-full"
       )}>
-        <div className="flex flex-col h-full pt-20 px-6">
+        <div className="relative flex flex-col h-full w-full pt-20 px-6">
+          {/* Close button in absolute position */}
+          <button 
+            className="absolute top-6 right-6 text-uiy-dark focus:outline-none"
+            onClick={() => setIsOpen(false)}
+          >
+            <X size={24} />
+          </button>
+          
           {navItems.map((item) => (
             <a
               key={item.name}
