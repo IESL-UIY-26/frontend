@@ -6,6 +6,8 @@ import About from '@/components/About';
 import Eligibility from '@/components/Eligibility';
 import Process from '@/components/Process';
 import Awards from '@/components/Awards';
+import Gallery from '@/components/Gallery';
+import FAQ from '@/components/FAQ';
 import ApplyNow from '@/components/ApplyNow';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
@@ -43,6 +45,8 @@ const Index = () => {
       <Eligibility />
       <Process />
       <Awards />
+      <Gallery />
+      <FAQ />
       <ApplyNow />
       <Footer />
       <ScrollToTop />
