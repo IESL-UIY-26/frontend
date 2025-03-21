@@ -107,7 +107,15 @@ export default {
 				'fade-in': 'fade-in 0.6s ease-out',
 				'fade-up': 'fade-up 0.8s ease-out',
 				'slide-in': 'slide-in 0.5s ease-out',
-				'reveal-text': 'reveal-text 0.5s ease-out'
+				'reveal-text': 'reveal-text 0.5s ease-out',
+				'fade-out': 'fade-out 0.6s ease-out',
+				'scale-in': 'scale-in 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+				'slide-up': 'slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+				'slide-down': 'slide-down 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+				'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
+				'float': 'float 6s ease-in-out infinite',
+				'spin-slow': 'spin-slow 20s linear infinite',
+				'shimmer': 'shimmer 2s linear infinite'
 			},
 			backgroundImage: {
 				'hero-pattern': 'url("https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&q=80&w=1000")',
