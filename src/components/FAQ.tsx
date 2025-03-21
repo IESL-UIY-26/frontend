@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { QuestionCircle } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 
 const faqItems = [
   {
@@ -36,7 +36,7 @@ const FAQ = () => {
       <div className="section-container">
         <div className="max-w-3xl mx-auto text-center mb-16 reveal-animation">
           <div className="flex justify-center mb-3">
-            <QuestionCircle className="w-8 h-8 text-uiy-blue" />
+            <HelpCircle className="w-8 h-8 text-uiy-blue" />
           </div>
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Frequently Asked Questions</h2>
           <p className="text-lg text-gray-600">
