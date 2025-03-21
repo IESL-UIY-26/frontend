@@ -79,7 +79,7 @@ const ApplyNow = () => {
                 </div>
               </div>
               
-              <a href="https://uiy.iesl.lk" className="mt-8 btn-primary inline-flex items-center gap-2 group">
+              <a href="https://docs.google.com/forms/d/1L7owY2QViIQ3s4P4RmIn1JHLe8yrbAlYXsKD2f07PwM/edit" className="mt-8 btn-primary inline-flex items-center gap-2 group">
                 Start Your Application 
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </a>
