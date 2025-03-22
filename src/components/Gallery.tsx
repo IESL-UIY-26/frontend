@@ -98,7 +98,7 @@ const Gallery = () => {
         </div>
 
         <div className="mt-8 flex w-full text-center">
-          <img src="/images/img23.jpg" alt="" className='max-w-[600px] mx-auto' />
+          <img src="/images/img23.jpg" alt="UIY - The grand finale" className='max-w-[600px] mx-auto w-full' />
         </div>
       </div>
     </section>
