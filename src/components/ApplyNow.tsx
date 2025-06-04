@@ -20,25 +20,7 @@ const ApplyNow = () => {
                 <h3 className="text-2xl font-bold">Application Checklist</h3>
                 <div className="flex flex-wrap gap-2">
                   <a 
-                    href="https://uiy.iesl.lk/documents/UIY Reoprt-temp.doc" 
-                    className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Download className="w-3 h-3" />
-                    UIY Report Template
-                  </a>
-                  <a 
-                    href="https://uiy.iesl.lk/documents/Declaration Letter .docx" 
-                    className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Download className="w-3 h-3" />
-                    Declaration Letter
-                  </a>
-                  <a 
-                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2025,New.pdf" 
+                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2025_New.pdf" 
                     className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -91,6 +73,27 @@ const ApplyNow = () => {
                         <span>Declaration letter from department head</span>
                       </div>
                     </div>
+
+                    <div className="mt-4 space-y-2">
+                      <p className="text-sm font-medium text-gray-700">Download required documents:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <a 
+                          href="https://uiy.iesl.lk/documents/uiy-reoport-temp.doc" 
+                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                        >
+                          <Download className="w-3 h-3" />
+                          UIY Report Template
+                        </a>
+                        <a 
+                          href="https://uiy.iesl.lk/documents/Declaration_Letter.docx" 
+                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                        >
+                          <Download className="w-3 h-3" />
+                          Declaration Letter
+                        </a>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
                 
