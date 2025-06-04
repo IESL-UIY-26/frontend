@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar, File, ArrowRight, Download } from 'lucide-react';
 
@@ -17,7 +16,38 @@ const ApplyNow = () => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden reveal-animation">
           <div className="grid md:grid-cols-2">
             <div className="p-8 md:p-12">
-              <h3 className="text-2xl font-bold mb-6">Application Checklist</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <h3 className="text-2xl font-bold">Application Checklist</h3>
+                <div className="flex flex-wrap gap-2">
+                  <a 
+                    href="https://uiy.iesl.lk/documents/UIY Reoprt-temp.doc" 
+                    className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Download className="w-3 h-3" />
+                    UIY Report Template
+                  </a>
+                  <a 
+                    href="https://uiy.iesl.lk/documents/Declaration Letter .docx" 
+                    className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Download className="w-3 h-3" />
+                    Declaration Letter
+                  </a>
+                  <a 
+                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2025,New.pdf" 
+                    className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Download className="w-3 h-3" />
+                    General Instructions
+                  </a>
+                </div>
+              </div>
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -59,33 +89,6 @@ const ApplyNow = () => {
                       <div className="flex items-center gap-2 text-gray-600">
                         <File className="w-4 h-4 text-uiy-blue" />
                         <span>Declaration letter from department head</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 space-y-2">
-                      <p className="text-sm font-medium text-gray-700">Download required documents:</p>
-                      <div className="flex flex-wrap gap-2">
-                        <a 
-                          href="#uiy-report-template" 
-                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
-                        >
-                          <Download className="w-3 h-3" />
-                          UIY Report Template
-                        </a>
-                        <a 
-                          href="#declaration-letter" 
-                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
-                        >
-                          <Download className="w-3 h-3" />
-                          Declaration Letter
-                        </a>
-                        <a 
-                          href="#general-instructions" 
-                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
-                        >
-                          <Download className="w-3 h-3" />
-                          General Instructions
-                        </a>
                       </div>
                     </div>
                   </div>
