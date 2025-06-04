@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar, File, ArrowRight } from 'lucide-react';
+import { Calendar, File, ArrowRight, Download } from 'lucide-react';
 
 const ApplyNow = () => {
   return (
@@ -59,6 +59,33 @@ const ApplyNow = () => {
                       <div className="flex items-center gap-2 text-gray-600">
                         <File className="w-4 h-4 text-uiy-blue" />
                         <span>Declaration letter from department head</span>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 space-y-2">
+                      <p className="text-sm font-medium text-gray-700">Download required documents:</p>
+                      <div className="flex flex-wrap gap-2">
+                        <a 
+                          href="#uiy-report-template" 
+                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                        >
+                          <Download className="w-3 h-3" />
+                          UIY Report Template
+                        </a>
+                        <a 
+                          href="#declaration-letter" 
+                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                        >
+                          <Download className="w-3 h-3" />
+                          Declaration Letter
+                        </a>
+                        <a 
+                          href="#general-instructions" 
+                          className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
+                        >
+                          <Download className="w-3 h-3" />
+                          General Instructions
+                        </a>
                       </div>
                     </div>
                   </div>
