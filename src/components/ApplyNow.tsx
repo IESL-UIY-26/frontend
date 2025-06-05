@@ -41,7 +41,7 @@ const ApplyNow = () => {
                     <p className="text-gray-600">Confirm you're a registered undergraduate at one of the eligible universities.</p>
                   </div>
                 </div>
-                
+{/*                 
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
                     <span className="font-bold text-uiy-blue">2</span>
@@ -51,10 +51,10 @@ const ApplyNow = () => {
                     <p className="text-gray-600">Ensure you have student membership with IESL (required by July 2025).</p>
                   </div>
                 </div>
-                
+                 */}
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <span className="font-bold text-uiy-blue">3</span>
+                    <span className="font-bold text-uiy-blue">2</span>
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Prepare Your Documents</h4>
@@ -99,7 +99,7 @@ const ApplyNow = () => {
                 
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-                    <span className="font-bold text-uiy-blue">4</span>
+                    <span className="font-bold text-uiy-blue">3</span>
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Submit Your Application</h4>
