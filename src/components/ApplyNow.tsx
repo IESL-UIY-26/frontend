@@ -38,7 +38,7 @@ const ApplyNow = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Verify Your Eligibility</h4>
-                    <p className="text-gray-600">Confirm you're a registered undergraduate at one of the eligible universities.</p>
+                    <p className="text-gray-600">Confirm you're an engineering registered undergraduate at one of the eligible universities.</p>
                   </div>
                 </div>
 {/*                 
@@ -58,7 +58,7 @@ const ApplyNow = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Prepare Your Documents</h4>
-                    <p className="text-gray-600">Create your application, project proposal, and get the declaration letter.</p>
+                    <p className="text-gray-600">Create your application, brief project report, and get the declaration letter.</p>
                     <div className="mt-2 flex flex-col gap-2">
                       <div className="flex items-center gap-2 text-gray-600">
                         <File className="w-4 h-4 text-uiy-blue" />

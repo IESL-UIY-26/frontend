@@ -15,12 +15,13 @@ const timelineData = [
   },
   {
     title: "Preliminary Competition",
+    subtitle: "*Subjected to change",
     date: "August-September 2025",
     description: "Selected candidates will submit additional materials and participate in a Q&A session.",
     requirements: [
       "3-minute video of the invention",
       "Brochure of the invention",
-      "Q&A session participation"
+      "Q&A session"
     ]
   },
   {
@@ -29,9 +30,9 @@ const timelineData = [
     description: "Physical event featuring the top innovations (max 6) with prototype demonstrations.",
     requirements: [
       "Physical prototype of the invention",
-      "Project report (max 10 pages)",
+      "Brief Project Report (max 10 pages)",
       "Marketing video clip",
-      "Q&A session with judging panel"
+      "Q&A session"
     ]
   },
   {
@@ -86,8 +87,11 @@ const Process = () => {
                     <span>{item.date}</span>
                   </div>
                   
-                  <h3 className={`text-xl font-bold mb-3 ${item.highlight ? 'text-uiy-accent' : 'text-uiy-blue'}`}>{item.title}</h3>
-                  
+                  <h3 className={`text-xl font-bold ${item.highlight ? 'text-uiy-accent' : 'text-uiy-blue'}`}>{item.title}</h3>
+                  {item.subtitle && (
+                    <p className="text-sm text-gray-500 mb-4">{item.subtitle}</p>
+                  )}
+                                    
                   <p className="text-gray-600 mb-4">{item.description}</p>
                   
                   {item.requirements && (

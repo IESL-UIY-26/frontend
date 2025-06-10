@@ -20,7 +20,7 @@ const Eligibility = () => {
           <p className="text-sm font-semibold text-uiy-blue uppercase tracking-wider mb-3">Who Can Participate</p>
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Eligibility Criteria</h2>
           <p className="text-lg text-gray-600">
-            The UIY competition is exclusively open to engineering students from specific universities in Sri Lanka,
+            The UIY competition is exclusively open to engineering undergraduates from specific universities in Sri Lanka,
             providing them with a platform to showcase their innovative solutions.
           </p>
         </div>
