@@ -66,7 +66,7 @@ const ApplyNow = () => {
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <File className="w-4 h-4 text-uiy-blue" />
-                        <span>Project proposal (max 3 pages)</span>
+                        <span>Brief Project Report (max 3 pages)</span>
                       </div>
                       <div className="flex items-center gap-2 text-gray-600">
                         <File className="w-4 h-4 text-uiy-blue" />
