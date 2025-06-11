@@ -20,7 +20,7 @@ const ApplyNow = () => {
                 <h3 className="text-2xl font-bold">Application Checklist</h3>
                 <div className="flex flex-wrap gap-2">
                   <a 
-                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2025_New.pdf" 
+                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2025_final.pdf" 
                     className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
