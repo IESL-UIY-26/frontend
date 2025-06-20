@@ -12,6 +12,8 @@ import ApplyNow from '@/components/ApplyNow';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
 
+
+
 const Index = () => {
   useEffect(() => {
     // Initialize intersection observer for animations
