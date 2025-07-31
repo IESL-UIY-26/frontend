@@ -103,10 +103,10 @@ const ApplyNow = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Submit Your Application</h4>
-                    <p className="text-gray-600">Submit all documents via the UIY website before July 31, 2025.</p>
+                    <p className="text-gray-600">Submit all documents via the UIY website before August 24, 2025.</p>
                     <div className="mt-3 flex items-center gap-2 text-sm font-medium text-uiy-blue">
                       <Calendar className="w-4 h-4" />
-                      <span>Deadline: July 31, 2025</span>
+                      <span>Deadline: August 24, 2025</span>
                     </div>
                   </div>
                 </div>
@@ -125,7 +125,7 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>July 31, 2025</span>
+                    <span>August 24, 2025</span>
                   </div>
                   <p className="font-medium">Application Deadline</p>
                   <p className="text-sm text-gray-600 mt-1">Last day to submit your complete application package</p>

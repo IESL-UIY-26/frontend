@@ -11,6 +11,7 @@ import FAQ from '@/components/FAQ';
 import ApplyNow from '@/components/ApplyNow';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
+import Banner from '@/components/Banner';
 
 
 
@@ -43,6 +44,7 @@ const Index = () => {
     <div className="min-h-screen w-full">
       <Navbar />
       <Hero />
+      <Banner />
       <About />
       <Eligibility />
       <Process />
