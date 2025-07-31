@@ -73,7 +73,7 @@ const Eligibility = () => {
                 <div>
                   <p className="font-medium text-gray-800 mb-2">2. Application Submission</p>
                   <p className="text-gray-600">
-                    Applications must be submitted through the IESL-UIY website (https://uiy.iesl.lk) by July 31, 2025.
+                    Applications must be submitted through the IESL-UIY website (https://uiy.iesl.lk) by August 24, 2025.
                   </p>
                 </div>
                 
