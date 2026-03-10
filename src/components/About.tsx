@@ -79,10 +79,10 @@ const About = () => {
         
         <div className="mt-24 grid md:grid-cols-2 gap-12 items-center reveal-animation">
           <div>
-            <p className="text-sm font-semibold text-uiy-blue uppercase tracking-wider mb-3">UIY 2025 Theme</p>
+            <p className="text-sm font-semibold text-uiy-blue uppercase tracking-wider mb-3">UIY 2026 Theme</p>
             <h3 className="text-3xl font-display font-bold mb-6">Digital Transformation, Human-Machine Interaction, and Entrepreneurship</h3>
             <p className="text-gray-600 mb-6">
-              UIY 2025's major focus areas include digital transformation, human-machine interaction, and entrepreneurship, 
+              UIY 2026's major focus areas include digital transformation, human-machine interaction, and entrepreneurship, 
               but participants are encouraged to explore beyond these themes and develop next-generation engineering solutions 
               that address real-world challenges.
             </p>

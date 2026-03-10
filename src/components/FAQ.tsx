@@ -5,7 +5,7 @@ import { HelpCircle } from 'lucide-react';
 
 const faqItems = [
   {
-    question: "What is UIY 2025?",
+    question: "What is UIY 2026?",
     answer: "UIY is a unique platform for recognizing and rewarding the nation's most outstanding and innovative undergraduate students and showcasing the emerging ideas and inventions that will shape our future. Judges will evaluate each entry for its originality, inventiveness, the scope of use and potential social, environmental or economic value."
   },
   {
@@ -21,11 +21,11 @@ const faqItems = [
     answer: "Absolutely! Awards criteria are as follows: Awards and cash prizes for the best 3 inventions from each field. Awards and cash prizes for the overall best 4 inventions. Special award and cash prize for the most popular invention. Provide the opportunity for some selected inventions to patent their inventions through Sri Lanka Inventors Commission."
   },
   {
-    question: "What is the basic procedure of UIY 2025 participation?",
+    question: "What is the basic procedure of UIY 2026 participation?",
     answer: "Registration form the link: Click Here. A letter signed by the Project supervisor/advisor and Head of Department verifying the originality of the students' work needs to be submitted."
   },
   {
-    question: "Who will be the judges of the UIY 2025?",
+    question: "Who will be the judges of the UIY 2026?",
     answer: "Judged by the Sri Lanka Inventors Commission and the judge's decision will be the final decision."
   }
 ];
@@ -40,7 +40,7 @@ const FAQ = () => {
           </div>
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Frequently Asked Questions</h2>
           <p className="text-lg text-gray-600">
-            Find answers to common questions about the UIY 2025 competition.
+            Find answers to common questions about the UIY 2026 competition.
           </p>
         </div>
         

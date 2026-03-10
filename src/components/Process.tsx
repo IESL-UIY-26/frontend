@@ -5,7 +5,7 @@ import { Calendar, ArrowDown, CheckCircle } from 'lucide-react';
 const timelineData = [
   {
     title: "Application Phase",
-    date: "By August 24, 2025",
+    date: "By August 24, 2026",
     description: "Submit your application, project proposal, and declaration letter through the IESL-UIY website.",
     requirements: [
       "Completed application form",
@@ -16,7 +16,7 @@ const timelineData = [
   {
     title: "Preliminary Competition",
     subtitle: "*Subjected to change",
-    date: "August-September 2025",
+    date: "August-September 2026",
     description: "Selected candidates will submit additional materials and participate in a Q&A session.",
     requirements: [
       "3-minute video of the invention",
@@ -26,7 +26,7 @@ const timelineData = [
   },
   {
     title: "Final Competition",
-    date: "October 2025",
+    date: "October 2026",
     description: "Physical event featuring the top innovations (max 6) with prototype demonstrations.",
     requirements: [
       "Physical prototype of the invention",
@@ -37,7 +37,7 @@ const timelineData = [
   },
   {
     title: "Awards Ceremony",
-    date: "October 2025",
+    date: "October 2026",
     description: "Recognition of the top inventors with prizes and certificates.",
     highlight: true
   }

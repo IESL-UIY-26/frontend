@@ -9,8 +9,8 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <img src='/images/logo-light.png' alt="UIY 2025" className="w-auto h-16" />
-              <span className="font-display text-xl font-semibold">UIY 2025</span>
+              <img src='/images/logo-light.png' alt="UIY 2026" className="w-auto h-16" />
+              <span className="font-display text-xl font-semibold">UIY 2026</span>
             </div>
             
             <p className="text-gray-600 mb-6 max-w-md">
@@ -60,7 +60,7 @@ const Footer = () => {
         </div>
         
         <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">© 2025 Institution of Engineers Sri Lanka. All rights reserved.</p>
+          <p className="text-gray-500 text-sm">© 2026 Institution of Engineers Sri Lanka. All rights reserved.</p>
           
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-uiy-blue transition-colors hidden">Privacy Policy</a>
