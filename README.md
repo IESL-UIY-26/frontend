@@ -97,7 +97,23 @@ docs/     → documentation only
 refactor/ → code restructure, no behaviour change
 ```
 
-**2. Make your changes**, then commit following the Conventional Commits format above.
+**2. Make your changes**, then stage and commit following the Conventional Commits format above.
+
+```sh
+# Stage a specific file
+git add src/components/Hero.tsx
+
+# Stage multiple specific files
+git add src/components/Hero.tsx src/components/About.tsx
+
+# Stage all changes at once
+git add .
+
+# Commit with a conventional message
+git commit -m "feat: your short description here"
+```
+
+> Alternatively, use the **VS Code Source Control panel** (`Ctrl+Shift+G`) to stage files and write your commit message there.
 
 **3. Push your branch** and open a Pull Request against `main`:
 
