@@ -1,0 +1,25 @@
+#!/bin/sh
+
+commit_regex="^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+"
+
+if ! grep -qE "$commit_regex" "$1"; then
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "Commit message should follow:"
+  echo "<type>(<scope>): <description>"
+  echo ""
+  echo "Types:"
+  echo "  feat     - new feature"
+  echo "  fix      - bug fix"
+  echo "  docs     - documentation"
+  echo "  style    - formatting"
+  echo "  refactor - code restructuring"
+  echo "  test     - tests"
+  echo "  chore    - maintenance"
+  echo ""
+  echo "Examples:"
+  echo "  feat: add user authentication"
+  echo "  fix(api): resolve validation error"
+  echo "  docs: update README with installation steps"
+  exit 1
+fi
