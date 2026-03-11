@@ -1,69 +1,124 @@
-# Welcome to your Lovable project
+# IESL UIY 2026 — Undergraduate Inventor of the Year
 
-## Project info
+The official website for the **IESL Undergraduate Inventor of the Year (UIY) 2026** competition, organised by the Institution of Engineers Sri Lanka (IESL). This site serves as the main digital presence for the competition, providing information about the competition, eligibility criteria, the application process, awards, gallery, and an online application portal for Sri Lankan engineering undergraduates.
 
-**URL**: https://lovable.dev/projects/5608d67f-a937-4360-85b1-977a8c7f3ac9
+## Tech Stack
 
-## How can I edit this code?
+- **React 18** — UI library
+- **TypeScript** — Type safety
+- **Vite** — Build tool & dev server
+- **Tailwind CSS** — Utility-first styling
+- **shadcn/ui** — Accessible component library (Radix UI primitives)
+- **Framer Motion** — Animations
+- **React Router v6** — Client-side routing
+- **React Hook Form + Zod** — Form handling & validation
+- **Husky + Commitlint** — Git commit message validation (Conventional Commits)
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5608d67f-a937-4360-85b1-977a8c7f3ac9) and start prompting.
+Make sure you have one of the following installed:
 
-Changes made via Lovable will be committed automatically to this repo.
+- [Node.js](https://nodejs.org/) (v18+) with npm, **or**
+- [Bun](https://bun.sh/) (recommended — the project uses `bun.lockb`)
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation & Running Locally
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 1. Clone the repository
+git clone https://github.com/IESL-UIY-26/frontend.git
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 2. Navigate into the project directory
+cd frontend
 
-# Step 3: Install the necessary dependencies.
-npm i
+# 3. Install dependencies
+npm install
+# or with npm:
+bun install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# 4. Start the development server
 npm run dev
+# or with npm:
+bun run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080` by default.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Other Useful Commands
 
-**Use GitHub Codespaces**
+| Command           | Description                          |
+| ----------------- | ------------------------------------ |
+| `bun run build`   | Build for production                 |
+| `bun run preview` | Preview the production build locally |
+| `bun run lint`    | Run ESLint                           |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/       # Page sections (Hero, About, FAQ, etc.) & shared UI
+│   └── ui/           # shadcn/ui components
+├── pages/            # Route-level page components
+├── hooks/            # Custom React hooks
+└── lib/              # Utility functions
+public/               # Static assets (images, documents, sitemap)
+```
 
-This project is built with .
+## Contributing
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) spec (enforced by Husky + Commitlint).
 
-## How can I deploy this project?
+```
+feat: add new section
+fix: correct typo in FAQ
+chore: update dependencies
+```
 
-Simply open [Lovable](https://lovable.dev/projects/5608d67f-a937-4360-85b1-977a8c7f3ac9) and click on Share -> Publish.
+### Branching & Pull Requests
 
-## I want to use a custom domain - is that possible?
+This repository uses **branch protection rules** on `main`. Direct pushes are not allowed — all changes must go through a pull request.
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+**1. Create a branch** from `main` using a descriptive, prefixed name:
+
+```sh
+git checkout main
+git pull origin main
+git checkout -b feat/your-feature-name
+```
+
+Common prefixes:
+
+```
+feat/     → new feature or content
+fix/      → bug fix
+chore/    → maintenance, config, tooling
+docs/     → documentation only
+refactor/ → code restructure, no behaviour change
+```
+
+**2. Make your changes**, then stage and commit following the Conventional Commits format above.
+
+```sh
+# Stage a specific file
+git add src/components/Hero.tsx
+
+# Stage multiple specific files
+git add src/components/Hero.tsx src/components/About.tsx
+
+# Stage all changes at once
+git add .
+
+# Commit with a conventional message
+git commit -m "feat: your short description here"
+```
+
+> Alternatively, use the **VS Code Source Control panel** (`Ctrl+Shift+G`) to stage files and write your commit message there.
+
+**3. Push your branch** and open a Pull Request against `main`:
+
+```sh
+git push origin feat/your-feature-name
+```
+
+Then go to the repository on GitHub → **Pull requests** → **New pull request**, set the base branch to `main`, and submit your PR for review.
