@@ -15,13 +15,36 @@ const navItems = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  
+  const [activeSection, setActiveSection] = useState('');
+  const getSectionId = (href: string) => href.replace('#', '');
+
   useEffect(() => {
+    const sectionIds = navItems.map((item) => getSectionId(item.href));
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
+
+      const scrollPosition = window.scrollY + 120;
+      let currentSection = '';
+
+      sectionIds.forEach((id) => {
+        const section = document.getElementById(id);
+        if (!section) return;
+
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          currentSection = id;
+        }
+      });
+
+      setActiveSection(currentSection);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -40,16 +63,17 @@ const Navbar = () => {
             UIY 2026
           </span>
         </a>
-        
+
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
-            <a 
+            <a
               key={item.name}
               href={item.href}
               className={cn(
                 "text-sm font-medium transition-all duration-300 hover:text-uiy-blue relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-uiy-blue after:transition-all after:duration-300 hover:after:w-full",
-                scrolled ? "text-uiy-dark" : "text-white"
+                scrolled ? "text-uiy-dark" : "text-white",
+                activeSection === getSectionId(item.href) && "text-uiy-blue after:w-full"
               )}
             >
               {item.name}
@@ -57,11 +81,11 @@ const Navbar = () => {
           ))}
           <a href="#apply" className="btn-primary">Apply Now</a>
         </div>
-        
+
         {/* Mobile Menu Toggle */}
-        <button 
+        <button
           className={cn(
-            "md:hidden focus:outline-none", 
+            "md:hidden focus:outline-none",
             scrolled ? "text-uiy-dark" : "text-white"
           )}
           onClick={() => setIsOpen(!isOpen)}
@@ -69,7 +93,7 @@ const Navbar = () => {
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
-      
+
       {/* Mobile Menu */}
       <div className={cn(
         "fixed inset-0 z-40 bg-white transform transition-transform duration-300 ease-in-out flex",
@@ -77,19 +101,22 @@ const Navbar = () => {
       )}>
         <div className="relative flex flex-col h-full w-full pt-20 px-6">
           {/* Close button in absolute position */}
-          <button 
+          <button
             className="absolute top-6 right-6 text-uiy-dark focus:outline-none"
             onClick={() => setIsOpen(false)}
           >
             <X size={24} />
           </button>
-          
+
           {navItems.map((item) => (
             <a
               key={item.name}
               href={item.href}
               onClick={() => setIsOpen(false)}
-              className="py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
+              className={cn(
+                "py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors",
+                activeSection === getSectionId(item.href) && "text-uiy-blue"
+              )}
             >
               {item.name}
             </a>
