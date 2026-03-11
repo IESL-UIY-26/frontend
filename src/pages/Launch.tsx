@@ -94,7 +94,7 @@ const Launch = () => {
       
       toast({
         title: "Launch Successful! 🚀",
-        description: "Welcome to IESL UIY 2025",
+        description: "Welcome to IESL UIY 2026",
         duration: 5000,
       });
       
@@ -160,7 +160,7 @@ const Launch = () => {
                   <span>Invitation Only</span>
                 </div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                  IESL UIY <span className="text-uiy-blue">2025</span>
+                  IESL UIY <span className="text-uiy-blue">2026</span>
                 </h1>
                 <p className="mx-auto max-w-2xl text-lg font-medium text-slate-600">
                   Institute of Engineers Sri Lanka - Undergraduate Inventor of the Year
@@ -175,7 +175,7 @@ const Launch = () => {
                 className="max-w-2xl text-slate-600"
               >
                 Join us as we celebrate innovation, excellence, and the future of engineering in Sri Lanka. 
-                The IESL UIY 2025 is about to launch, recognizing the brightest undergraduate inventors.
+                The IESL UIY 2026 is about to launch, recognizing the brightest undergraduate inventors.
               </motion.p>
               
               {/* Launch button with elaborate animations */}
@@ -259,7 +259,7 @@ const Launch = () => {
                 transition={{ delay: 0.3, duration: 0.6 }}
                 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl"
               >
-                Welcome to <span className="text-uiy-blue">IESL UIY 2025</span>
+                Welcome to <span className="text-uiy-blue">IESL UIY 2026</span>
               </motion.h1>
               
               <motion.p

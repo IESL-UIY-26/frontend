@@ -9,7 +9,7 @@ const ApplyNow = () => {
           <p className="text-sm font-semibold text-uiy-blue uppercase tracking-wider mb-3">Get Started</p>
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to Apply?</h2>
           <p className="text-lg text-gray-600">
-            Follow these steps to start your journey in the UIY 2025 competition and showcase your innovative engineering solution.
+            Follow these steps to start your journey in the UIY 2026 competition and showcase your innovative engineering solution.
           </p>
         </div>
         
@@ -20,7 +20,7 @@ const ApplyNow = () => {
                 <h3 className="text-2xl font-bold">Application Checklist</h3>
                 <div className="flex flex-wrap gap-2">
                   <a 
-                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2025_final.pdf" 
+                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2026_final.pdf" 
                     className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -48,7 +48,7 @@ const ApplyNow = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Obtain IESL Membership</h4>
-                    <p className="text-gray-600">Ensure you have student membership with IESL (required by July 2025).</p>
+                    <p className="text-gray-600">Ensure you have student membership with IESL (required by July 2026).</p>
                   </div>
                 </div>
                  */}
@@ -103,10 +103,10 @@ const ApplyNow = () => {
                   </div>
                   <div>
                     <h4 className="font-semibold mb-1">Submit Your Application</h4>
-                    <p className="text-gray-600">Submit all documents via the UIY website before August 24, 2025.</p>
+                    <p className="text-gray-600">Submit all documents via the UIY website before August 24, 2026.</p>
                     <div className="mt-3 flex items-center gap-2 text-sm font-medium text-uiy-blue">
                       <Calendar className="w-4 h-4" />
-                      <span>Deadline: August 24, 2025</span>
+                      <span>Deadline: August 24, 2026</span>
                     </div>
                   </div>
                 </div>
@@ -125,7 +125,7 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>August 24, 2025</span>
+                    <span>August 24, 2026</span>
                   </div>
                   <p className="font-medium">Application Deadline</p>
                   <p className="text-sm text-gray-600 mt-1">Last day to submit your complete application package</p>
@@ -134,7 +134,7 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>August-September 2025</span>
+                    <span>August-September 2026</span>
                   </div>
                   <p className="font-medium">Preliminary Competition</p>
                   <p className="text-sm text-gray-600 mt-1">Submission of video, brochure, and Q&A session</p>
@@ -143,7 +143,7 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>October 2025</span>
+                    <span>October 2026</span>
                   </div>
                   <p className="font-medium">Final Competition & Awards</p>
                   <p className="text-sm text-gray-600 mt-1">Physical event with prototype demonstrations</p>

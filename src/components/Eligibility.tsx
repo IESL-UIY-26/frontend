@@ -66,14 +66,14 @@ const Eligibility = () => {
                   <p className="font-medium text-gray-800 mb-2">1. Registration Status</p>
                   <p className="text-gray-600">
                     Students must be registered undergraduates at one of the eligible universities and hold IESL student membership
-                    (to be obtained by July 2025).
+                    (to be obtained by July 2026).
                   </p>
                 </div>
                 
                 <div>
                   <p className="font-medium text-gray-800 mb-2">2. Application Submission</p>
                   <p className="text-gray-600">
-                    Applications must be submitted through the IESL-UIY website (https://uiy.iesl.lk) by August 24, 2025.
+                    Applications must be submitted through the IESL-UIY website (https://uiy.iesl.lk) by August 24, 2026.
                   </p>
                 </div>
                 

@@ -24,7 +24,7 @@ const Hero = () => {
               className="h-20 sm:h-24 md:h-28 object-contain hidden"
             />
             <div className="inline-block backdrop-blur-sm bg-white/10 py-2 px-4 rounded-full">
-              <p className="text-sm font-medium text-white">IESL UIY 2025 Competition</p>
+              <p className="text-sm font-medium text-white">IESL UIY 2026 Competition</p>
             </div>
           </div>
           

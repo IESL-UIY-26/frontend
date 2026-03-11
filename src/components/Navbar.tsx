@@ -32,12 +32,12 @@ const Navbar = () => {
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
-          <img src='/images/logo-light.png' alt="UIY 2025" className="w-auto h-16" />
+          <img src='/images/logo-light.png' alt="UIY 2026" className="w-auto h-16" />
           <span className={cn(
             "font-display text-xl font-semibold transition-colors",
             scrolled ? "text-uiy-dark" : "text-white"
           )}>
-            UIY 2025
+            UIY 2026
           </span>
         </a>
         
