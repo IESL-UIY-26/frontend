@@ -61,6 +61,16 @@ const Navbar = () => {
         
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
+          <Link
+            to="/projects"
+            className={cn(
+              "text-sm font-medium transition-all duration-300 hover:text-uiy-blue",
+              isDark ? "text-uiy-dark" : "text-white"
+            )}
+          >
+            Projects
+          </Link>
+
           {navItems.map((item) => (
             <a 
               key={item.name}
@@ -179,6 +189,14 @@ const Navbar = () => {
               {item.name}
             </a>
           ))}
+
+          <Link
+            to="/projects"
+            onClick={() => setIsOpen(false)}
+            className="py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
+          >
+            Projects
+          </Link>
 
           {/* Apply Now / View My Team — logged-in users only */}
           {user && (
