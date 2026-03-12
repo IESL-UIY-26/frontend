@@ -1,28 +1,33 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { authAPI } from '@/features/Auth/api/auth.api';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
+import { UserRole } from '@/features/Auth/enums/auth.enums';
 
 /**
  * Landing page after a Supabase OAuth redirect.
- * Syncs the user to the backend, then redirects to profile completion if
- * optional fields (phone, DOB, etc.) are missing, otherwise goes home.
+ * Waits for AuthContext to finish syncing the user (onAuthStateChange SIGNED_IN),
+ * then redirects based on role and profile completeness.
  */
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
+  const { loading, session, dbUser } = useAuth();
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) {
-        navigate('/login', { replace: true });
-        return;
-      }
-      const user = await authAPI.syncUser(session.access_token);
-      const isComplete = !!(user?.contact_number && user?.date_of_birth);
+    if (loading) return;
+    if (!session) {
+      navigate('/login', { replace: true });
+      return;
+    }
+    if (!dbUser) return; // still waiting for onAuthStateChange to finish syncing
+
+    if (dbUser.role === UserRole.ADMIN) {
+      navigate('/admin', { replace: true });
+    } else {
+      const isComplete = !!(dbUser.contact_number && dbUser.date_of_birth);
       navigate(isComplete ? '/' : '/complete-profile', { replace: true });
-    });
-  }, [navigate]);
+    }
+  }, [loading, session, dbUser, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-uiy-darkblue via-uiy-blue to-uiy-accent">

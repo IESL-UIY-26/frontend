@@ -25,6 +25,7 @@ export interface IUser {
 export interface AuthContextValue {
   session: Session | null;
   user: User | null;
+  dbUser: IUser | null;
   loading: boolean;
   signUpWithEmail: (
     email: string,
@@ -34,7 +35,7 @@ export interface AuthContextValue {
   signInWithEmail: (
     email: string,
     password: string
-  ) => Promise<{ error: AuthError | null }>;
+  ) => Promise<{ error: AuthError | null; dbUser: IUser | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
 }
