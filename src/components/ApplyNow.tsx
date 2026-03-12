@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Calendar, File, ArrowRight, Download } from 'lucide-react';
 
 const ApplyNow = () => {
@@ -112,10 +113,10 @@ const ApplyNow = () => {
                 </div>
               </div>
               
-              <a href="https://docs.google.com/forms/d/1L7owY2QViIQ3s4P4RmIn1JHLe8yrbAlYXsKD2f07PwM/edit" className="mt-8 btn-primary inline-flex items-center gap-2 group">
-                Start Your Application 
+              <Link to="/create-team" className="mt-8 btn-primary inline-flex items-center gap-2 group">
+                Start Your Application
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              </Link>
             </div>
             
             <div className="bg-gradient-blue p-8 md:p-12 flex flex-col justify-center">
