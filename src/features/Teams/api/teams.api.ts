@@ -1,7 +1,13 @@
 import api from '@/utils/api-client';
 import type { TeamCreationFormValues } from '../dtos/teams.dto';
+import type { IMyTeam } from '../types/teams.types';
 
 export const teamsAPI = {
+  getMyTeam: async (): Promise<IMyTeam | null> => {
+    const response = await api.get<IMyTeam | null>('/api/teams/my-team');
+    return response.data;
+  },
+
   createTeam: async (form: TeamCreationFormValues): Promise<unknown> => {
     // Build payload without a strict interface so TypeScript inference
     // matches Zod's inferred types exactly

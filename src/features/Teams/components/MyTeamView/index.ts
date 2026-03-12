@@ -1,0 +1,1 @@
+export { MyTeamView } from './MyTeamView';

@@ -411,7 +411,12 @@ export function TeamCreationForm() {
         <StepIndicator current={step} />
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form 
+            onSubmit={(e) => e.preventDefault()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault();
+            }}
+          >
 
             {/* ── Step 1: Team Info ── */}
             {step === 1 && (
@@ -637,6 +642,11 @@ export function TeamCreationForm() {
                             setShowSearchResults(true);
                           }}
                           onFocus={() => setShowSearchResults(true)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                            }
+                          }}
                           placeholder="Type email to search registered users..."
                           className="h-10 pl-9 pr-9"
                         />
@@ -766,8 +776,9 @@ export function TeamCreationForm() {
                 </Button>
               ) : (
                 <Button
-                  type="submit"
+                  type="button"
                   disabled={submitting}
+                  onClick={() => form.handleSubmit(onSubmit)()}
                   className="bg-uiy-blue hover:bg-uiy-darkblue text-white flex items-center gap-2 min-w-[140px]"
                 >
                   {submitting ? (

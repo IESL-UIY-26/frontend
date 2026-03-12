@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut, User, Users } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
+import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
 
 const navItems = [
   { name: 'Home', href: '#home' },
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
+  const { myTeam, teamLoading } = useTeamStatus();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -66,7 +68,21 @@ const Navbar = () => {
               {item.name}
             </a>
           ))}
-          <a href="#apply" className="btn-primary">Apply Now</a>
+
+          {/* Apply Now / View My Team */}
+          {!teamLoading && (
+            user && myTeam ? (
+              <Link
+                to="/my-team"
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <Users className="w-4 h-4" />
+                My Team
+              </Link>
+            ) : (
+              <a href="#apply" className="btn-primary">Apply Now</a>
+            )
+          )}
 
           {user ? (
             <DropdownMenu>
@@ -85,6 +101,14 @@ const Navbar = () => {
                   <p className="text-sm font-medium truncate">{user.email}</p>
                 </div>
                 <DropdownMenuSeparator />
+                {myTeam && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-team" className="cursor-pointer">
+                      <Users className="mr-2 h-4 w-4" />
+                      My Team
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive cursor-pointer"
                   onClick={() => signOut()}
@@ -151,7 +175,22 @@ const Navbar = () => {
               {item.name}
             </a>
           ))}
-          <a href="#apply" className="btn-primary mt-8 text-center" onClick={() => setIsOpen(false)}>Apply Now</a>
+
+          {/* Apply Now / View My Team */}
+          {!teamLoading && (
+            user && myTeam ? (
+              <Link
+                to="/my-team"
+                className="btn-primary mt-8 text-center inline-flex items-center justify-center gap-2"
+                onClick={() => setIsOpen(false)}
+              >
+                <Users className="w-4 h-4" />
+                My Team
+              </Link>
+            ) : (
+              <a href="#apply" className="btn-primary mt-8 text-center" onClick={() => setIsOpen(false)}>Apply Now</a>
+            )
+          )}
 
           {user ? (
             <div className="mt-6 border-t pt-4">
