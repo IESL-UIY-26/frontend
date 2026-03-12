@@ -3,9 +3,11 @@ import React from 'react';
 import { ArrowRight, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
 
 const Hero = () => {
   const { myTeam } = useTeamStatus();
+  const { user } = useAuth();
 
   return (
     <section id="home" className="min-h-screen relative flex items-center overflow-hidden">
@@ -46,15 +48,17 @@ const Hero = () => {
               Learn More
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
-            {myTeam ? (
-              <Link to="/my-team" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center gap-2 whitespace-nowrap">
-                <Users className="w-4 h-4" />
-                My Team
-              </Link>
-            ) : (
-              <a href="#apply" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center whitespace-nowrap">
-                Apply Now
-              </a>
+            {user && (
+              myTeam ? (
+                <Link to="/my-team" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center gap-2 whitespace-nowrap">
+                  <Users className="w-4 h-4" />
+                  My Team
+                </Link>
+              ) : (
+                <a href="#apply" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center whitespace-nowrap">
+                  Apply Now
+                </a>
+              )
             )}
           </div>
         </div>

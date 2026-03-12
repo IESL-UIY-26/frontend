@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { Menu, X, LogOut, User, Users } from 'lucide-react';
 import {
@@ -28,6 +28,11 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
   const { myTeam } = useTeamStatus();
+  const location = useLocation();
+
+  // On non-landing pages (e.g. /create-team, /my-team) always use the dark style
+  const forceDark = location.pathname !== '/';
+  const isDark = forceDark || scrolled;
   
   useEffect(() => {
     const handleScroll = () => {
@@ -41,14 +46,14 @@ const Navbar = () => {
   return (
     <nav className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6",
-      scrolled ? "bg-white/90 backdrop-blur-md shadow-md py-3" : "bg-transparent"
+      isDark ? "bg-white/90 backdrop-blur-md shadow-md py-3" : "bg-transparent"
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
           <img src='/images/logo-light.png' alt="UIY 2026" className="w-auto h-16" />
           <span className={cn(
             "font-display text-xl font-semibold transition-colors",
-            scrolled ? "text-uiy-dark" : "text-white"
+            isDark ? "text-uiy-dark" : "text-white"
           )}>
             UIY 2026
           </span>
@@ -62,24 +67,25 @@ const Navbar = () => {
               href={item.href}
               className={cn(
                 "text-sm font-medium transition-all duration-300 hover:text-uiy-blue relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-uiy-blue after:transition-all after:duration-300 hover:after:w-full",
-                scrolled ? "text-uiy-dark" : "text-white"
+                isDark ? "text-uiy-dark" : "text-white"
               )}
             >
               {item.name}
             </a>
           ))}
 
-          {/* Apply Now / View My Team */}
-          {user && myTeam ? (
-            <Link
-              to="/my-team"
-              className="btn-primary inline-flex items-center justify-center gap-2 whitespace-nowrap"
-            >
-              {/* <Users className="w-4 h-4" /> */}
-              My Team
-            </Link>
-          ) : (
-            <a href="#apply" className="btn-primary whitespace-nowrap">Apply Now</a>
+          {/* Apply Now / View My Team — logged-in users only */}
+          {user && (
+            myTeam ? (
+              <Link
+                to="/my-team"
+                className="btn-primary inline-flex items-center justify-center gap-2 whitespace-nowrap"
+              >
+                My Team
+              </Link>
+            ) : (
+              <a href="#apply" className="btn-primary whitespace-nowrap">Apply Now</a>
+            )
           )}
 
           {user ? (
@@ -122,7 +128,7 @@ const Navbar = () => {
                 to="/login"
                 className={cn(
                   "text-sm font-medium transition-colors hover:text-uiy-blue",
-                  scrolled ? "text-uiy-dark" : "text-white"
+                  isDark ? "text-uiy-dark" : "text-white"
                 )}
               >
                 Sign In
@@ -141,7 +147,7 @@ const Navbar = () => {
         <button 
           className={cn(
             "md:hidden focus:outline-none", 
-            scrolled ? "text-uiy-dark" : "text-white"
+            isDark ? "text-uiy-dark" : "text-white"
           )}
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -174,18 +180,20 @@ const Navbar = () => {
             </a>
           ))}
 
-          {/* Apply Now / View My Team */}
-          {user && myTeam ? (
-            <Link
-              to="/my-team"
-              className="btn-primary mt-8 text-center inline-flex items-center justify-center gap-2"
-              onClick={() => setIsOpen(false)}
-            >
-              <Users className="w-4 h-4" />
-              My Team
-            </Link>
-          ) : (
-            <a href="#apply" className="btn-primary mt-8 text-center whitespace-nowrap" onClick={() => setIsOpen(false)}>Apply Now</a>
+          {/* Apply Now / View My Team — logged-in users only */}
+          {user && (
+            myTeam ? (
+              <Link
+                to="/my-team"
+                className="btn-primary mt-8 text-center inline-flex items-center justify-center gap-2"
+                onClick={() => setIsOpen(false)}
+              >
+                <Users className="w-4 h-4" />
+                My Team
+              </Link>
+            ) : (
+              <a href="#apply" className="btn-primary mt-8 text-center whitespace-nowrap" onClick={() => setIsOpen(false)}>Apply Now</a>
+            )
           )}
 
           {user ? (

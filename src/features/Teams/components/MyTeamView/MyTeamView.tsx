@@ -64,6 +64,7 @@ export function MyTeamView() {
   }
 
   const leader = myTeam.members.find((m) => m.role === 'LEADER');
+  console.log('My Team:', myTeam);
   const regularMembers = myTeam.members.filter((m) => m.role === 'MEMBER');
 
   return (
