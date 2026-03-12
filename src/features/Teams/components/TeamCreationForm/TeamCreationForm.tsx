@@ -397,7 +397,7 @@ export function TeamCreationForm() {
   // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -411,7 +411,12 @@ export function TeamCreationForm() {
         <StepIndicator current={step} />
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form 
+            onSubmit={(e) => e.preventDefault()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') e.preventDefault();
+            }}
+          >
 
             {/* ── Step 1: Team Info ── */}
             {step === 1 && (
@@ -637,6 +642,11 @@ export function TeamCreationForm() {
                             setShowSearchResults(true);
                           }}
                           onFocus={() => setShowSearchResults(true)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                            }
+                          }}
                           placeholder="Type email to search registered users..."
                           className="h-10 pl-9 pr-9"
                         />
@@ -663,14 +673,15 @@ export function TeamCreationForm() {
                           {searchResults.map((user) => {
                             const alreadyAdded = fields.some((f) => f.user_id === user.id);
                             const isLeader = user.id === dbUser?.id;
+                            const blocked = alreadyAdded || isLeader || user.in_team;
                             return (
                               <button
                                 key={user.id}
                                 type="button"
-                                disabled={alreadyAdded || isLeader}
+                                disabled={blocked}
                                 onClick={() => addMember(user)}
                                 className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
-                                  alreadyAdded || isLeader
+                                  blocked
                                     ? 'opacity-50 cursor-not-allowed bg-gray-50'
                                     : 'hover:bg-blue-50 cursor-pointer'
                                 }`}
@@ -684,7 +695,10 @@ export function TeamCreationForm() {
                                 </div>
                                 {alreadyAdded && <Badge variant="secondary" className="text-xs">Added</Badge>}
                                 {isLeader && <Badge variant="secondary" className="text-xs">You (Leader)</Badge>}
-                                {!alreadyAdded && !isLeader && (
+                                {!alreadyAdded && !isLeader && user.in_team && (
+                                  <Badge variant="destructive" className="text-xs">Already in a team</Badge>
+                                )}
+                                {!blocked && (
                                   <Plus className="w-4 h-4 text-uiy-blue flex-shrink-0" />
                                 )}
                               </button>
@@ -762,8 +776,9 @@ export function TeamCreationForm() {
                 </Button>
               ) : (
                 <Button
-                  type="submit"
+                  type="button"
                   disabled={submitting}
+                  onClick={() => form.handleSubmit(onSubmit)()}
                   className="bg-uiy-blue hover:bg-uiy-darkblue text-white flex items-center gap-2 min-w-[140px]"
                 >
                   {submitting ? (
