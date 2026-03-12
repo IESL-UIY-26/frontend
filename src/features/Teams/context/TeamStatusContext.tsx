@@ -10,24 +10,41 @@ interface TeamStatusContextValue {
   refreshMyTeam: () => Promise<void>;
 }
 
+const STORAGE_KEY = 'uiy_my_team';
+
+const readCache = (): IMyTeam | null => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as IMyTeam) : null;
+  } catch {
+    return null;
+  }
+};
+
 const TeamStatusContext = createContext<TeamStatusContextValue | undefined>(undefined);
 
 export const TeamStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading: authLoading } = useAuth();
-  const [myTeam, setMyTeam] = useState<IMyTeam | null>(null);
+  const [myTeam, setMyTeam] = useState<IMyTeam | null>(readCache);
   const [teamLoading, setTeamLoading] = useState(false);
 
   const fetchMyTeam = useCallback(async () => {
     if (!user) {
       setMyTeam(null);
+      localStorage.removeItem(STORAGE_KEY);
       return;
     }
     setTeamLoading(true);
     try {
       const team = await teamsAPI.getMyTeam();
       setMyTeam(team);
+      if (team) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(team));
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
     } catch {
-      setMyTeam(null);
+      // Keep existing cached value on network error so the button stays visible
     } finally {
       setTeamLoading(false);
     }

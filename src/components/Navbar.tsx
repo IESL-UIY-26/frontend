@@ -27,7 +27,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
-  const { myTeam, teamLoading } = useTeamStatus();
+  const { myTeam } = useTeamStatus();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -70,18 +70,16 @@ const Navbar = () => {
           ))}
 
           {/* Apply Now / View My Team */}
-          {!teamLoading && (
-            user && myTeam ? (
-              <Link
-                to="/my-team"
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                <Users className="w-4 h-4" />
-                My Team
-              </Link>
-            ) : (
-              <a href="#apply" className="btn-primary">Apply Now</a>
-            )
+          {user && myTeam ? (
+            <Link
+              to="/my-team"
+              className="btn-primary inline-flex items-center justify-center gap-2 whitespace-nowrap"
+            >
+              {/* <Users className="w-4 h-4" /> */}
+              My Team
+            </Link>
+          ) : (
+            <a href="#apply" className="btn-primary whitespace-nowrap">Apply Now</a>
           )}
 
           {user ? (
@@ -177,19 +175,17 @@ const Navbar = () => {
           ))}
 
           {/* Apply Now / View My Team */}
-          {!teamLoading && (
-            user && myTeam ? (
-              <Link
-                to="/my-team"
-                className="btn-primary mt-8 text-center inline-flex items-center justify-center gap-2"
-                onClick={() => setIsOpen(false)}
-              >
-                <Users className="w-4 h-4" />
-                My Team
-              </Link>
-            ) : (
-              <a href="#apply" className="btn-primary mt-8 text-center" onClick={() => setIsOpen(false)}>Apply Now</a>
-            )
+          {user && myTeam ? (
+            <Link
+              to="/my-team"
+              className="btn-primary mt-8 text-center inline-flex items-center justify-center gap-2"
+              onClick={() => setIsOpen(false)}
+            >
+              <Users className="w-4 h-4" />
+              My Team
+            </Link>
+          ) : (
+            <a href="#apply" className="btn-primary mt-8 text-center whitespace-nowrap" onClick={() => setIsOpen(false)}>Apply Now</a>
           )}
 
           {user ? (

@@ -5,10 +5,12 @@ import type { IUniversity } from '@/features/Admin/types/universities.types';
 import type { IUserSearchResult } from '../types/teams.types';
 import { teamsAPI } from '../api/teams.api';
 import { usersAPI } from '../api/users.api';
+import { useTeamStatus } from '../context/TeamStatusContext';
 import api from '@/utils/api-client';
 
 export const useTeamCreation = () => {
   const navigate = useNavigate();
+  const { refreshMyTeam } = useTeamStatus();
   const [universities, setUniversities] = useState<IUniversity[]>([]);
   const [universitiesLoading, setUniversitiesLoading] = useState(true);
 
@@ -59,6 +61,7 @@ export const useTeamCreation = () => {
       setSubmitting(true);
       try {
         await teamsAPI.createTeam(formValues);
+        await refreshMyTeam();
         toast.success('Team created successfully! 🎉');
         navigate('/');
       } catch (err) {
