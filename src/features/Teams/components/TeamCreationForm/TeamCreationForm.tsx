@@ -663,14 +663,15 @@ export function TeamCreationForm() {
                           {searchResults.map((user) => {
                             const alreadyAdded = fields.some((f) => f.user_id === user.id);
                             const isLeader = user.id === dbUser?.id;
+                            const blocked = alreadyAdded || isLeader || user.in_team;
                             return (
                               <button
                                 key={user.id}
                                 type="button"
-                                disabled={alreadyAdded || isLeader}
+                                disabled={blocked}
                                 onClick={() => addMember(user)}
                                 className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
-                                  alreadyAdded || isLeader
+                                  blocked
                                     ? 'opacity-50 cursor-not-allowed bg-gray-50'
                                     : 'hover:bg-blue-50 cursor-pointer'
                                 }`}
@@ -684,7 +685,10 @@ export function TeamCreationForm() {
                                 </div>
                                 {alreadyAdded && <Badge variant="secondary" className="text-xs">Added</Badge>}
                                 {isLeader && <Badge variant="secondary" className="text-xs">You (Leader)</Badge>}
-                                {!alreadyAdded && !isLeader && (
+                                {!alreadyAdded && !isLeader && user.in_team && (
+                                  <Badge variant="destructive" className="text-xs">Already in a team</Badge>
+                                )}
+                                {!blocked && (
                                   <Plus className="w-4 h-4 text-uiy-blue flex-shrink-0" />
                                 )}
                               </button>

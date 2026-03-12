@@ -14,7 +14,10 @@ async function buildHeaders(withBody = false): Promise<Record<string, string>> {
 const api = {
   get: async <T>(path: string): Promise<{ data: T }> => {
     const res = await fetch(`${API_URL}${path}`, { headers: await buildHeaders() });
-    if (!res.ok) throw new Error(`GET ${path} failed: ${res.status}`);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({})) as { message?: string };
+      throw new Error(body.message ?? `GET ${path} failed: ${res.status}`);
+    }
     return res.json() as Promise<{ data: T }>;
   },
 
@@ -24,7 +27,10 @@ const api = {
       headers: await buildHeaders(true),
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(`POST ${path} failed: ${res.status}`);
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({})) as { message?: string };
+      throw new Error(errBody.message ?? `POST ${path} failed: ${res.status}`);
+    }
     return res.json() as Promise<{ data: T }>;
   },
 
@@ -34,7 +40,10 @@ const api = {
       headers: await buildHeaders(true),
       body: JSON.stringify(body),
     });
-    if (!res.ok) throw new Error(`PATCH ${path} failed: ${res.status}`);
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({})) as { message?: string };
+      throw new Error(errBody.message ?? `PATCH ${path} failed: ${res.status}`);
+    }
     return res.json() as Promise<{ data: T }>;
   },
 
@@ -43,7 +52,10 @@ const api = {
       method: 'DELETE',
       headers: await buildHeaders(),
     });
-    if (!res.ok) throw new Error(`DELETE ${path} failed: ${res.status}`);
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({})) as { message?: string };
+      throw new Error(errBody.message ?? `DELETE ${path} failed: ${res.status}`);
+    }
     return res.json() as Promise<{ data: T }>;
   },
 };

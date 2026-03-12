@@ -2,6 +2,7 @@ export interface IUserSearchResult {
   id: string;
   full_name: string;
   email: string;
+  in_team: boolean;
 }
 
 export interface ITeamMemberForm {
