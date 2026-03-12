@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '../../hooks/use-auth';
 import { loginSchema, type LoginDto } from '../../dtos/auth.dto';
@@ -18,6 +19,7 @@ export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const {
     register,
@@ -26,9 +28,15 @@ export const LoginForm: React.FC = () => {
   } = useForm<LoginDto>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (values: LoginDto) => {
+    setLoginError(null);
     const { error } = await signInWithEmail(values.email, values.password);
     if (error) {
-      toast({ variant: 'destructive', title: 'Login failed', description: error.message });
+      if (error.message.toLowerCase().includes('invalid login credentials') ||
+          error.message.toLowerCase().includes('invalid credentials')) {
+        setLoginError('invalid_credentials');
+      } else {
+        toast({ variant: 'destructive', title: 'Login failed', description: error.message });
+      }
     } else {
       navigate('/');
     }
@@ -51,6 +59,21 @@ export const LoginForm: React.FC = () => {
       </CardHeader>
 
       <CardContent className="space-y-5 pt-4">
+        {loginError === 'invalid_credentials' && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Incorrect email or password. If you signed up with Google, use the{' '}
+              <button
+                type="button"
+                className="underline font-medium"
+                onClick={handleGoogle}
+              >
+                Google button
+              </button>{' '}above.
+            </AlertDescription>
+          </Alert>
+        )}
         <GoogleButton loading={googleLoading} disabled={isSubmitting} onClick={handleGoogle} />
 
         <div className="flex items-center gap-3">

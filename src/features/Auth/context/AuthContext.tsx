@@ -8,7 +8,7 @@ import React, {
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { authAPI } from '../api/auth.api';
-import type { AuthContextValue } from '../types/auth.types';
+import type { AuthContextValue, ProfileData } from '../types/auth.types';
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -33,7 +33,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setUser(session?.user ?? null);
 
       if (_event === 'SIGNED_IN' && session) {
-        await authAPI.syncUser(session.access_token);
+        const pendingStr = localStorage.getItem('pending_profile');
+        const pendingProfile: Partial<ProfileData> | undefined = pendingStr
+          ? (JSON.parse(pendingStr) as Partial<ProfileData>)
+          : undefined;
+        await authAPI.syncUser(session.access_token, pendingProfile);
+        if (pendingStr) localStorage.removeItem('pending_profile');
       }
     });
 
@@ -41,13 +46,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const signUpWithEmail = useCallback(
-    async (email: string, password: string, fullName: string) => {
+    async (email: string, password: string, profile: ProfileData) => {
       const { data, error } = await supabase.auth.signUp({ email, password });
 
       if (!error && data.session) {
-        await authAPI.syncUser(data.session.access_token, fullName);
+        await authAPI.syncUser(data.session.access_token, profile);
       } else if (!error && data.user && !data.session) {
-        localStorage.setItem('pending_full_name', fullName);
+        localStorage.setItem('pending_profile', JSON.stringify(profile));
       }
 
       return { error };
@@ -63,9 +68,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       if (!error && data.session) {
-        const pendingName = localStorage.getItem('pending_full_name') ?? undefined;
-        await authAPI.syncUser(data.session.access_token, pendingName);
-        if (pendingName) localStorage.removeItem('pending_full_name');
+        const pendingStr = localStorage.getItem('pending_profile');
+        const pendingProfile: Partial<ProfileData> | undefined = pendingStr
+          ? (JSON.parse(pendingStr) as Partial<ProfileData>)
+          : undefined;
+        await authAPI.syncUser(data.session.access_token, pendingProfile);
+        if (pendingStr) localStorage.removeItem('pending_profile');
       }
 
       return { error };

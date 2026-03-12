@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { cn } from "@/lib/utils";
 import { Menu, X, LogOut, User } from 'lucide-react';
 import {
@@ -67,7 +68,7 @@ const Navbar = () => {
           ))}
           <a href="#apply" className="btn-primary">Apply Now</a>
 
-          {user && (
+          {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-2 focus:outline-none">
@@ -93,6 +94,24 @@ const Navbar = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                to="/login"
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-uiy-blue",
+                  scrolled ? "text-uiy-dark" : "text-white"
+                )}
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/signup"
+                className="btn-primary text-sm"
+              >
+                Register
+              </Link>
+            </div>
           )}
         </div>
         
@@ -134,7 +153,7 @@ const Navbar = () => {
           ))}
           <a href="#apply" className="btn-primary mt-8 text-center" onClick={() => setIsOpen(false)}>Apply Now</a>
 
-          {user && (
+          {user ? (
             <div className="mt-6 border-t pt-4">
               <p className="text-xs text-muted-foreground">Signed in as</p>
               <p className="text-sm font-medium truncate text-uiy-dark mb-3">{user.email}</p>
@@ -144,6 +163,23 @@ const Navbar = () => {
               >
                 <LogOut size={16} /> Sign out
               </button>
+            </div>
+          ) : (
+            <div className="mt-6 border-t pt-6 flex flex-col gap-3">
+              <Link
+                to="/login"
+                className="text-center py-3 text-lg font-medium text-uiy-blue border border-uiy-blue rounded-lg hover:bg-uiy-blue hover:text-white transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/signup"
+                className="btn-primary text-center"
+                onClick={() => setIsOpen(false)}
+              >
+                Register
+              </Link>
             </div>
           )}
         </div>
