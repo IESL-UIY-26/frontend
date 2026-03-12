@@ -1,7 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
 
 const navItems = [
   { name: 'Home', href: '#home' },
@@ -15,6 +24,7 @@ const navItems = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, signOut } = useAuth();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -56,6 +66,34 @@ const Navbar = () => {
             </a>
           ))}
           <a href="#apply" className="btn-primary">Apply Now</a>
+
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-2 focus:outline-none">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-uiy-blue text-white text-xs">
+                      {user.email?.[0].toUpperCase() ?? <User size={14} />}
+                    </AvatarFallback>
+                  </Avatar>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Signed in as</p>
+                  <p className="text-sm font-medium truncate">{user.email}</p>
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                  onClick={() => signOut()}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         
         {/* Mobile Menu Toggle */}
@@ -95,6 +133,19 @@ const Navbar = () => {
             </a>
           ))}
           <a href="#apply" className="btn-primary mt-8 text-center" onClick={() => setIsOpen(false)}>Apply Now</a>
+
+          {user && (
+            <div className="mt-6 border-t pt-4">
+              <p className="text-xs text-muted-foreground">Signed in as</p>
+              <p className="text-sm font-medium truncate text-uiy-dark mb-3">{user.email}</p>
+              <button
+                className="flex items-center gap-2 text-sm text-destructive hover:opacity-80"
+                onClick={() => { signOut(); setIsOpen(false); }}
+              >
+                <LogOut size={16} /> Sign out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
