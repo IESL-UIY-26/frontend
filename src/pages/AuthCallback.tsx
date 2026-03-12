@@ -1,20 +1,26 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { authAPI } from '@/features/Auth/api/auth.api';
 import { Loader2 } from 'lucide-react';
 
 /**
  * Landing page after a Supabase OAuth redirect.
- * Supabase appends the tokens as a URL fragment; the JS client picks them up
- * automatically on load so we just wait for the session, then redirect home.
+ * Syncs the user to the backend, then redirects to profile completion if
+ * optional fields (phone, DOB, etc.) are missing, otherwise goes home.
  */
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      // Whether session exists or not, send user away from this intermediate page
-      navigate(session ? '/' : '/login', { replace: true });
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) {
+        navigate('/login', { replace: true });
+        return;
+      }
+      const user = await authAPI.syncUser(session.access_token);
+      const isComplete = !!(user?.contact_number && user?.date_of_birth);
+      navigate(isComplete ? '/' : '/complete-profile', { replace: true });
     });
   }, [navigate]);
 

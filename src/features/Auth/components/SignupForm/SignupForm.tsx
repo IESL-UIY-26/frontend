@@ -2,12 +2,20 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '../../hooks/use-auth';
 import { signupSchema, type SignupDto } from '../../dtos/auth.dto';
@@ -18,17 +26,31 @@ export const SignupForm: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [accountExistsEmail, setAccountExistsEmail] = useState<string | null>(null);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<SignupDto>({ resolver: zodResolver(signupSchema) });
 
   const onSubmit = async (values: SignupDto) => {
-    const { error } = await signUpWithEmail(values.email, values.password, values.full_name);
+    setAccountExistsEmail(null);
+    const { error } = await signUpWithEmail(values.email, values.password, {
+      full_name: values.full_name,
+      contact_number: values.contact_number,
+      date_of_birth: values.date_of_birth,
+      address: values.address,
+      gender: values.gender,
+    });
     if (error) {
-      toast({ variant: 'destructive', title: 'Sign-up failed', description: error.message });
+      if (error.message.toLowerCase().includes('already registered') ||
+          error.message.toLowerCase().includes('already exists')) {
+        setAccountExistsEmail(values.email);
+      } else {
+        toast({ variant: 'destructive', title: 'Sign-up failed', description: error.message });
+      }
     } else {
       toast({
         title: 'Account created!',
@@ -55,6 +77,25 @@ export const SignupForm: React.FC = () => {
       </CardHeader>
 
       <CardContent className="space-y-5 pt-4">
+        {accountExistsEmail && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              An account already exists for <strong>{accountExistsEmail}</strong>.{' '}
+              <Link to="/login" className="underline font-medium">
+                Sign in instead
+              </Link>
+              {' '}or try{' '}
+              <button
+                type="button"
+                className="underline font-medium"
+                onClick={handleGoogle}
+              >
+                Continue with Google
+              </button>.
+            </AlertDescription>
+          </Alert>
+        )}
         <GoogleButton loading={googleLoading} disabled={isSubmitting} onClick={handleGoogle} />
 
         <div className="flex items-center gap-3">
@@ -118,6 +159,52 @@ export const SignupForm: React.FC = () => {
             {errors.confirm_password && (
               <p className="text-xs text-destructive">{errors.confirm_password.message}</p>
             )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="contact_number">Phone Number</Label>
+              <Input
+                id="contact_number"
+                type="tel"
+                placeholder="+94 71 234 5678"
+                autoComplete="tel"
+                {...register('contact_number')}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="date_of_birth">Date of Birth</Label>
+              <Input
+                id="date_of_birth"
+                type="date"
+                {...register('date_of_birth')}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="gender">Gender</Label>
+            <Select onValueChange={(v) => setValue('gender', v)}>
+              <SelectTrigger id="gender">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="Non-binary">Non-binary</SelectItem>
+                <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              type="text"
+              placeholder="123 Main St, Colombo"
+              {...register('address')}
+            />
           </div>
 
           <Button

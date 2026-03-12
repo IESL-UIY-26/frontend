@@ -11,6 +11,10 @@ export const signupSchema = z
     email: z.string().email('Please enter a valid email'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirm_password: z.string(),
+    contact_number: z.string().optional(),
+    date_of_birth: z.string().optional(),
+    address: z.string().optional(),
+    gender: z.string().optional(),
   })
   .refine((d) => d.password === d.confirm_password, {
     message: 'Passwords do not match',
