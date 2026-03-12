@@ -8,7 +8,7 @@ import React, {
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { authAPI } from '../api/auth.api';
-import type { AuthContextValue, ProfileData } from '../types/auth.types';
+import type { AuthContextValue, IUser, ProfileData } from '../types/auth.types';
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -17,6 +17,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [dbUser, setDbUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,13 +32,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (!session) {
+        setDbUser(null);
+      }
 
       if (_event === 'SIGNED_IN' && session) {
         const pendingStr = localStorage.getItem('pending_profile');
         const pendingProfile: Partial<ProfileData> | undefined = pendingStr
           ? (JSON.parse(pendingStr) as Partial<ProfileData>)
           : undefined;
-        await authAPI.syncUser(session.access_token, pendingProfile);
+        const syncedUser = await authAPI.syncUser(session.access_token, pendingProfile);
+        setDbUser(syncedUser ?? null);
         if (pendingStr) localStorage.removeItem('pending_profile');
       }
     });
@@ -72,11 +77,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const pendingProfile: Partial<ProfileData> | undefined = pendingStr
           ? (JSON.parse(pendingStr) as Partial<ProfileData>)
           : undefined;
-        await authAPI.syncUser(data.session.access_token, pendingProfile);
+        const syncedUser = await authAPI.syncUser(data.session.access_token, pendingProfile);
+        setDbUser(syncedUser ?? null);
         if (pendingStr) localStorage.removeItem('pending_profile');
+        return { error: null, dbUser: syncedUser ?? null };
       }
 
-      return { error };
+      return { error, dbUser: null };
     },
     []
   );
@@ -95,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ session, user, loading, signUpWithEmail, signInWithEmail, signInWithGoogle, signOut }}
+      value={{ session, user, dbUser, loading, signUpWithEmail, signInWithEmail, signInWithGoogle, signOut }}
     >
       {children}
     </AuthContext.Provider>

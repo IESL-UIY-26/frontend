@@ -1,0 +1,1 @@
+export { UniversitiesTab } from './UniversitiesTab';

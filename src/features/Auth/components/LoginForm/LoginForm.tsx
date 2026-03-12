@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '../../hooks/use-auth';
 import { loginSchema, type LoginDto } from '../../dtos/auth.dto';
 import { GoogleButton } from '../GoogleButton';
+import { UserRole } from '../../enums/auth.enums';
 
 export const LoginForm: React.FC = () => {
   const { signInWithEmail, signInWithGoogle } = useAuth();
@@ -29,7 +30,7 @@ export const LoginForm: React.FC = () => {
 
   const onSubmit = async (values: LoginDto) => {
     setLoginError(null);
-    const { error } = await signInWithEmail(values.email, values.password);
+    const { error, dbUser } = await signInWithEmail(values.email, values.password);
     if (error) {
       if (error.message.toLowerCase().includes('invalid login credentials') ||
           error.message.toLowerCase().includes('invalid credentials')) {
@@ -38,7 +39,7 @@ export const LoginForm: React.FC = () => {
         toast({ variant: 'destructive', title: 'Login failed', description: error.message });
       }
     } else {
-      navigate('/');
+      navigate(dbUser?.role === UserRole.ADMIN ? '/admin' : '/');
     }
   };
 
