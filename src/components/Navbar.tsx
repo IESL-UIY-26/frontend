@@ -22,11 +22,14 @@ const navItems = [
   { name: 'Contact', href: '#contact' },
 ];
 
+const getSectionId = (href: string) => href.replace('#', '');
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
   const { user, signOut } = useAuth();
-  
+
   useEffect(() => {
     const sectionIds = navItems.map((item) => getSectionId(item.href));
 
