@@ -1,37 +1,11 @@
 import Navbar from '@/components/Navbar';
-import { useEffect, useState } from 'react';
-import { projectsAPI } from '@/features/Projects/api/projects.api';
-import type { IPublicProject } from '@/features/Projects/types/projects.types';
-import { ApiError } from '@/utils/api-client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Loader2, FolderOpen, ExternalLink } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+import { ProjectCard } from '@/features/Projects/components/ProjectCard';
+import { useProjects } from '@/features/Projects/hooks/use-projects';
 
 const Projects = () => {
-  const [projects, setProjects] = useState<IPublicProject[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const run = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await projectsAPI.getPublicProjects();
-        setProjects(data);
-      } catch (err) {
-        if (err instanceof ApiError && err.status === 404 && err.path === '/api/public/projects') {
-          setError('Public projects service is not available right now (endpoint not found). Please contact admin or try again later.');
-        } else {
-          setError(err instanceof Error ? err.message : 'Failed to load projects');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void run();
-  }, []);
+  const { projects, loading, error } = useProjects();
 
   return (
     <>
@@ -58,40 +32,7 @@ const Projects = () => {
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               {projects.map((project) => (
-                <Card key={project.id} className="shadow-sm">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-3">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <FolderOpen className="w-5 h-5 text-uiy-blue" />
-                        {project.title}
-                      </CardTitle>
-                      <Badge variant="secondary">{project.team?.team_name ?? 'Team'}</Badge>
-                    </div>
-                    {project.team?.university?.name && (
-                      <p className="text-sm text-gray-500">{project.team.university.name}</p>
-                    )}
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {project.description && <p className="text-sm text-gray-700">{project.description}</p>}
-                    <div className="flex flex-wrap gap-2">
-                      {project.github_url && (
-                        <a href={project.github_url} target="_blank" rel="noreferrer" className="text-sm text-uiy-blue inline-flex items-center gap-1 hover:underline">
-                          GitHub <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                      {project.youtube_link && (
-                        <a href={project.youtube_link} target="_blank" rel="noreferrer" className="text-sm text-uiy-blue inline-flex items-center gap-1 hover:underline">
-                          YouTube <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                      {project.pdf && (
-                        <a href={project.pdf} target="_blank" rel="noreferrer" className="text-sm text-uiy-blue inline-flex items-center gap-1 hover:underline">
-                          PDF <ExternalLink className="w-3 h-3" />
-                        </a>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <ProjectCard key={project.id} project={project} />
               ))}
             </div>
           )}
