@@ -25,6 +25,7 @@ const Sessions = () => {
 
   useEffect(() => {
     if (!user) return;
+    if (loading) return;
 
     const pendingSessionId = searchParams.get('registerSessionId');
     if (!pendingSessionId) return;
@@ -45,7 +46,7 @@ const Sessions = () => {
       await toggleRegistration(pendingSessionId, false);
       clearIntent();
     })();
-  }, [user, searchParams, setSearchParams, registeredIds, toggleRegistration]);
+  }, [user, loading, searchParams, setSearchParams, registeredIds, toggleRegistration]);
 
   return (
     <>
