@@ -1,7 +1,11 @@
 import React from 'react';
-import { Calendar, File, ArrowRight, Download } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Calendar, File, ArrowRight, Download, Users } from 'lucide-react';
+import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
 
 const ApplyNow = () => {
+  const { myTeam } = useTeamStatus();
+
   return (
     <section id="apply" className="py-24 bg-uiy-gray">
       <div className="section-container">
@@ -112,10 +116,23 @@ const ApplyNow = () => {
                 </div>
               </div>
               
-              <a href="https://docs.google.com/forms/d/1L7owY2QViIQ3s4P4RmIn1JHLe8yrbAlYXsKD2f07PwM/edit" className="mt-8 btn-primary inline-flex items-center gap-2 group">
-                Start Your Application 
-                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              {myTeam ? (
+                <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm font-medium text-green-800 mb-3">
+                    You have already registered a team!
+                  </p>
+                  <Link to="/my-team" className="btn-primary inline-flex items-center gap-2 group">
+                    <Users className="w-4 h-4" />
+                    View My Team
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              ) : (
+                <Link to="/create-team" className="mt-8 btn-primary inline-flex items-center gap-2 group">
+                  Start Your Application
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              )}
             </div>
             
             <div className="bg-gradient-blue p-8 md:p-12 flex flex-col justify-center">

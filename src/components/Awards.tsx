@@ -17,19 +17,6 @@ const Awards = () => {
         
         {/* Award Prizes */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
-          {/* First Place */}
-          <div className="bg-gradient-to-br from-white/10 to-transparent backdrop-blur-sm p-8 rounded-xl border border-white/10 reveal-animation" style={{ animationDelay: '0.1s' }}>
-            <div className="flex justify-between items-start mb-6">
-              <div className="p-3 rounded-full bg-uiy-accent/20">
-                <Award className="w-8 h-8 text-uiy-accent" />
-              </div>
-              <span className="text-5xl font-bold text-uiy-accent">1st</span>
-            </div>
-            <h3 className="text-2xl font-bold mb-2">First Place</h3>
-            <p className="text-gray-300 mb-4">Recognition for outstanding innovation excellence</p>
-            <div className="text-3xl font-bold text-uiy-accent mb-2">LKR 150,000</div>
-            <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
-          </div>
           
           {/* Second Place */}
           <div className="bg-gradient-to-br from-white/10 to-transparent backdrop-blur-sm p-8 rounded-xl border border-white/10 reveal-animation" style={{ animationDelay: '0.2s' }}>
@@ -44,20 +31,35 @@ const Awards = () => {
             <div className="text-3xl font-bold text-blue-400 mb-2">LKR 125,000</div>
             <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
           </div>
-          
-          {/* Third Place */}
+
+          {/* First Place */}
           <div className="bg-gradient-to-br from-white/10 to-transparent backdrop-blur-sm p-8 rounded-xl border border-white/10 reveal-animation" style={{ animationDelay: '0.3s' }}>
             <div className="flex justify-between items-start mb-6">
               <div className="p-3 rounded-full bg-orange-400/20">
                 <Award className="w-8 h-8 text-orange-400" />
               </div>
-              <span className="text-5xl font-bold text-orange-400">3rd</span>
+              <span className="text-5xl font-bold text-orange-400">1st</span>
+            </div>
+            <h3 className="text-2xl font-bold mb-2">First Place</h3>
+            <p className="text-gray-300 mb-4">Recognition for outstanding innovation excellence</p>
+            <div className="text-3xl font-bold text-orange-400 mb-2">LKR 150,000</div>
+            <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
+          </div>
+
+          {/* Third Place */}
+          <div className="bg-gradient-to-br from-white/10 to-transparent backdrop-blur-sm p-8 rounded-xl border border-white/10 reveal-animation" style={{ animationDelay: '0.1s' }}>
+            <div className="flex justify-between items-start mb-6">
+              <div className="p-3 rounded-full bg-uiy-accent/20">
+                <Award className="w-8 h-8 text-uiy-accent" />
+              </div>
+              <span className="text-5xl font-bold text-uiy-accent">3rd</span>
             </div>
             <h3 className="text-2xl font-bold mb-2">Third Place</h3>
             <p className="text-gray-300 mb-4">Recognition for remarkable innovation</p>
-            <div className="text-3xl font-bold text-orange-400 mb-2">LKR 100,000</div>
+            <div className="text-3xl font-bold text-uiy-accent mb-2">LKR 100,000</div>
             <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
           </div>
+  
         </div>
         
         {/* Benefits */}

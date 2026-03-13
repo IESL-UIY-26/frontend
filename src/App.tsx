@@ -12,7 +12,13 @@ import Signup from "./pages/Signup";
 import AuthCallback from "./pages/AuthCallback";
 import CompleteProfile from "./pages/CompleteProfile";
 import AdminDashboard from "./pages/AdminDashboard";
+import CreateTeam from './pages/CreateTeam';
+import MyTeam from './pages/MyTeam';
+import Projects from './pages/Projects';
+import Sessions from './pages/Sessions';
+import MyProfile from './pages/MyProfile';
 import { AdminGuard } from "@/features/Auth/components/AdminGuard";
+import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext';
 
 const queryClient = new QueryClient();
 
@@ -23,17 +29,24 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/launch" element={<Launch />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/complete-profile" element={<CompleteProfile />} />
-            <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <TeamStatusProvider>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/launch" element={<Launch />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/complete-profile" element={<CompleteProfile />} />
+              <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+              <Route path="/create-team" element={<CreateTeam />} />
+              <Route path="/my-team" element={<MyTeam />} />
+              <Route path="/my-profile" element={<MyProfile />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/sessions" element={<Sessions />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TeamStatusProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
