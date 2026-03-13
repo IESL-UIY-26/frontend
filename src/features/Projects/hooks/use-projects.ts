@@ -1,33 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { projectsAPI } from '../api/projects.api';
-import type { IPublicProject } from '../types/projects.types';
 import { ApiError } from '@/utils/api-client';
 
 export const useProjects = () => {
-  const [projects, setProjects] = useState<IPublicProject[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: projects = [],
+    isLoading: loading,
+    error: queryError,
+  } = useQuery({
+    queryKey: ['public-projects'],
+    queryFn: () => projectsAPI.getPublicProjects(),
+    staleTime: 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchInterval: 30 * 1000,
+  });
 
-  useEffect(() => {
-    const run = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await projectsAPI.getPublicProjects();
-        setProjects(data);
-      } catch (err) {
-        if (err instanceof ApiError && err.status === 404 && err.path === '/api/public/projects') {
-          setError('Public projects service is not available right now (endpoint not found). Please contact admin or try again later.');
-        } else {
-          setError(err instanceof Error ? err.message : 'Failed to load projects');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void run();
-  }, []);
+  const error = useMemo(() => {
+    if (!queryError) return null;
+    if (queryError instanceof ApiError && queryError.status === 404 && queryError.path === '/api/public/projects') {
+      return 'Public projects service is not available right now (endpoint not found). Please contact admin or try again later.';
+    }
+    return queryError instanceof Error ? queryError.message : 'Failed to load projects';
+  }, [queryError]);
 
   return {
     projects,

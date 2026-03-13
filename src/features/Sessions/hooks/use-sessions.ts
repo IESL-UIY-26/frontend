@@ -1,37 +1,97 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { ApiError } from '@/utils/api-client';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { sessionsAPI } from '../api/sessions.api';
-import type { IAvailableSession } from '../types/sessions.types';
+import type { IMyRegistration } from '../types/sessions.types';
 
 export const useSessions = () => {
-  const [sessions, setSessions] = useState<IAvailableSession[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const run = async () => {
-      setLoading(true);
-      setError(null);
+  const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
+
+  const {
+    data: sessions = [],
+    isLoading: sessionsLoading,
+    error: sessionsError,
+  } = useQuery({
+    queryKey: ['available-sessions'],
+    queryFn: () => sessionsAPI.getAvailableSessions(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const {
+    data: myRegistrations = [],
+    isLoading: registrationsLoading,
+  } = useQuery({
+    queryKey: ['my-session-registrations', user?.id],
+    queryFn: () => sessionsAPI.getMyRegistrations(),
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const registeredIds = useMemo(
+    () => new Set(myRegistrations.map((reg: IMyRegistration) => reg.session_id)),
+    [myRegistrations]
+  );
+
+  const registerMutation = useMutation({
+    mutationFn: (sessionId: string) => sessionsAPI.register(sessionId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['my-session-registrations', user?.id] });
+    },
+  });
+
+  const unregisterMutation = useMutation({
+    mutationFn: (sessionId: string) => sessionsAPI.unregister(sessionId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['my-session-registrations', user?.id] });
+    },
+  });
+
+  const error = useMemo(() => {
+    if (!sessionsError) return null;
+    if (sessionsError instanceof ApiError && sessionsError.status === 404 && sessionsError.path === '/api/sessions/available') {
+      return 'Sessions service is not available right now (endpoint not found). Please contact admin or try again later.';
+    }
+    return sessionsError instanceof Error ? sessionsError.message : 'Failed to load sessions';
+  }, [sessionsError]);
+
+  const loading = sessionsLoading || (!!user && registrationsLoading);
+
+  const toggleRegistration = useCallback(
+    async (sessionId: string, currentlyRegistered: boolean) => {
+      if (togglingIds.has(sessionId)) return;
+      setTogglingIds((prev) => new Set(prev).add(sessionId));
       try {
-        const data = await sessionsAPI.getAvailableSessions();
-        setSessions(data);
-      } catch (err) {
-        if (err instanceof ApiError && err.status === 404 && err.path === '/api/sessions/available') {
-          setError('Sessions service is not available right now (endpoint not found). Please contact admin or try again later.');
+        if (currentlyRegistered) {
+          await unregisterMutation.mutateAsync(sessionId);
+          toast.success('Registration cancelled');
         } else {
-          setError(err instanceof Error ? err.message : 'Failed to load sessions');
+          await registerMutation.mutateAsync(sessionId);
+          toast.success('Successfully registered!');
         }
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Action failed');
       } finally {
-        setLoading(false);
+        setTogglingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(sessionId);
+          return next;
+        });
       }
-    };
-
-    void run();
-  }, []);
+    },
+    [togglingIds, registerMutation, unregisterMutation]
+  );
 
   return {
     sessions,
     loading,
     error,
+    registeredIds,
+    togglingIds,
+    toggleRegistration,
   };
 };

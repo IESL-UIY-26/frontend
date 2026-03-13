@@ -16,12 +16,16 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
             <FolderOpen className="w-5 h-5 text-uiy-blue" />
             {project.title}
           </CardTitle>
-          <Badge variant="secondary">{project.team?.team_name ?? 'Team'}</Badge>
+          <Badge variant="secondary">Team: {project.team?.team_name ?? 'TBA'}</Badge>
         </div>
-        {project.team?.university?.name && <p className="text-sm text-gray-500">{project.team.university.name}</p>}
+        <p className="text-sm text-gray-500">University: {project.team?.university?.name ?? 'TBA'}</p>
       </CardHeader>
       <CardContent className="space-y-3">
-        {project.description && <p className="text-sm text-gray-700">{project.description}</p>}
+        {project.description && (
+          <p className="text-sm text-gray-700">
+            <span className="font-medium">Summary:</span> {project.description}
+          </p>
+        )}
         <div className="flex flex-wrap gap-2">
           {project.github_url && (
             <a href={project.github_url} target="_blank" rel="noreferrer" className="text-sm text-uiy-blue inline-flex items-center gap-1 hover:underline">

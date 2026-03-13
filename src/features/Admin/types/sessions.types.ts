@@ -10,3 +10,17 @@ export interface ISession {
   created_by: string;
   created_at: string;
 }
+
+export interface ISessionFeedbackAdminView {
+  id: string;
+  session_id: string;
+  user_id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+  user: {
+    id: string;
+    full_name: string;
+    email: string;
+  };
+}

@@ -2,14 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from "@/lib/utils";
-import { Menu, X, LogOut, User, Users } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Menu, X, User, Users } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
@@ -26,7 +19,7 @@ const navItems = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { myTeam } = useTeamStatus();
   const location = useLocation();
 
@@ -48,7 +41,7 @@ const Navbar = () => {
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6",
       isDark ? "bg-white/90 backdrop-blur-md shadow-md py-3" : "bg-transparent"
     )}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
           <img src='/images/logo-light.png' alt="UIY 2026" className="w-auto h-16" />
           <span className={cn(
@@ -60,7 +53,7 @@ const Navbar = () => {
         </a>
         
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 ml-auto justify-end">
           <Link
             to="/projects"
             className={cn(
@@ -109,39 +102,15 @@ const Navbar = () => {
           )}
 
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 focus:outline-none">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-uiy-blue text-white text-xs">
-                      {user.email?.[0].toUpperCase() ?? <User size={14} />}
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-3 py-2">
-                  <p className="text-xs text-muted-foreground">Signed in as</p>
-                  <p className="text-sm font-medium truncate">{user.email}</p>
-                </div>
-                <DropdownMenuSeparator />
-                {myTeam && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/my-team" className="cursor-pointer">
-                      <Users className="mr-2 h-4 w-4" />
-                      My Team
-                    </Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive cursor-pointer"
-                  onClick={() => signOut()}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center">
+              <Link to="/my-profile" className="flex items-center gap-2 focus:outline-none" aria-label="My Profile">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-uiy-blue text-white text-xs">
+                    {user.email?.[0].toUpperCase() ?? <User size={14} />}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            </div>
           ) : (
             <div className="flex items-center gap-3">
               <Link
@@ -236,12 +205,13 @@ const Navbar = () => {
             <div className="mt-6 border-t pt-4">
               <p className="text-xs text-muted-foreground">Signed in as</p>
               <p className="text-sm font-medium truncate text-uiy-dark mb-3">{user.email}</p>
-              <button
-                className="flex items-center gap-2 text-sm text-destructive hover:opacity-80"
-                onClick={() => { signOut(); setIsOpen(false); }}
+              <Link
+                to="/my-profile"
+                className="flex items-center gap-2 text-sm text-uiy-dark hover:text-uiy-blue"
+                onClick={() => setIsOpen(false)}
               >
-                <LogOut size={16} /> Sign out
-              </button>
+                <User size={16} /> My Profile
+              </Link>
             </div>
           ) : (
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">

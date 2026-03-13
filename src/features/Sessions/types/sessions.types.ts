@@ -8,3 +8,25 @@ export interface IAvailableSession {
   duration_minutes: number;
   host_name: string | null;
 }
+
+export interface IMyRegistration {
+  id: string;
+  session_id: string;
+  user_id: string;
+  created_at: string;
+  session: IAvailableSession;
+}
+
+export interface ISessionFeedback {
+  id: string;
+  session_id: string;
+  user_id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface IFeedbackPayload {
+  rating: number;
+  comment?: string;
+}

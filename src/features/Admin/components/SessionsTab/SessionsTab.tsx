@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2, Plus, Pencil, Trash2, ExternalLink } from 'lucide-react';
+import { Loader2, Plus, Pencil, Trash2, ExternalLink, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +17,8 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useSessions } from '../../hooks/use-sessions';
-import type { ISession } from '../../types/sessions.types';
+import { sessionsAPI } from '../../api/sessions.api';
+import type { ISession, ISessionFeedbackAdminView } from '../../types/sessions.types';
 import { fmtDate, fmtTime } from '../../utils/session-utils';
 
 type SessionForm = {
@@ -42,12 +43,24 @@ const emptyForm: SessionForm = {
 
 export function SessionsTab() {
   const { sessions, loading, createSession, updateSession, deleteSession } = useSessions();
+  const minSessionDate = new Date().toISOString().split('T')[0];
   const [dialog, setDialog] = useState<{ open: boolean; editing: ISession | null }>({
     open: false,
     editing: null,
   });
   const [form, setForm] = useState<SessionForm>(emptyForm);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [feedbackDialog, setFeedbackDialog] = useState<{
+    open: boolean;
+    sessionTitle: string;
+    loading: boolean;
+    rows: ISessionFeedbackAdminView[];
+  }>({
+    open: false,
+    sessionTitle: '',
+    loading: false,
+    rows: [],
+  });
 
   const openAdd = () => {
     setForm(emptyForm);
@@ -95,6 +108,24 @@ export function SessionsTab() {
     setDeleting(null);
   };
 
+  const openFeedbackDialog = async (sessionId: string, sessionTitle: string) => {
+    setFeedbackDialog({
+      open: true,
+      sessionTitle,
+      loading: true,
+      rows: [],
+    });
+
+    try {
+      const rows = await sessionsAPI.getSessionFeedbacks(sessionId);
+      setFeedbackDialog((prev) => ({ ...prev, rows }));
+    } catch {
+      setFeedbackDialog((prev) => ({ ...prev, rows: [] }));
+    } finally {
+      setFeedbackDialog((prev) => ({ ...prev, loading: false }));
+    }
+  };
+
   return (
     <>
       <div className="flex items-center justify-between mb-4">
@@ -121,6 +152,7 @@ export function SessionsTab() {
                 <TableHead>Duration</TableHead>
                 <TableHead>Host</TableHead>
                 <TableHead>Zoom</TableHead>
+                <TableHead>Feedback</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -145,6 +177,15 @@ export function SessionsTab() {
                     ) : (
                       '—'
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => void openFeedbackDialog(s.id, s.title)}
+                    >
+                      <MessageSquare className="h-3.5 w-3.5 mr-1" /> View
+                    </Button>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
@@ -197,6 +238,7 @@ export function SessionsTab() {
                 <Label>Date *</Label>
                 <Input
                   type="date"
+                  min={dialog.editing ? undefined : minSessionDate}
                   value={form.session_date}
                   onChange={(e) => setForm((p) => ({ ...p, session_date: e.target.value }))}
                 />
@@ -267,6 +309,42 @@ export function SessionsTab() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog
+        open={feedbackDialog.open}
+        onOpenChange={(open) => setFeedbackDialog((prev) => ({ ...prev, open }))}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Session Feedback — {feedbackDialog.sessionTitle}</DialogTitle>
+          </DialogHeader>
+
+          {feedbackDialog.loading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-5 w-5 animate-spin text-uiy-blue" />
+            </div>
+          ) : feedbackDialog.rows.length === 0 ? (
+            <p className="text-sm text-gray-500 py-4">No feedback submitted yet.</p>
+          ) : (
+            <div className="space-y-3 max-h-[420px] overflow-y-auto">
+              {feedbackDialog.rows.map((fb) => (
+                <div key={fb.id} className="rounded-md border p-3">
+                  <p className="font-medium text-sm text-gray-900">{fb.user.full_name} ({fb.user.email})</p>
+                  <p className="text-sm text-gray-700 mt-1">Rating: {fb.rating}/5</p>
+                  <p className="text-sm text-gray-600 mt-1">{fb.comment || 'No comment'}</p>
+                  <p className="text-xs text-gray-400 mt-2">{fmtDate(fb.created_at)} {fmtTime(fb.created_at)}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setFeedbackDialog((prev) => ({ ...prev, open: false }))}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
