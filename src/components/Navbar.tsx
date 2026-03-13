@@ -41,7 +41,7 @@ const Navbar = () => {
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6",
       isDark ? "bg-white/90 backdrop-blur-md shadow-md py-3" : "bg-transparent"
     )}>
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         <a href="/" className="flex items-center gap-2">
           <img src='/images/logo-light.png' alt="UIY 2026" className="w-auto h-16" />
           <span className={cn(
@@ -53,7 +53,7 @@ const Navbar = () => {
         </a>
         
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-8">
+        <div className="hidden md:flex items-center space-x-8 ml-auto justify-end">
           <Link
             to="/projects"
             className={cn(
