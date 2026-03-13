@@ -8,3 +8,11 @@ export interface IAvailableSession {
   duration_minutes: number;
   host_name: string | null;
 }
+
+export interface IMyRegistration {
+  id: string;
+  session_id: string;
+  user_id: string;
+  created_at: string;
+  session: IAvailableSession;
+}

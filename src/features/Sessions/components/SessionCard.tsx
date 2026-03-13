@@ -1,10 +1,15 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, Clock3, ExternalLink, User2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CalendarDays, CheckCircle2, Clock3, ExternalLink, Loader2, User2 } from 'lucide-react';
 import type { IAvailableSession } from '../types/sessions.types';
 
 interface SessionCardProps {
   session: IAvailableSession;
+  /** undefined = not logged in (no button shown) */
+  registered?: boolean;
+  toggling?: boolean;
+  onToggle?: () => void;
 }
 
 const formatDate = (isoDate: string) =>
@@ -20,9 +25,11 @@ const formatTime = (isoTime: string) =>
     minute: '2-digit',
   });
 
-export const SessionCard = ({ session }: SessionCardProps) => {
+export const SessionCard = ({ session, registered, toggling = false, onToggle }: SessionCardProps) => {
+  const isLoggedIn = registered !== undefined;
+
   return (
-    <Card className="shadow-sm">
+    <Card className="shadow-sm flex flex-col">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <CardTitle className="text-lg">{session.title}</CardTitle>
@@ -31,7 +38,7 @@ export const SessionCard = ({ session }: SessionCardProps) => {
         {session.description && <p className="text-sm text-gray-700">{session.description}</p>}
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 flex-1">
         <div className="grid gap-2 text-sm text-gray-600">
           <p className="inline-flex items-center gap-2">
             <CalendarDays className="w-4 h-4 text-uiy-blue" />
@@ -60,6 +67,26 @@ export const SessionCard = ({ session }: SessionCardProps) => {
           </a>
         )}
       </CardContent>
+
+      {isLoggedIn && (
+        <CardFooter className="pt-0">
+          <Button
+            size="sm"
+            variant={registered ? 'outline' : 'default'}
+            className={registered ? 'w-full' : 'w-full bg-uiy-blue hover:bg-uiy-darkblue'}
+            disabled={toggling}
+            onClick={onToggle}
+          >
+            {toggling ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : registered ? (
+              <><CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600" />Registered &mdash; Cancel</>  
+            ) : (
+              'Register'
+            )}
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   );
 };

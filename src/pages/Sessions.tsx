@@ -1,11 +1,13 @@
 import Navbar from '@/components/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { SessionCard } from '@/features/Sessions/components/SessionCard';
 import { useSessions } from '@/features/Sessions/hooks/use-sessions';
 
 const Sessions = () => {
-  const { sessions, loading, error } = useSessions();
+  const { user } = useAuth();
+  const { sessions, loading, error, registeredIds, togglingIds, toggleRegistration } = useSessions();
 
   return (
     <>
@@ -32,7 +34,13 @@ const Sessions = () => {
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               {sessions.map((session) => (
-                <SessionCard key={session.id} session={session} />
+                <SessionCard
+                  key={session.id}
+                  session={session}
+                  registered={user ? registeredIds.has(session.id) : undefined}
+                  toggling={togglingIds.has(session.id)}
+                  onToggle={() => toggleRegistration(session.id, registeredIds.has(session.id))}
+                />
               ))}
             </div>
           )}
