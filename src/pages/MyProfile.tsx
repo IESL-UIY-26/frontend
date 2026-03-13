@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { Loader2, UserRound, CalendarDays, Clock3, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
@@ -9,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { profileAPI } from '@/features/Profile/api/profile.api';
-import type { IMyProfile, IMySessionRegistration, IUpdateMyProfilePayload } from '@/features/Profile/types/profile.types';
+import type { IUpdateMyProfilePayload } from '@/features/Profile/types/profile.types';
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
@@ -20,13 +21,9 @@ const formatTime = (iso: string) =>
 const MyProfile = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
+  const queryClient = useQueryClient();
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
-
-  const [profile, setProfile] = useState<IMyProfile | null>(null);
-  const [myRegistrations, setMyRegistrations] = useState<IMySessionRegistration[]>([]);
 
   const [form, setForm] = useState<IUpdateMyProfilePayload>({
     full_name: '',
@@ -36,58 +33,85 @@ const MyProfile = () => {
     date_of_birth: '',
   });
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [profileData, registrationsData] = await Promise.all([
-        profileAPI.getMyProfile(),
-        profileAPI.getMyRegistrations(),
-      ]);
+  const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
+    queryKey: ['my-profile', user?.id],
+    queryFn: () => profileAPI.getMyProfile(),
+    enabled: !!user && !authLoading,
+    staleTime: 5 * 60 * 1000,
+  });
 
-      setProfile(profileData);
-      setMyRegistrations(registrationsData);
+  const {
+    data: myRegistrations = [],
+    isLoading: registrationsLoading,
+    error: registrationsError,
+  } = useQuery({
+    queryKey: ['my-registrations', user?.id],
+    queryFn: () => profileAPI.getMyRegistrations(),
+    enabled: !!user && !authLoading,
+    staleTime: 5 * 60 * 1000,
+  });
 
-      setForm({
-        full_name: profileData.full_name ?? '',
-        contact_number: profileData.contact_number ?? '',
-        gender: profileData.gender ?? '',
-        address: profileData.address ?? '',
-        date_of_birth: profileData.date_of_birth ? profileData.date_of_birth.split('T')[0] : '',
-      });
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to load profile');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const updateProfileMutation = useMutation({
+    mutationFn: (payload: IUpdateMyProfilePayload) => profileAPI.updateMyProfile(payload),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['my-profile', user?.id], updated);
+      toast.success('Profile updated');
+    },
+    onError: (err: unknown) => {
+      toast.error(err instanceof Error ? err.message : 'Failed to update profile');
+    },
+  });
+
+  const cancelRegistrationMutation = useMutation({
+    mutationFn: (sessionId: string) => profileAPI.unregisterFromSession(sessionId),
+    onSuccess: () => {
+      toast.success('Registration cancelled');
+      void queryClient.invalidateQueries({ queryKey: ['my-registrations', user?.id] });
+    },
+    onError: (err: unknown) => {
+      toast.error(err instanceof Error ? err.message : 'Action failed');
+    },
+  });
 
   useEffect(() => {
     if (authLoading) return;
     if (!user) {
       navigate('/login?returnTo=/my-profile', { replace: true });
-      return;
     }
-    void loadData();
-  }, [authLoading, user, navigate, loadData]);
+  }, [authLoading, user, navigate]);
+
+  useEffect(() => {
+    if (!profile) return;
+    setForm({
+      full_name: profile.full_name ?? '',
+      contact_number: profile.contact_number ?? '',
+      gender: profile.gender ?? '',
+      address: profile.address ?? '',
+      date_of_birth: profile.date_of_birth ? profile.date_of_birth.split('T')[0] : '',
+    });
+  }, [profile]);
+
+  useEffect(() => {
+    if (profileError) {
+      toast.error(profileError instanceof Error ? profileError.message : 'Failed to load profile');
+    }
+  }, [profileError]);
+
+  useEffect(() => {
+    if (registrationsError) {
+      toast.error(registrationsError instanceof Error ? registrationsError.message : 'Failed to load sessions');
+    }
+  }, [registrationsError]);
 
   const handleSave = async () => {
-    setSaving(true);
-    try {
-      const payload: IUpdateMyProfilePayload = {
-        full_name: form.full_name?.trim() || undefined,
-        contact_number: form.contact_number?.trim() || null,
-        gender: form.gender?.trim() || null,
-        address: form.address?.trim() || null,
-        date_of_birth: form.date_of_birth || null,
-      };
-      const updated = await profileAPI.updateMyProfile(payload);
-      setProfile(updated);
-      toast.success('Profile updated');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to update profile');
-    } finally {
-      setSaving(false);
-    }
+    const payload: IUpdateMyProfilePayload = {
+      full_name: form.full_name?.trim() || undefined,
+      contact_number: form.contact_number?.trim() || null,
+      gender: form.gender?.trim() || null,
+      address: form.address?.trim() || null,
+      date_of_birth: form.date_of_birth || null,
+    };
+    await updateProfileMutation.mutateAsync(payload);
   };
 
   const cancelRegistration = async (sessionId: string) => {
@@ -95,11 +119,7 @@ const MyProfile = () => {
 
     setTogglingIds((prev) => new Set(prev).add(sessionId));
     try {
-      await profileAPI.unregisterFromSession(sessionId);
-      toast.success('Registration cancelled');
-      await loadData();
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Action failed');
+      await cancelRegistrationMutation.mutateAsync(sessionId);
     } finally {
       setTogglingIds((prev) => {
         const next = new Set(prev);
@@ -109,7 +129,7 @@ const MyProfile = () => {
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading || profileLoading || registrationsLoading) {
     return (
       <>
         <Navbar />
@@ -164,8 +184,8 @@ const MyProfile = () => {
                 </div>
               </div>
               <div className="flex justify-end">
-                <Button className="bg-uiy-blue hover:bg-uiy-darkblue" onClick={() => void handleSave()} disabled={saving}>
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                <Button className="bg-uiy-blue hover:bg-uiy-darkblue" onClick={() => void handleSave()} disabled={updateProfileMutation.isPending}>
+                  {updateProfileMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                   Save Profile
                 </Button>
               </div>
