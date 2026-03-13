@@ -150,6 +150,7 @@ export function SessionsTab() {
                 <TableHead>Date</TableHead>
                 <TableHead>Time</TableHead>
                 <TableHead>Duration</TableHead>
+                <TableHead>Registered</TableHead>
                 <TableHead>Host</TableHead>
                 <TableHead>Zoom</TableHead>
                 <TableHead>Feedback</TableHead>
@@ -163,6 +164,7 @@ export function SessionsTab() {
                   <TableCell>{fmtDate(s.session_date)}</TableCell>
                   <TableCell>{fmtTime(s.session_time)}</TableCell>
                   <TableCell>{s.duration_minutes} min</TableCell>
+                  <TableCell>{s.count}</TableCell>
                   <TableCell>{s.host_name ?? '—'}</TableCell>
                   <TableCell>
                     {s.zoom_link ? (
