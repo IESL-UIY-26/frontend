@@ -6,7 +6,7 @@ import type { IAvailableSession } from '../types/sessions.types';
 
 interface SessionCardProps {
   session: IAvailableSession;
-  /** undefined = not logged in (no button shown) */
+  isLoggedIn: boolean;
   registered?: boolean;
   toggling?: boolean;
   onToggle?: () => void;
@@ -25,9 +25,7 @@ const formatTime = (isoTime: string) =>
     minute: '2-digit',
   });
 
-export const SessionCard = ({ session, registered, toggling = false, onToggle }: SessionCardProps) => {
-  const isLoggedIn = registered !== undefined;
-
+export const SessionCard = ({ session, isLoggedIn, registered = false, toggling = false, onToggle }: SessionCardProps) => {
   return (
     <Card className="shadow-sm flex flex-col">
       <CardHeader className="pb-3">
@@ -56,7 +54,8 @@ export const SessionCard = ({ session, registered, toggling = false, onToggle }:
           )}
         </div>
 
-        {session.zoom_link && (
+        {/* Zoom link is only visible to registered participants */}
+        {isLoggedIn && registered && session.zoom_link && (
           <a
             href={session.zoom_link}
             target="_blank"
@@ -68,25 +67,23 @@ export const SessionCard = ({ session, registered, toggling = false, onToggle }:
         )}
       </CardContent>
 
-      {isLoggedIn && (
-        <CardFooter className="pt-0">
-          <Button
-            size="sm"
-            variant={registered ? 'outline' : 'default'}
-            className={registered ? 'w-full' : 'w-full bg-uiy-blue hover:bg-uiy-darkblue'}
-            disabled={toggling}
-            onClick={onToggle}
-          >
-            {toggling ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : registered ? (
-              <><CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600" />Registered &mdash; Cancel</>  
-            ) : (
-              'Register'
-            )}
-          </Button>
-        </CardFooter>
-      )}
+      <CardFooter className="pt-0">
+        <Button
+          size="sm"
+          variant={isLoggedIn && registered ? 'outline' : 'default'}
+          className={isLoggedIn && registered ? 'w-full' : 'w-full bg-uiy-blue hover:bg-uiy-darkblue'}
+          disabled={toggling}
+          onClick={onToggle}
+        >
+          {toggling ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : isLoggedIn && registered ? (
+            <><CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600" />Registered &mdash; Cancel</>
+          ) : (
+            'Register'
+          )}
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

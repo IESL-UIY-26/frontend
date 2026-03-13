@@ -1,13 +1,21 @@
 import Navbar from '@/components/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { SessionCard } from '@/features/Sessions/components/SessionCard';
 import { useSessions } from '@/features/Sessions/hooks/use-sessions';
 
 const Sessions = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { sessions, loading, error, registeredIds, togglingIds, toggleRegistration } = useSessions();
+
+  const handleNotLoggedIn = () => {
+    toast.info('You must be logged in to register for a session.');
+    void navigate('/login');
+  };
 
   return (
     <>
@@ -37,9 +45,14 @@ const Sessions = () => {
                 <SessionCard
                   key={session.id}
                   session={session}
-                  registered={user ? registeredIds.has(session.id) : undefined}
+                  isLoggedIn={!!user}
+                  registered={registeredIds.has(session.id)}
                   toggling={togglingIds.has(session.id)}
-                  onToggle={() => toggleRegistration(session.id, registeredIds.has(session.id))}
+                  onToggle={
+                    user
+                      ? () => toggleRegistration(session.id, registeredIds.has(session.id))
+                      : handleNotLoggedIn
+                  }
                 />
               ))}
             </div>
