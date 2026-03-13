@@ -71,6 +71,16 @@ const Navbar = () => {
             Projects
           </Link>
 
+          <Link
+            to="/sessions"
+            className={cn(
+              "text-sm font-medium transition-all duration-300 hover:text-uiy-blue",
+              isDark ? "text-uiy-dark" : "text-white"
+            )}
+          >
+            Sessions
+          </Link>
+
           {navItems.map((item) => (
             <a 
               key={item.name}
@@ -196,6 +206,14 @@ const Navbar = () => {
             className="py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
           >
             Projects
+          </Link>
+
+          <Link
+            to="/sessions"
+            onClick={() => setIsOpen(false)}
+            className="py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
+          >
+            Sessions
           </Link>
 
           {/* Apply Now / View My Team — logged-in users only */}
