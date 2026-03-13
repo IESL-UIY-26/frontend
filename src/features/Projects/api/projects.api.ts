@@ -21,4 +21,12 @@ export const projectsAPI = {
     const response = await api.patch<IProject>(`/api/projects/${projectId}`, payload);
     return response.data;
   },
+
+  createVote: async (projectId: string): Promise<void> => {
+    await api.post(`/api/projects/${projectId}/vote`);
+  },
+
+  removeVote: async (projectId: string): Promise<void> => {
+    await api.delete(`/api/projects/${projectId}/vote`);
+  },
 };

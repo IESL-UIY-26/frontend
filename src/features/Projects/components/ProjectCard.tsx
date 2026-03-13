@@ -1,13 +1,18 @@
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink, FolderOpen } from 'lucide-react';
+import { ExternalLink, FolderOpen, Loader2, ThumbsUp } from 'lucide-react';
 import type { IPublicProject } from '../types/projects.types';
 
 interface ProjectCardProps {
   project: IPublicProject;
+  canVote: boolean;
+  voted: boolean;
+  voting: boolean;
+  onVoteToggle: () => void;
 }
 
-export const ProjectCard = ({ project }: ProjectCardProps) => {
+export const ProjectCard = ({ project, canVote, voted, voting, onVoteToggle }: ProjectCardProps) => {
   return (
     <Card className="shadow-sm">
       <CardHeader className="pb-3">
@@ -42,6 +47,22 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
               PDF <ExternalLink className="w-3 h-3" />
             </a>
           )}
+        </div>
+        <div className="pt-1 flex items-center justify-between gap-3">
+          <p className="text-sm text-gray-600 inline-flex items-center gap-1">
+            <ThumbsUp className="w-4 h-4 text-uiy-blue" />
+            Votes: {project.vote_count}
+          </p>
+          <Button
+            size="sm"
+            variant={voted ? 'secondary' : 'default'}
+            className={!voted ? 'bg-uiy-blue hover:bg-uiy-darkblue' : ''}
+            disabled={voting}
+            onClick={onVoteToggle}
+          >
+            {voting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            {!canVote ? 'Login to Vote' : voted ? 'Remove Vote' : 'Vote'}
+          </Button>
         </div>
       </CardContent>
     </Card>
