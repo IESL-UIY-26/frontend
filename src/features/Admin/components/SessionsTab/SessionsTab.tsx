@@ -42,6 +42,7 @@ const emptyForm: SessionForm = {
 
 export function SessionsTab() {
   const { sessions, loading, createSession, updateSession, deleteSession } = useSessions();
+  const minSessionDate = new Date().toISOString().split('T')[0];
   const [dialog, setDialog] = useState<{ open: boolean; editing: ISession | null }>({
     open: false,
     editing: null,
@@ -197,6 +198,7 @@ export function SessionsTab() {
                 <Label>Date *</Label>
                 <Input
                   type="date"
+                  min={dialog.editing ? undefined : minSessionDate}
                   value={form.session_date}
                   onChange={(e) => setForm((p) => ({ ...p, session_date: e.target.value }))}
                 />
