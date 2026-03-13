@@ -174,8 +174,7 @@ const Navbar = () => {
               to={item.to}
               onClick={() => setIsOpen(false)}
               className={cn(
-                "py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors",
-                activeSection === getSectionId(item.href) && "text-uiy-blue"
+                "py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
               )}
             >
               {item.name}
