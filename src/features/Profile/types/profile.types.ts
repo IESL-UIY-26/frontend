@@ -22,6 +22,14 @@ export interface IUpdateMyProfilePayload {
   date_of_birth?: string | null;
 }
 
+export interface IMyProfileForm {
+  full_name: string;
+  contact_number: string;
+  gender: string;
+  address: string;
+  date_of_birth: string;
+}
+
 export interface IMySessionRegistration {
   id: string;
   session_id: string;
