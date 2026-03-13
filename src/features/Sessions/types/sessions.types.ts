@@ -16,3 +16,17 @@ export interface IMyRegistration {
   created_at: string;
   session: IAvailableSession;
 }
+
+export interface ISessionFeedback {
+  id: string;
+  session_id: string;
+  user_id: string;
+  rating: number;
+  comment: string | null;
+  created_at: string;
+}
+
+export interface IFeedbackPayload {
+  rating: number;
+  comment?: string;
+}

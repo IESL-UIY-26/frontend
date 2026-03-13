@@ -1,6 +1,7 @@
 import api from '@/utils/api-client';
 import type { CreateSessionDto, UpdateSessionDto } from '../dtos/sessions.dto';
 import type { ISession } from '../types/sessions.types';
+import type { ISessionFeedbackAdminView } from '../types/sessions.types';
 
 export const sessionsAPI = {
   getSessions: async (): Promise<ISession[]> => {
@@ -20,5 +21,10 @@ export const sessionsAPI = {
 
   deleteSession: async (id: string): Promise<void> => {
     await api.delete(`/api/sessions/${id}`);
+  },
+
+  getSessionFeedbacks: async (sessionId: string): Promise<ISessionFeedbackAdminView[]> => {
+    const response = await api.get<ISessionFeedbackAdminView[]>(`/api/sessions/${sessionId}/feedback`);
+    return response.data;
   },
 };
