@@ -28,6 +28,37 @@ const CompleteProfile: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const navigateAfterProfile = () => {
+    const pendingRaw = localStorage.getItem('post_auth_redirect');
+    if (!pendingRaw) {
+      navigate('/', { replace: true });
+      return;
+    }
+
+    try {
+      const pending = JSON.parse(pendingRaw) as {
+        returnTo?: string;
+        registerSessionId?: string | null;
+      };
+
+      const nextPath = pending.returnTo || '/';
+      const nextParams = new URLSearchParams();
+      if (pending.registerSessionId) {
+        nextParams.set('registerSessionId', pending.registerSessionId);
+        nextParams.set('returnTo', nextPath);
+      }
+
+      localStorage.removeItem('post_auth_redirect');
+      navigate(
+        nextParams.toString() ? `${nextPath}?${nextParams.toString()}` : nextPath,
+        { replace: true }
+      );
+    } catch {
+      localStorage.removeItem('post_auth_redirect');
+      navigate('/', { replace: true });
+    }
+  };
+
   const {
     register,
     handleSubmit,
@@ -53,7 +84,7 @@ const CompleteProfile: React.FC = () => {
     });
 
     toast({ title: 'Profile saved!', description: 'Welcome to UIY 2026.' });
-    navigate('/', { replace: true });
+    navigateAfterProfile();
   };
 
   return (
@@ -133,7 +164,7 @@ const CompleteProfile: React.FC = () => {
               <button
                 type="button"
                 className="w-full text-sm text-muted-foreground hover:underline"
-                onClick={() => navigate('/', { replace: true })}
+                onClick={navigateAfterProfile}
               >
                 Skip for now
               </button>

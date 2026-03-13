@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, AlertCircle } from 'lucide-react';
@@ -24,9 +24,15 @@ import { GoogleButton } from '../GoogleButton';
 export const SignupForm: React.FC = () => {
   const { signUpWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [googleLoading, setGoogleLoading] = useState(false);
   const [accountExistsEmail, setAccountExistsEmail] = useState<string | null>(null);
+
+  const params = new URLSearchParams(location.search);
+  const returnTo = params.get('returnTo') ?? '/';
+  const registerSessionId = params.get('registerSessionId');
+  const loginHref = `/login${location.search}`;
 
   const {
     register,
@@ -56,14 +62,24 @@ export const SignupForm: React.FC = () => {
         title: 'Account created!',
         description: 'Check your email to confirm your account, then sign in.',
       });
-      navigate('/login');
+      navigate(loginHref);
     }
   };
 
   const handleGoogle = async () => {
     setGoogleLoading(true);
+
+    localStorage.setItem(
+      'post_auth_redirect',
+      JSON.stringify({
+        returnTo,
+        registerSessionId,
+      })
+    );
+
     const { error } = await signInWithGoogle();
     if (error) {
+      localStorage.removeItem('post_auth_redirect');
       toast({ variant: 'destructive', title: 'Google sign-in failed', description: error.message });
       setGoogleLoading(false);
     }
@@ -82,7 +98,7 @@ export const SignupForm: React.FC = () => {
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
               An account already exists for <strong>{accountExistsEmail}</strong>.{' '}
-              <Link to="/login" className="underline font-medium">
+              <Link to={loginHref} className="underline font-medium">
                 Sign in instead
               </Link>
               {' '}or try{' '}
@@ -221,7 +237,7 @@ export const SignupForm: React.FC = () => {
       <CardFooter className="justify-center pb-6">
         <p className="text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link to="/login" className="text-uiy-blue font-medium hover:underline">
+          <Link to={loginHref} className="text-uiy-blue font-medium hover:underline">
             Sign in
           </Link>
         </p>

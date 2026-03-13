@@ -1,7 +1,8 @@
 import Navbar from '@/components/Navbar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { SessionCard } from '@/features/Sessions/components/SessionCard';
@@ -10,12 +11,41 @@ import { useSessions } from '@/features/Sessions/hooks/use-sessions';
 const Sessions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { sessions, loading, error, registeredIds, togglingIds, toggleRegistration } = useSessions();
 
-  const handleNotLoggedIn = () => {
+  const handleNotLoggedIn = (sessionId: string) => {
     toast.info('You must be logged in to register for a session.');
-    void navigate('/login');
+    const params = new URLSearchParams({
+      returnTo: '/sessions',
+      registerSessionId: sessionId,
+    });
+    void navigate(`/login?${params.toString()}`);
   };
+
+  useEffect(() => {
+    if (!user) return;
+
+    const pendingSessionId = searchParams.get('registerSessionId');
+    if (!pendingSessionId) return;
+
+    const clearIntent = () => {
+      const nextParams = new URLSearchParams(searchParams);
+      nextParams.delete('registerSessionId');
+      nextParams.delete('returnTo');
+      setSearchParams(nextParams, { replace: true });
+    };
+
+    if (registeredIds.has(pendingSessionId)) {
+      clearIntent();
+      return;
+    }
+
+    void (async () => {
+      await toggleRegistration(pendingSessionId, false);
+      clearIntent();
+    })();
+  }, [user, searchParams, setSearchParams, registeredIds, toggleRegistration]);
 
   return (
     <>
@@ -51,7 +81,7 @@ const Sessions = () => {
                   onToggle={
                     user
                       ? () => toggleRegistration(session.id, registeredIds.has(session.id))
-                      : handleNotLoggedIn
+                      : () => handleNotLoggedIn(session.id)
                   }
                 />
               ))}

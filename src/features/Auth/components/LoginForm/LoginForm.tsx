@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, AlertCircle } from 'lucide-react';
@@ -18,9 +18,15 @@ import { UserRole } from '../../enums/auth.enums';
 export const LoginForm: React.FC = () => {
   const { signInWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [googleLoading, setGoogleLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+
+  const params = new URLSearchParams(location.search);
+  const returnTo = params.get('returnTo') ?? '/';
+  const registerSessionId = params.get('registerSessionId');
+  const signupHref = `/signup${location.search}`;
 
   const {
     register,
@@ -39,14 +45,24 @@ export const LoginForm: React.FC = () => {
         toast({ variant: 'destructive', title: 'Login failed', description: error.message });
       }
     } else {
-      navigate(dbUser?.role === UserRole.ADMIN ? '/admin' : '/');
+      navigate(dbUser?.role === UserRole.ADMIN ? '/admin' : returnTo);
     }
   };
 
   const handleGoogle = async () => {
     setGoogleLoading(true);
+
+    localStorage.setItem(
+      'post_auth_redirect',
+      JSON.stringify({
+        returnTo,
+        registerSessionId,
+      })
+    );
+
     const { error } = await signInWithGoogle();
     if (error) {
+      localStorage.removeItem('post_auth_redirect');
       toast({ variant: 'destructive', title: 'Google sign-in failed', description: error.message });
       setGoogleLoading(false);
     }
@@ -126,7 +142,7 @@ export const LoginForm: React.FC = () => {
       <CardFooter className="justify-center pb-6">
         <p className="text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link to="/signup" className="text-uiy-blue font-medium hover:underline">
+          <Link to={signupHref} className="text-uiy-blue font-medium hover:underline">
             Sign up
           </Link>
         </p>

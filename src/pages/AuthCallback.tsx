@@ -25,7 +25,39 @@ const AuthCallback: React.FC = () => {
       navigate('/admin', { replace: true });
     } else {
       const isComplete = !!(dbUser.contact_number && dbUser.date_of_birth);
-      navigate(isComplete ? '/' : '/complete-profile', { replace: true });
+      if (!isComplete) {
+        navigate('/complete-profile', { replace: true });
+        return;
+      }
+
+      const pendingRaw = localStorage.getItem('post_auth_redirect');
+      if (!pendingRaw) {
+        navigate('/', { replace: true });
+        return;
+      }
+
+      try {
+        const pending = JSON.parse(pendingRaw) as {
+          returnTo?: string;
+          registerSessionId?: string | null;
+        };
+
+        const nextPath = pending.returnTo || '/';
+        const nextParams = new URLSearchParams();
+        if (pending.registerSessionId) {
+          nextParams.set('registerSessionId', pending.registerSessionId);
+          nextParams.set('returnTo', nextPath);
+        }
+
+        localStorage.removeItem('post_auth_redirect');
+        navigate(
+          nextParams.toString() ? `${nextPath}?${nextParams.toString()}` : nextPath,
+          { replace: true }
+        );
+      } catch {
+        localStorage.removeItem('post_auth_redirect');
+        navigate('/', { replace: true });
+      }
     }
   }, [loading, session, dbUser, navigate]);
 
