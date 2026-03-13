@@ -2,6 +2,18 @@ import { supabase } from '@/lib/supabase';
 
 const API_URL = import.meta.env.VITE_API_URL as string;
 
+export class ApiError extends Error {
+  status: number;
+  path: string;
+
+  constructor(message: string, status: number, path: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.path = path;
+  }
+}
+
 async function buildHeaders(withBody = false): Promise<Record<string, string>> {
   const headers: Record<string, string> = {};
   if (withBody) headers['Content-Type'] = 'application/json';
@@ -11,12 +23,17 @@ async function buildHeaders(withBody = false): Promise<Record<string, string>> {
   return headers;
 }
 
+async function throwApiError(res: Response, method: string, path: string): Promise<never> {
+  const body = await res.json().catch(() => ({})) as { message?: string };
+  const fallback = `${method} ${path} failed: ${res.status}`;
+  throw new ApiError(body.message ?? fallback, res.status, path);
+}
+
 const api = {
   get: async <T>(path: string): Promise<{ data: T }> => {
     const res = await fetch(`${API_URL}${path}`, { headers: await buildHeaders() });
     if (!res.ok) {
-      const body = await res.json().catch(() => ({})) as { message?: string };
-      throw new Error(body.message ?? `GET ${path} failed: ${res.status}`);
+      await throwApiError(res, 'GET', path);
     }
     return res.json() as Promise<{ data: T }>;
   },
@@ -28,8 +45,7 @@ const api = {
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      const errBody = await res.json().catch(() => ({})) as { message?: string };
-      throw new Error(errBody.message ?? `POST ${path} failed: ${res.status}`);
+      await throwApiError(res, 'POST', path);
     }
     return res.json() as Promise<{ data: T }>;
   },
@@ -41,8 +57,7 @@ const api = {
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      const errBody = await res.json().catch(() => ({})) as { message?: string };
-      throw new Error(errBody.message ?? `PATCH ${path} failed: ${res.status}`);
+      await throwApiError(res, 'PATCH', path);
     }
     return res.json() as Promise<{ data: T }>;
   },
@@ -53,8 +68,7 @@ const api = {
       headers: await buildHeaders(),
     });
     if (!res.ok) {
-      const errBody = await res.json().catch(() => ({})) as { message?: string };
-      throw new Error(errBody.message ?? `DELETE ${path} failed: ${res.status}`);
+      await throwApiError(res, 'DELETE', path);
     }
     return res.json() as Promise<{ data: T }>;
   },

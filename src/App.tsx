@@ -14,6 +14,8 @@ import CompleteProfile from "./pages/CompleteProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import CreateTeam from './pages/CreateTeam';
 import MyTeam from './pages/MyTeam';
+import Projects from './pages/Projects';
+import Sessions from './pages/Sessions';
 import { AdminGuard } from "@/features/Auth/components/AdminGuard";
 import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext';
 
@@ -37,6 +39,8 @@ const App = () => (
               <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
               <Route path="/create-team" element={<CreateTeam />} />
               <Route path="/my-team" element={<MyTeam />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/sessions" element={<Sessions />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
