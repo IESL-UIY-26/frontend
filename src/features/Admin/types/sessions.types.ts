@@ -6,6 +6,7 @@ export interface ISession {
   session_date: string;
   session_time: string;
   duration_minutes: number;
+  count: number;
   host_name: string | null;
   created_by: string;
   created_at: string;

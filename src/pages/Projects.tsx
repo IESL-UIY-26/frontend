@@ -3,9 +3,20 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { ProjectCard } from '@/features/Projects/components/ProjectCard';
 import { useProjects } from '@/features/Projects/hooks/use-projects';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Projects = () => {
-  const { projects, loading, error } = useProjects();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { projects, loading, error, votedIds, togglingIds, toggleVote } = useProjects();
+
+  const handleRequireLogin = () => {
+    toast.info('You must be logged in to vote for a project.');
+    const params = new URLSearchParams({ returnTo: '/projects' });
+    void navigate(`/login?${params.toString()}`);
+  };
 
   return (
     <>
@@ -32,7 +43,14 @@ const Projects = () => {
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
               {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
+                <ProjectCard
+                  key={project.id}
+                  project={project}
+                  canVote={!!user}
+                  voted={votedIds.has(project.id)}
+                  voting={togglingIds.has(project.id)}
+                  onVoteToggle={user ? () => void toggleVote(project.id) : handleRequireLogin}
+                />
               ))}
             </div>
           )}
