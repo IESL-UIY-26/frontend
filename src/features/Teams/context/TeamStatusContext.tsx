@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import type { IMyTeam } from '../types/teams.types';
 import { teamsAPI } from '../api/teams.api';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
@@ -53,6 +53,12 @@ export const TeamStatusProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [myTeam, setMyTeam] = useState<IMyTeam | null>(() => readTeamFromCookie());
   const [hasTeamCache, setHasTeamCache] = useState(readCacheBoolean);
   const [teamLoading, setTeamLoading] = useState(false);
+  const myTeamRef = useRef(myTeam);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    myTeamRef.current = myTeam;
+  }, [myTeam]);
 
   // Initialize myTeam as a sentinel if cache says we have a team (so button shows before API returns)
   useEffect(() => {
@@ -72,13 +78,42 @@ export const TeamStatusProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   }, [hasTeamCache, myTeam]);
 
   const fetchMyTeam = useCallback(async () => {
+    // Only clear team data if auth is done loading and we're certain there's no user
+    // Don't clear during auth revalidation to prevent losing cached data
     if (!user) {
-      setMyTeam(null);
-      setHasTeamCache(false);
-      setTeamCookie(null);
-      localStorage.removeItem(STORAGE_KEY);
+      if (!authLoading) {
+        setMyTeam(null);
+        setHasTeamCache(false);
+        setTeamCookie(null);
+        localStorage.removeItem(STORAGE_KEY);
+      }
       return;
     }
+
+    // Skip fetching if we already have cached team data and this isn't a manual refresh
+    // This prevents unnecessary loading states when navigating between pages
+    const hasCachedTeam = myTeamRef.current && (myTeamRef.current.id !== '');
+    if (hasCachedTeam) {
+      // Silently revalidate in background without setting loading state
+      try {
+        const team = await teamsAPI.getMyTeam();
+
+        // Only update state if the team actually changed to prevent unnecessary rerenders
+        const teamChanged = JSON.stringify(team) !== JSON.stringify(myTeamRef.current);
+        if (teamChanged) {
+          setMyTeam(team);
+        }
+
+        const hasTeam = !!team;
+        setHasTeamCache(hasTeam);
+        localStorage.setItem(STORAGE_KEY, hasTeam.toString());
+        setTeamCookie(team);
+      } catch {
+        // Keep existing cached value on network error
+      }
+      return;
+    }
+
     setTeamLoading(true);
     try {
       const team = await teamsAPI.getMyTeam();
@@ -92,11 +127,18 @@ export const TeamStatusProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } finally {
       setTeamLoading(false);
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   useEffect(() => {
-    if (!authLoading) fetchMyTeam();
-  }, [authLoading, fetchMyTeam]);
+    // Only fetch if auth is ready AND we don't already have valid cached team data
+    // This prevents unnecessary fetches when navigating between pages
+    const hasCachedTeam = myTeamRef.current && myTeamRef.current.id !== '';
+
+    if (!authLoading && !hasCachedTeam) {
+      void fetchMyTeam();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading]); // Only depend on authLoading, not fetchMyTeam or myTeam
 
   return (
     <TeamStatusContext.Provider value={{ myTeam, teamLoading, refreshMyTeam: fetchMyTeam }}>

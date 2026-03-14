@@ -331,35 +331,44 @@ export function MyTeamView() {
     setProjectImageFileId(undefined);
   };
 
-  const showInitialLoading = (authLoading && !user) || (teamLoading && !myTeam);
+  // Only show loading when we have no team data (prevents spinner when cached data exists)
+  // If we have myTeam from cache, show it immediately even if auth/team is revalidating
+  const showInitialLoading = !myTeam && ((authLoading && !user) || teamLoading);
 
+  // Render loading state in content area (like Sessions/Projects pages)
   if (showInitialLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-uiy-blue" />
+      <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-uiy-blue" />
+        </div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
-        <AlertCircle className="w-12 h-12 text-gray-300" />
-        <h2 className="text-xl font-semibold text-gray-700">You need to sign in</h2>
-        <Link to="/login" className="btn-primary">Sign In</Link>
+      <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-4 text-center py-20">
+          <AlertCircle className="w-12 h-12 text-gray-300" />
+          <h2 className="text-xl font-semibold text-gray-700">You need to sign in</h2>
+          <Link to="/login" className="btn-primary">Sign In</Link>
+        </div>
       </div>
     );
   }
 
   if (!myTeam) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
-        <Users className="w-12 h-12 text-gray-300" />
-        <h2 className="text-xl font-semibold text-gray-700">You haven't joined a team yet</h2>
-        <p className="text-gray-500 max-w-sm">Create your team to participate in UIY 2026.</p>
-        <Link to="/create-team" className="btn-primary inline-flex items-center gap-2">
-          Create Team
-        </Link>
+      <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
+        <div className="max-w-7xl mx-auto flex flex-col items-center justify-center gap-4 text-center py-20">
+          <Users className="w-12 h-12 text-gray-300" />
+          <h2 className="text-xl font-semibold text-gray-700">You haven't joined a team yet</h2>
+          <p className="text-gray-500 max-w-sm">Create your team to participate in UIY 2026.</p>
+          <Link to="/create-team" className="btn-primary inline-flex items-center gap-2">
+            Create Team
+          </Link>
+        </div>
       </div>
     );
   }

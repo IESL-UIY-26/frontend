@@ -19,7 +19,10 @@ const AuthCallback: React.FC = () => {
       navigate('/login', { replace: true });
       return;
     }
-    if (!dbUser) return; // still waiting for onAuthStateChange to finish syncing
+    if (!dbUser) {
+      navigate('/complete-profile', { replace: true });
+      return;
+    }
 
     if (dbUser.role === UserRole.ADMIN) {
       navigate('/admin', { replace: true });

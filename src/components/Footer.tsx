@@ -6,8 +6,9 @@ import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { UserRole } from '@/features/Auth/enums/auth.enums';
 
 const Footer = () => {
-  const { dbUser } = useAuth();
+  const { user, dbUser, loading } = useAuth();
   const isAdmin = dbUser?.role === UserRole.ADMIN;
+  const authReady = !loading;
 
   return (
     <footer id="contact" className="bg-white border-t border-gray-100">
@@ -51,11 +52,11 @@ const Footer = () => {
               <li><a href="#process" className="text-gray-600 hover:text-uiy-blue transition-colors">Process</a></li>
               <li><a href="#awards" className="text-gray-600 hover:text-uiy-blue transition-colors">Awards</a></li>
               <li>
-                {isAdmin ? (
+                {authReady && (isAdmin ? (
                   <Link to="/admin" className="text-gray-600 hover:text-uiy-blue transition-colors">Admin Dashboard</Link>
                 ) : (
                   <a href="#apply" className="text-gray-600 hover:text-uiy-blue transition-colors">Apply Now</a>
-                )}
+                ))}
               </li>
             </ul>
           </div>

@@ -6,8 +6,9 @@ import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { UserRole } from '@/features/Auth/enums/auth.enums';
 
 const Awards = () => {
-  const { dbUser } = useAuth();
+  const { user, dbUser, loading } = useAuth();
   const isAdmin = dbUser?.role === UserRole.ADMIN;
+  const authReady = !loading;
 
   return (
     <section id="awards" className="py-24 bg-uiy-dark text-white">
@@ -109,11 +110,11 @@ const Awards = () => {
               By participating in the UIY competition, you're one step closer to turning your innovative idea into a 
               practical, marketable product that contributes to technological and industrial growth.
             </p>
-            {isAdmin ? (
+            {authReady && (isAdmin ? (
               <Link to="/admin" className="mt-8 inline-block btn-primary">Admin Dashboard</Link>
             ) : (
               <a href="#apply" className="mt-8 inline-block btn-primary">Apply Now</a>
-            )}
+            ))}
           </div>
         </div>
       </div>

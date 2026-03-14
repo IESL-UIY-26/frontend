@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
-import { Loader2, Plus, Pencil, Trash2, ExternalLink, MessageSquare } from 'lucide-react';
+import { Loader2, Plus, Pencil, ExternalLink, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { useSessions } from '../../hooks/use-sessions';
 import { sessionsAPI } from '../../api/sessions.api';
 import type { ISession, ISessionFeedbackAdminView } from '../../types/sessions.types';
@@ -42,14 +32,13 @@ const emptyForm: SessionForm = {
 };
 
 export function SessionsTab() {
-  const { sessions, loading, createSession, updateSession, deleteSession } = useSessions();
+  const { sessions, loading, createSession, updateSession } = useSessions();
   const minSessionDate = new Date().toISOString().split('T')[0];
   const [dialog, setDialog] = useState<{ open: boolean; editing: ISession | null }>({
     open: false,
     editing: null,
   });
   const [form, setForm] = useState<SessionForm>(emptyForm);
-  const [deleting, setDeleting] = useState<string | null>(null);
   const [feedbackDialog, setFeedbackDialog] = useState<{
     open: boolean;
     sessionTitle: string;
@@ -100,12 +89,6 @@ export function SessionsTab() {
     } catch {
       // error already toasted by the hook
     }
-  };
-
-  const handleDelete = async () => {
-    if (!deleting) return;
-    await deleteSession(deleting);
-    setDeleting(null);
   };
 
   const openFeedbackDialog = async (sessionId: string, sessionTitle: string) => {
@@ -190,19 +173,9 @@ export function SessionsTab() {
                     </Button>
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => openEdit(s)}>
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-destructive hover:text-destructive"
-                        onClick={() => setDeleting(s.id)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </div>
+                    <Button size="sm" variant="outline" onClick={() => openEdit(s)}>
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -292,25 +265,6 @@ export function SessionsTab() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Delete Confirm */}
-      <AlertDialog open={!!deleting} onOpenChange={(o) => { if (!o) setDeleting(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Session?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive hover:bg-destructive/90"
-              onClick={() => void handleDelete()}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
 
       <Dialog
         open={feedbackDialog.open}
