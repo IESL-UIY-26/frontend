@@ -17,6 +17,16 @@ export const sessionsAPI = {
     };
   },
 
+  searchSessionsByDate: async (date: string, page = 1): Promise<IGetAvailableSessionsResult> => {
+    const response = await api.getRaw<IAvailableSessionsResponse>(
+      `/api/sessions/search?date=${encodeURIComponent(date)}&page=${page}`
+    );
+    return {
+      sessions: response.data,
+      pagination: response.pagination,
+    };
+  },
+
   getMyRegistrations: async (): Promise<IMyRegistration[]> => {
     const response = await api.get<IMyRegistration[]>('/api/sessions/my-registrations');
     return response.data;

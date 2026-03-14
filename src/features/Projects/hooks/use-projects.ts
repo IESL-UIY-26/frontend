@@ -6,7 +6,7 @@ import { ApiError } from '@/utils/api-client';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import type { IGetPublicProjectsResult } from '../types/projects.types';
 
-export const useProjects = (page: number) => {
+export const useProjects = (page: number, query = '') => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
@@ -17,8 +17,9 @@ export const useProjects = (page: number) => {
     isLoading: loading,
     error: queryError,
   } = useQuery({
-    queryKey: ['public-projects', page],
-    queryFn: () => projectsAPI.getPublicProjects(page),
+    queryKey: ['public-projects', page, query],
+    queryFn: () =>
+      query ? projectsAPI.searchProjectsByName(query, page) : projectsAPI.getPublicProjects(page),
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
     refetchInterval: 30 * 1000,
@@ -52,7 +53,7 @@ export const useProjects = (page: number) => {
 
   const updateVoteCount = useCallback(
     (projectId: string, delta: 1 | -1) => {
-      queryClient.setQueryData<IGetPublicProjectsResult>(['public-projects', page], (prev) => {
+      queryClient.setQueryData<IGetPublicProjectsResult>(['public-projects', page, query], (prev) => {
         if (!prev) return prev;
 
         return {
@@ -68,7 +69,7 @@ export const useProjects = (page: number) => {
         };
       });
     },
-    [page, queryClient]
+    [page, query, queryClient]
   );
 
   const toggleVote = useCallback(

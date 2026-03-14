@@ -15,6 +15,16 @@ export const projectsAPI = {
     };
   },
 
+  searchProjectsByName: async (q: string, page = 1): Promise<IGetPublicProjectsResult> => {
+    const response = await api.getRaw<IPublicProjectsResponse>(
+      `/api/public/projects/search?q=${encodeURIComponent(q)}&page=${page}`
+    );
+    return {
+      projects: response.data,
+      pagination: response.pagination,
+    };
+  },
+
   getTeamProjects: async (teamId: string): Promise<IProject[]> => {
     const response = await api.get<IProject[]>(`/api/teams/${teamId}/projects`);
     return response.data;

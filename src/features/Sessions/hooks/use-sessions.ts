@@ -6,7 +6,7 @@ import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { sessionsAPI } from '../api/sessions.api';
 import type { IGetAvailableSessionsResult, IMyRegistration } from '../types/sessions.types';
 
-export const useSessions = (page: number) => {
+export const useSessions = (page: number, date = '') => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -17,8 +17,9 @@ export const useSessions = (page: number) => {
     isLoading: sessionsLoading,
     error: sessionsError,
   } = useQuery({
-    queryKey: ['available-sessions', page],
-    queryFn: () => sessionsAPI.getAvailableSessions(page),
+    queryKey: ['available-sessions', page, date],
+    queryFn: () =>
+      date ? sessionsAPI.searchSessionsByDate(date, page) : sessionsAPI.getAvailableSessions(page),
     staleTime: 5 * 60 * 1000,
   });
 

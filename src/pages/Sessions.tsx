@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
-import { useEffect } from 'react';
+import { Calendar, Loader2, X } from 'lucide-react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
@@ -23,7 +23,25 @@ const Sessions = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { page, setPage } = usePageQueryParam(searchParams, setSearchParams);
   const { sessions, totalPages, hasPreviousPage, hasNextPage, loading, error, registeredIds, togglingIds, toggleRegistration } =
-    useSessions(page);
+    useSessions(page, searchParams.get('date') ?? '');
+
+  const date = searchParams.get('date') ?? '';
+
+  const setDate = useCallback(
+    (newDate: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (newDate) next.set('date', newDate);
+          else next.delete('date');
+          next.set('page', '1');
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
   const [feedbackDialog, setFeedbackDialog] = useState<{
     open: boolean;
     sessionId: string | null;
@@ -165,6 +183,25 @@ const Sessions = () => {
             <p className="text-gray-500 mt-2">Browse all upcoming public sessions</p>
           </div>
 
+          <div className="relative max-w-xs mx-auto">
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Input
+              type="date"
+              className="pl-9 pr-9"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+            {date && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={() => setDate('')}
+                aria-label="Clear date filter"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-uiy-blue" />
@@ -175,7 +212,9 @@ const Sessions = () => {
             </Card>
           ) : sessions.length === 0 ? (
             <Card>
-              <CardContent className="py-10 text-center text-gray-500">No available sessions right now.</CardContent>
+              <CardContent className="py-10 text-center text-gray-500">
+                {date ? `No sessions found for ${date}.` : 'No available sessions right now.'}
+              </CardContent>
             </Card>
           ) : (
             <>
