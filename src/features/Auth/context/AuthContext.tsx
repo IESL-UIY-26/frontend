@@ -21,19 +21,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    const bootstrapSession = async () => {
+      setLoading(true);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session) {
+          const pendingStr = localStorage.getItem('pending_profile');
+          const pendingProfile: Partial<ProfileData> | undefined = pendingStr
+            ? (JSON.parse(pendingStr) as Partial<ProfileData>)
+            : undefined;
+
+          try {
+            const syncedUser = await authAPI.syncUser(session.access_token, pendingProfile);
+            setDbUser(syncedUser ?? null);
+            if (pendingStr) localStorage.removeItem('pending_profile');
+          } catch {
+            setDbUser(null);
+          }
+        } else {
+          setDbUser(null);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void bootstrapSession();
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
       if (!session) {
         setDbUser(null);
+        setLoading(false);
+        return;
       }
 
       if (_event === 'SIGNED_IN' && session) {
@@ -41,10 +71,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const pendingProfile: Partial<ProfileData> | undefined = pendingStr
           ? (JSON.parse(pendingStr) as Partial<ProfileData>)
           : undefined;
-        const syncedUser = await authAPI.syncUser(session.access_token, pendingProfile);
-        setDbUser(syncedUser ?? null);
-        if (pendingStr) localStorage.removeItem('pending_profile');
+        try {
+          const syncedUser = await authAPI.syncUser(session.access_token, pendingProfile);
+          setDbUser(syncedUser ?? null);
+          if (pendingStr) localStorage.removeItem('pending_profile');
+        } catch {
+          setDbUser(null);
+        }
       }
+
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
