@@ -4,10 +4,12 @@ import { ArrowRight, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
+import { UserRole } from '@/features/Auth/enums/auth.enums';
 
 const Hero = () => {
   const { myTeam } = useTeamStatus();
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
+  const isAdmin = dbUser?.role === UserRole.ADMIN;
 
   return (
     <section id="home" className="min-h-screen relative flex items-center overflow-hidden">
@@ -49,7 +51,11 @@ const Hero = () => {
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             {user && (
-              myTeam ? (
+              isAdmin ? (
+                <Link to="/admin" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center whitespace-nowrap">
+                  Admin Dashboard
+                </Link>
+              ) : myTeam ? (
                 <Link to="/my-team" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center gap-2 whitespace-nowrap">
                   <Users className="w-4 h-4" />
                   My Team

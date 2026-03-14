@@ -1,8 +1,14 @@
 
 import React from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '@/features/Auth/hooks/use-auth';
+import { UserRole } from '@/features/Auth/enums/auth.enums';
 
 const Footer = () => {
+  const { dbUser } = useAuth();
+  const isAdmin = dbUser?.role === UserRole.ADMIN;
+
   return (
     <footer id="contact" className="bg-white border-t border-gray-100">
       <div className="container mx-auto px-6 py-16">
@@ -44,7 +50,13 @@ const Footer = () => {
               <li><a href="#eligibility" className="text-gray-600 hover:text-uiy-blue transition-colors">Eligibility</a></li>
               <li><a href="#process" className="text-gray-600 hover:text-uiy-blue transition-colors">Process</a></li>
               <li><a href="#awards" className="text-gray-600 hover:text-uiy-blue transition-colors">Awards</a></li>
-              <li><a href="#apply" className="text-gray-600 hover:text-uiy-blue transition-colors">Apply Now</a></li>
+              <li>
+                {isAdmin ? (
+                  <Link to="/admin" className="text-gray-600 hover:text-uiy-blue transition-colors">Admin Dashboard</Link>
+                ) : (
+                  <a href="#apply" className="text-gray-600 hover:text-uiy-blue transition-colors">Apply Now</a>
+                )}
+              </li>
             </ul>
           </div>
           

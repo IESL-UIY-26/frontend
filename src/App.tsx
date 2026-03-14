@@ -18,6 +18,7 @@ import Projects from './pages/Projects';
 import Sessions from './pages/Sessions';
 import MyProfile from './pages/MyProfile';
 import { AdminGuard } from "@/features/Auth/components/AdminGuard";
+import { UserGuard } from "@/features/Auth/components/UserGuard";
 import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext';
 
 const queryClient = new QueryClient();
@@ -38,8 +39,8 @@ const App = () => (
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/complete-profile" element={<CompleteProfile />} />
               <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
-              <Route path="/create-team" element={<CreateTeam />} />
-              <Route path="/my-team" element={<MyTeam />} />
+              <Route path="/create-team" element={<UserGuard><CreateTeam /></UserGuard>} />
+              <Route path="/my-team" element={<UserGuard><MyTeam /></UserGuard>} />
               <Route path="/my-profile" element={<MyProfile />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/sessions" element={<Sessions />} />
