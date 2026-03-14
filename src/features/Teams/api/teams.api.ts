@@ -2,9 +2,37 @@ import api from '@/utils/api-client';
 import type { TeamCreationFormValues } from '../dtos/teams.dto';
 import type { IMyTeam } from '../types/teams.types';
 
+export interface UpdateTeamMemberPayload {
+  user_id: string;
+  role: 'LEADER' | 'MEMBER';
+  iesl_id?: number;
+  department?: string;
+  university_id_image?: string;
+}
+
+export interface UpdateTeamSupervisorPayload {
+  supervisor_name?: string;
+  supervisor_email?: string;
+  supervisor_contact_number?: string;
+  supervisor_university_id?: string;
+}
+
+export interface UpdateMyTeamPayload {
+  team_name?: string;
+  university_id?: string;
+  supervisor?: UpdateTeamSupervisorPayload;
+  co_supervisor?: UpdateTeamSupervisorPayload | null;
+  members?: UpdateTeamMemberPayload[];
+}
+
 export const teamsAPI = {
   getMyTeam: async (): Promise<IMyTeam | null> => {
     const response = await api.get<IMyTeam | null>('/api/teams/my-team');
+    return response.data;
+  },
+
+  updateMyTeam: async (payload: UpdateMyTeamPayload): Promise<IMyTeam> => {
+    const response = await api.patch<IMyTeam>('/api/teams/my-team', payload);
     return response.data;
   },
 
