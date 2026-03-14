@@ -26,7 +26,7 @@ const Projects = () => {
     togglingIds,
     toggleVote,
   } = useProjects(page);
-  useClampPage(page, totalPages, setPage);
+  useClampPage(page, totalPages, setPage, !loading && !error);
 
   const handleRequireLogin = () => {
     toast.info('You must be logged in to vote for a project.');

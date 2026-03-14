@@ -1,7 +1,14 @@
 import { useEffect } from 'react';
 
-export const useClampPage = (page: number, totalPages: number, setPage: (nextPage: number) => void) => {
+export const useClampPage = (
+  page: number,
+  totalPages: number,
+  setPage: (nextPage: number) => void,
+  enabled = true
+) => {
   useEffect(() => {
+    if (!enabled) return;
+
     if (totalPages === 0 && page !== 1) {
       setPage(1);
       return;
@@ -10,5 +17,5 @@ export const useClampPage = (page: number, totalPages: number, setPage: (nextPag
     if (totalPages > 0 && page > totalPages) {
       setPage(totalPages);
     }
-  }, [page, setPage, totalPages]);
+  }, [enabled, page, setPage, totalPages]);
 };

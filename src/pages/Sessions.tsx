@@ -153,7 +153,7 @@ const Sessions = () => {
       clearIntent();
     })();
   }, [user, loading, searchParams, setSearchParams, registeredIds, toggleRegistration]);
-  useClampPage(page, totalPages, setPage);
+  useClampPage(page, totalPages, setPage, !loading && !error);
 
   return (
     <>
