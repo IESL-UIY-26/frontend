@@ -720,6 +720,13 @@ export function TeamCreationForm() {
                         <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">No members added yet</p>
                         <p className="text-xs">Search by email above to add team members</p>
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {((form.formState.errors.members as any)?.message || form.formState.errors.members?.root?.message) && (
+                          <p className="text-xs text-red-500 mt-3 font-medium">
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            {((form.formState.errors.members as any)?.message as string | undefined) ?? form.formState.errors.members?.root?.message}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -778,7 +785,16 @@ export function TeamCreationForm() {
                 <Button
                   type="button"
                   disabled={submitting}
-                  onClick={() => form.handleSubmit(onSubmit)()}
+                  onClick={() => {
+                    if (fields.length === 0) {
+                      form.setError('members', {
+                        type: 'manual',
+                        message: 'You must add at least 1 other member. A team requires at least 2 members (including you as leader).',
+                      });
+                      return;
+                    }
+                    form.handleSubmit(onSubmit)();
+                  }}
                   className="bg-uiy-blue hover:bg-uiy-darkblue text-white flex items-center gap-2 min-w-[140px]"
                 >
                   {submitting ? (
