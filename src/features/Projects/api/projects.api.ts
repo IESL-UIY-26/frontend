@@ -1,10 +1,18 @@
 import api from '@/utils/api-client';
-import type { IProject, IProjectPayload, IPublicProject } from '../types/projects.types';
+import type {
+  IGetPublicProjectsResult,
+  IProject,
+  IProjectPayload,
+  IPublicProjectsResponse,
+} from '../types/projects.types';
 
 export const projectsAPI = {
-  getPublicProjects: async (): Promise<IPublicProject[]> => {
-    const response = await api.get<IPublicProject[]>('/api/public/projects');
-    return response.data;
+  getPublicProjects: async (page = 1): Promise<IGetPublicProjectsResult> => {
+    const response = await api.getRaw<IPublicProjectsResponse>(`/api/public/projects?page=${page}`);
+    return {
+      projects: response.data,
+      pagination: response.pagination,
+    };
   },
 
   getTeamProjects: async (teamId: string): Promise<IProject[]> => {

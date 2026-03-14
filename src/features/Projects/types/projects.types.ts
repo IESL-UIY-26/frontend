@@ -54,3 +54,21 @@ export interface IProjectPayload {
   pdf?: string;
   github_url?: string;
 }
+
+export interface IPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface IPublicProjectsResponse {
+  success: boolean;
+  data: IPublicProject[];
+  pagination: IPaginationMeta;
+}
+
+export interface IGetPublicProjectsResult {
+  projects: IPublicProject[];
+  pagination: IPaginationMeta;
+}

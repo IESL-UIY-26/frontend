@@ -20,7 +20,8 @@ export const profileAPI = {
   },
 
   getAvailableSessions: async (): Promise<IAvailableSession[]> => {
-    return sessionsAPI.getAvailableSessions();
+    const result = await sessionsAPI.getAvailableSessions(1);
+    return result.sessions;
   },
 
   registerToSession: async (sessionId: string): Promise<void> => {

@@ -30,3 +30,21 @@ export interface IFeedbackPayload {
   rating: number;
   comment?: string;
 }
+
+export interface ISessionsPaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface IAvailableSessionsResponse {
+  success: boolean;
+  data: IAvailableSession[];
+  pagination: ISessionsPaginationMeta;
+}
+
+export interface IGetAvailableSessionsResult {
+  sessions: IAvailableSession[];
+  pagination: ISessionsPaginationMeta;
+}

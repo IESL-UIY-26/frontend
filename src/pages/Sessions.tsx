@@ -14,12 +14,16 @@ import { sessionsAPI } from '@/features/Sessions/api/sessions.api';
 import { SessionCard } from '@/features/Sessions/components/SessionCard';
 import { useSessions } from '@/features/Sessions/hooks/use-sessions';
 import { useState } from 'react';
+import { usePageQueryParam } from '@/hooks/use-page-query-param';
+import { useClampPage } from '@/hooks/use-clamp-page';
 
 const Sessions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { sessions, loading, error, registeredIds, togglingIds, toggleRegistration } = useSessions();
+  const { page, setPage } = usePageQueryParam(searchParams, setSearchParams);
+  const { sessions, totalPages, hasPreviousPage, hasNextPage, loading, error, registeredIds, togglingIds, toggleRegistration } =
+    useSessions(page);
   const [feedbackDialog, setFeedbackDialog] = useState<{
     open: boolean;
     sessionId: string | null;
@@ -149,6 +153,7 @@ const Sessions = () => {
       clearIntent();
     })();
   }, [user, loading, searchParams, setSearchParams, registeredIds, toggleRegistration]);
+  useClampPage(page, totalPages, setPage);
 
   return (
     <>
@@ -173,24 +178,40 @@ const Sessions = () => {
               <CardContent className="py-10 text-center text-gray-500">No available sessions right now.</CardContent>
             </Card>
           ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              {sessions.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  isLoggedIn={!!user}
-                  registered={registeredIds.has(session.id)}
-                  toggling={togglingIds.has(session.id)}
-                  canGiveFeedback={!!user && registeredIds.has(session.id)}
-                  onFeedbackClick={() => void openFeedbackDialog(session.id, session.title)}
-                  onToggle={
-                    user
-                      ? () => toggleRegistration(session.id, registeredIds.has(session.id))
-                      : () => handleNotLoggedIn(session.id)
-                  }
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid md:grid-cols-2 gap-4">
+                {sessions.map((session) => (
+                  <SessionCard
+                    key={session.id}
+                    session={session}
+                    isLoggedIn={!!user}
+                    registered={registeredIds.has(session.id)}
+                    toggling={togglingIds.has(session.id)}
+                    canGiveFeedback={!!user && registeredIds.has(session.id)}
+                    onFeedbackClick={() => void openFeedbackDialog(session.id, session.title)}
+                    onToggle={
+                      user
+                        ? () => toggleRegistration(session.id, registeredIds.has(session.id))
+                        : () => handleNotLoggedIn(session.id)
+                    }
+                  />
+                ))}
+              </div>
+
+              {totalPages > 0 && (
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <Button variant="outline" onClick={() => setPage(page - 1)} disabled={!hasPreviousPage}>
+                    Previous
+                  </Button>
+                  <span className="text-sm text-gray-600">
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button variant="outline" onClick={() => setPage(page + 1)} disabled={!hasNextPage}>
+                    Next
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
