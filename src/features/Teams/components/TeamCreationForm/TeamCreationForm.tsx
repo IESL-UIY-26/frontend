@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { teamCreationSchema, type TeamCreationFormValues } from '../../dtos/teams.dto';
@@ -312,6 +312,25 @@ function MemberCard({
   );
 }
 
+// ─── Draft persistence helpers ────────────────────────────────────────────────
+
+const STORAGE_KEY = 'team_creation_draft';
+
+type StoredDraft = {
+  step?: number;
+  showCoSupervisor?: boolean;
+  values?: TeamCreationFormValues;
+};
+
+function getStoredDraft(): StoredDraft | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as StoredDraft) : null;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function TeamCreationForm() {
@@ -328,13 +347,16 @@ export function TeamCreationForm() {
     submitTeam,
   } = useTeamCreation();
 
-  const [step, setStep] = useState(1);
-  const [showCoSupervisor, setShowCoSupervisor] = useState(false);
+  // Restore draft from sessionStorage (runs once at mount via lazy initializer)
+  const [savedDraft] = useState(getStoredDraft);
+
+  const [step, setStep] = useState(savedDraft?.step ?? 1);
+  const [showCoSupervisor, setShowCoSupervisor] = useState(savedDraft?.showCoSupervisor ?? false);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
   const form = useForm<TeamCreationFormValues>({
     resolver: zodResolver(teamCreationSchema),
-    defaultValues: {
+    defaultValues: savedDraft?.values ?? {
       team_name: '',
       university_id: '',
       supervisor: {
@@ -356,6 +378,25 @@ export function TeamCreationForm() {
     control: form.control,
     name: 'members',
   });
+
+  // Persist form state to sessionStorage so a page refresh restores progress
+  useEffect(() => {
+    // Write immediately when step or showCoSupervisor changes
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+      step,
+      showCoSupervisor,
+      values: form.getValues(),
+    }));
+    // Also subscribe to individual field changes
+    const { unsubscribe } = form.watch((values) => {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+        step,
+        showCoSupervisor,
+        values,
+      }));
+    });
+    return unsubscribe;
+  }, [form, step, showCoSupervisor]);
 
   // ── Step navigation with partial validation ────────────────────────────────
 
@@ -391,6 +432,7 @@ export function TeamCreationForm() {
   // ── Form submit ────────────────────────────────────────────────────────────
 
   const onSubmit = async (values: TeamCreationFormValues) => {
+    sessionStorage.removeItem(STORAGE_KEY);
     await submitTeam(values);
   };
 

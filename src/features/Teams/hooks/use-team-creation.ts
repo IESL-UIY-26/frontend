@@ -63,7 +63,7 @@ export const useTeamCreation = () => {
         await teamsAPI.createTeam(formValues);
         await refreshMyTeam();
         toast.success('Team created successfully! 🎉');
-        navigate('/');
+        navigate('/my-team');
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to create team';
         toast.error(message);
@@ -71,7 +71,7 @@ export const useTeamCreation = () => {
         setSubmitting(false);
       }
     },
-    [navigate]
+    [navigate, refreshMyTeam]
   );
 
   return {
