@@ -1,15 +1,30 @@
 import api from '@/utils/api-client';
 import type {
+  IAvailableSessionsResponse,
   IAvailableSession,
   IFeedbackPayload,
+  IGetAvailableSessionsResult,
   IMyRegistration,
   ISessionFeedback,
 } from '../types/sessions.types';
 
 export const sessionsAPI = {
-  getAvailableSessions: async (): Promise<IAvailableSession[]> => {
-    const response = await api.get<IAvailableSession[]>('/api/sessions/available');
-    return response.data;
+  getAvailableSessions: async (page = 1): Promise<IGetAvailableSessionsResult> => {
+    const response = await api.getRaw<IAvailableSessionsResponse>(`/api/sessions/available?page=${page}`);
+    return {
+      sessions: response.data,
+      pagination: response.pagination,
+    };
+  },
+
+  searchSessionsByDate: async (date: string, page = 1): Promise<IGetAvailableSessionsResult> => {
+    const response = await api.getRaw<IAvailableSessionsResponse>(
+      `/api/sessions/search?date=${encodeURIComponent(date)}&page=${page}`
+    );
+    return {
+      sessions: response.data,
+      pagination: response.pagination,
+    };
   },
 
   getMyRegistrations: async (): Promise<IMyRegistration[]> => {

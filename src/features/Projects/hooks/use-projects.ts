@@ -4,29 +4,40 @@ import { toast } from 'sonner';
 import { projectsAPI } from '../api/projects.api';
 import { ApiError } from '@/utils/api-client';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
-import type { IPublicProject } from '../types/projects.types';
+import type { IGetPublicProjectsResult } from '../types/projects.types';
 
-export const useProjects = () => {
+export const useProjects = (page: number, query = '') => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
   const {
-    data: projects = [],
+    data: publicProjectsData,
     isLoading: loading,
     error: queryError,
   } = useQuery({
-    queryKey: ['public-projects'],
-    queryFn: () => projectsAPI.getPublicProjects(),
+    queryKey: ['public-projects', page, query],
+    queryFn: () =>
+      query ? projectsAPI.searchProjectsByName(query, page) : projectsAPI.getPublicProjects(page),
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
     refetchInterval: 30 * 1000,
   });
 
+  const projects = publicProjectsData?.projects ?? [];
+  const pagination = publicProjectsData?.pagination;
+  const totalPages = pagination?.totalPages ?? 0;
+  const hasPreviousPage = page > 1;
+  const hasNextPage = page < totalPages;
+
   const error = useMemo(() => {
     if (!queryError) return null;
-    if (queryError instanceof ApiError && queryError.status === 404 && queryError.path === '/api/public/projects') {
+    if (
+      queryError instanceof ApiError &&
+      queryError.status === 404 &&
+      queryError.path.startsWith('/api/public/projects')
+    ) {
       return 'Public projects service is not available right now (endpoint not found). Please contact admin or try again later.';
     }
     return queryError instanceof Error ? queryError.message : 'Failed to load projects';
@@ -42,18 +53,23 @@ export const useProjects = () => {
 
   const updateVoteCount = useCallback(
     (projectId: string, delta: 1 | -1) => {
-      queryClient.setQueryData<IPublicProject[]>(['public-projects'], (prev = []) =>
-        prev.map((project) =>
-          project.id === projectId
-            ? {
-                ...project,
-                vote_count: Math.max(0, project.vote_count + delta),
-              }
-            : project
-        )
-      );
+      queryClient.setQueryData<IGetPublicProjectsResult>(['public-projects', page, query], (prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+          projects: prev.projects.map((project) =>
+            project.id === projectId
+              ? {
+                  ...project,
+                  vote_count: Math.max(0, project.vote_count + delta),
+                }
+              : project
+          ),
+        };
+      });
     },
-    [queryClient]
+    [page, query, queryClient]
   );
 
   const toggleVote = useCallback(
@@ -107,6 +123,9 @@ export const useProjects = () => {
 
   return {
     projects,
+    totalPages,
+    hasPreviousPage,
+    hasNextPage,
     loading,
     error,
     votedIds,

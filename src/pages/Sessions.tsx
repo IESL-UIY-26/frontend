@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Loader2 } from 'lucide-react';
-import { useEffect } from 'react';
+import { Calendar, Loader2, X } from 'lucide-react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
@@ -14,12 +14,34 @@ import { sessionsAPI } from '@/features/Sessions/api/sessions.api';
 import { SessionCard } from '@/features/Sessions/components/SessionCard';
 import { useSessions } from '@/features/Sessions/hooks/use-sessions';
 import { useState } from 'react';
+import { usePageQueryParam } from '@/hooks/use-page-query-param';
+import { useClampPage } from '@/hooks/use-clamp-page';
 
 const Sessions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { sessions, loading, error, registeredIds, togglingIds, toggleRegistration } = useSessions();
+  const { page, setPage } = usePageQueryParam(searchParams, setSearchParams);
+  const { sessions, totalPages, hasPreviousPage, hasNextPage, loading, error, registeredIds, togglingIds, toggleRegistration } =
+    useSessions(page, searchParams.get('date') ?? '');
+
+  const date = searchParams.get('date') ?? '';
+
+  const setDate = useCallback(
+    (newDate: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (newDate) next.set('date', newDate);
+          else next.delete('date');
+          next.set('page', '1');
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
   const [feedbackDialog, setFeedbackDialog] = useState<{
     open: boolean;
     sessionId: string | null;
@@ -149,6 +171,7 @@ const Sessions = () => {
       clearIntent();
     })();
   }, [user, loading, searchParams, setSearchParams, registeredIds, toggleRegistration]);
+  useClampPage(page, totalPages, setPage, !loading && !error);
 
   return (
     <>
@@ -158,6 +181,25 @@ const Sessions = () => {
           <div className="text-center">
             <h1 className="text-3xl font-display font-bold text-gray-900">Available Sessions</h1>
             <p className="text-gray-500 mt-2">Browse all upcoming public sessions</p>
+          </div>
+
+          <div className="relative max-w-xs mx-auto">
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Input
+              type="date"
+              className="pl-9 pr-9"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+            {date && (
+              <button
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                onClick={() => setDate('')}
+                aria-label="Clear date filter"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           {loading ? (
@@ -170,27 +212,45 @@ const Sessions = () => {
             </Card>
           ) : sessions.length === 0 ? (
             <Card>
-              <CardContent className="py-10 text-center text-gray-500">No available sessions right now.</CardContent>
+              <CardContent className="py-10 text-center text-gray-500">
+                {date ? `No sessions found for ${date}.` : 'No available sessions right now.'}
+              </CardContent>
             </Card>
           ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              {sessions.map((session) => (
-                <SessionCard
-                  key={session.id}
-                  session={session}
-                  isLoggedIn={!!user}
-                  registered={registeredIds.has(session.id)}
-                  toggling={togglingIds.has(session.id)}
-                  canGiveFeedback={!!user && registeredIds.has(session.id)}
-                  onFeedbackClick={() => void openFeedbackDialog(session.id, session.title)}
-                  onToggle={
-                    user
-                      ? () => toggleRegistration(session.id, registeredIds.has(session.id))
-                      : () => handleNotLoggedIn(session.id)
-                  }
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid md:grid-cols-2 gap-4">
+                {sessions.map((session) => (
+                  <SessionCard
+                    key={session.id}
+                    session={session}
+                    isLoggedIn={!!user}
+                    registered={registeredIds.has(session.id)}
+                    toggling={togglingIds.has(session.id)}
+                    canGiveFeedback={!!user && registeredIds.has(session.id)}
+                    onFeedbackClick={() => void openFeedbackDialog(session.id, session.title)}
+                    onToggle={
+                      user
+                        ? () => toggleRegistration(session.id, registeredIds.has(session.id))
+                        : () => handleNotLoggedIn(session.id)
+                    }
+                  />
+                ))}
+              </div>
+
+              {totalPages > 0 && (
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <Button variant="outline" onClick={() => setPage(page - 1)} disabled={!hasPreviousPage}>
+                    Previous
+                  </Button>
+                  <span className="text-sm text-gray-600">
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button variant="outline" onClick={() => setPage(page + 1)} disabled={!hasNextPage}>
+                    Next
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
