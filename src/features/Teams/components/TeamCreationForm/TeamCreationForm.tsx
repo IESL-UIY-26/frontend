@@ -692,21 +692,23 @@ export function TeamCreationForm() {
                           placeholder="Type email to search registered users..."
                           className="h-10 pl-9 pr-9"
                         />
-                        {searchLoading && (
-                          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
-                        )}
-                        {searchQuery && !searchLoading && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              clearSearch();
-                              setShowSearchResults(false);
-                            }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        )}
+                        <div className="absolute inset-y-0 right-3 flex items-center">
+                          {searchLoading && (
+                            <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                          )}
+                          {searchQuery && !searchLoading && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                clearSearch();
+                                setShowSearchResults(false);
+                              }}
+                              className="text-gray-400 hover:text-gray-700"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {/* Results dropdown */}
