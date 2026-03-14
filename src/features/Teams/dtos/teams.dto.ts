@@ -26,7 +26,7 @@ export const teamCreationSchema = z.object({
   leader_iesl_id: z.coerce.number().int().positive('IESL ID must be a positive integer'),
   leader_department: z.string().min(1, 'Department is required'),
   leader_university_id_image: z.string().min(1, 'University ID image URL is required'),
-  members: z.array(memberSchema),
+  members: z.array(memberSchema).min(1, 'You must add at least one other member. A team needs at least 2 members (including you as leader).'),
 });
 
 export type TeamCreationFormValues = z.infer<typeof teamCreationSchema>;

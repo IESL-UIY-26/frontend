@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Menu, X, User, Users } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
+import { UserRole } from '@/features/Auth/enums/auth.enums';
 import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
@@ -19,11 +20,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   
-  const { user } = useAuth();
+  const { user, dbUser, loading: authLoading, signOut } = useAuth();
   const { myTeam } = useTeamStatus();
   const location = useLocation();
-
-  const {signOut} = useAuth();
+  const isAdmin = dbUser?.role === UserRole.ADMIN;
 
   useEffect(() => {
     const handleNavigationStyles = () => {
@@ -107,8 +107,10 @@ const Navbar = () => {
               Sessions
             </Link>
 
-            {user && (
-              myTeam ? (
+            {user && !authLoading && (
+              isAdmin ? (
+                <Link to="/admin" className="btn-primary whitespace-nowrap">Admin Dashboard</Link>
+              ) : myTeam ? (
                 <Link to="/my-team" className="btn-primary inline-flex items-center justify-center gap-2 whitespace-nowrap">
                   My Team
                 </Link>
@@ -227,8 +229,16 @@ const Navbar = () => {
             </div>
           )}
 
-          {user && (
-            myTeam ? (
+          {user && !authLoading && (
+            isAdmin ? (
+              <Link
+                to="/admin"
+                className="btn-primary mt-8 text-center whitespace-nowrap"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin Dashboard
+              </Link>
+            ) : myTeam ? (
               <Link
                 to="/my-team"
                 className="btn-primary mt-8 text-center inline-flex items-center justify-center gap-2"

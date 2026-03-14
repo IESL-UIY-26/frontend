@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { teamCreationSchema, type TeamCreationFormValues } from '../../dtos/teams.dto';
@@ -312,6 +312,25 @@ function MemberCard({
   );
 }
 
+// ─── Draft persistence helpers ────────────────────────────────────────────────
+
+const STORAGE_KEY = 'team_creation_draft';
+
+type StoredDraft = {
+  step?: number;
+  showCoSupervisor?: boolean;
+  values?: TeamCreationFormValues;
+};
+
+function getStoredDraft(): StoredDraft | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as StoredDraft) : null;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function TeamCreationForm() {
@@ -328,13 +347,16 @@ export function TeamCreationForm() {
     submitTeam,
   } = useTeamCreation();
 
-  const [step, setStep] = useState(1);
-  const [showCoSupervisor, setShowCoSupervisor] = useState(false);
+  // Restore draft from sessionStorage (runs once at mount via lazy initializer)
+  const [savedDraft] = useState(getStoredDraft);
+
+  const [step, setStep] = useState(savedDraft?.step ?? 1);
+  const [showCoSupervisor, setShowCoSupervisor] = useState(savedDraft?.showCoSupervisor ?? false);
   const [showSearchResults, setShowSearchResults] = useState(false);
 
   const form = useForm<TeamCreationFormValues>({
     resolver: zodResolver(teamCreationSchema),
-    defaultValues: {
+    defaultValues: savedDraft?.values ?? {
       team_name: '',
       university_id: '',
       supervisor: {
@@ -356,6 +378,25 @@ export function TeamCreationForm() {
     control: form.control,
     name: 'members',
   });
+
+  // Persist form state to sessionStorage so a page refresh restores progress
+  useEffect(() => {
+    // Write immediately when step or showCoSupervisor changes
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+      step,
+      showCoSupervisor,
+      values: form.getValues(),
+    }));
+    // Also subscribe to individual field changes
+    const { unsubscribe } = form.watch((values) => {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+        step,
+        showCoSupervisor,
+        values,
+      }));
+    });
+    return unsubscribe;
+  }, [form, step, showCoSupervisor]);
 
   // ── Step navigation with partial validation ────────────────────────────────
 
@@ -391,6 +432,7 @@ export function TeamCreationForm() {
   // ── Form submit ────────────────────────────────────────────────────────────
 
   const onSubmit = async (values: TeamCreationFormValues) => {
+    sessionStorage.removeItem(STORAGE_KEY);
     await submitTeam(values);
   };
 
@@ -631,7 +673,7 @@ export function TeamCreationForm() {
                     {/* Search box */}
                     <div className="relative">
                       <Label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Search team members by email
+                        Search team members by name or email
                       </Label>
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -647,24 +689,26 @@ export function TeamCreationForm() {
                               e.preventDefault();
                             }
                           }}
-                          placeholder="Type email to search registered users..."
+                          placeholder="Type name or email to search registered users..."
                           className="h-10 pl-9 pr-9"
                         />
-                        {searchLoading && (
-                          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 animate-spin" />
-                        )}
-                        {searchQuery && !searchLoading && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              clearSearch();
-                              setShowSearchResults(false);
-                            }}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        )}
+                        <div className="absolute inset-y-0 right-3 flex items-center">
+                          {searchLoading && (
+                            <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
+                          )}
+                          {searchQuery && !searchLoading && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                clearSearch();
+                                setShowSearchResults(false);
+                              }}
+                              className="text-gray-400 hover:text-gray-700"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {/* Results dropdown */}
@@ -709,7 +753,7 @@ export function TeamCreationForm() {
 
                       {showSearchResults && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0 && (
                         <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-sm text-gray-500">
-                          No registered users found for "{searchQuery}"
+                          No registered users found by name or email for "{searchQuery}"
                         </div>
                       )}
                     </div>
@@ -720,6 +764,13 @@ export function TeamCreationForm() {
                         <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">No members added yet</p>
                         <p className="text-xs">Search by email above to add team members</p>
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                        {((form.formState.errors.members as any)?.message || form.formState.errors.members?.root?.message) && (
+                          <p className="text-xs text-red-500 mt-3 font-medium">
+                            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                            {((form.formState.errors.members as any)?.message as string | undefined) ?? form.formState.errors.members?.root?.message}
+                          </p>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-3">
@@ -778,7 +829,16 @@ export function TeamCreationForm() {
                 <Button
                   type="button"
                   disabled={submitting}
-                  onClick={() => form.handleSubmit(onSubmit)()}
+                  onClick={() => {
+                    if (fields.length === 0) {
+                      form.setError('members', {
+                        type: 'manual',
+                        message: 'You must add at least 1 other member. A team requires at least 2 members (including you as leader).',
+                      });
+                      return;
+                    }
+                    form.handleSubmit(onSubmit)();
+                  }}
                   className="bg-uiy-blue hover:bg-uiy-darkblue text-white flex items-center gap-2 min-w-[140px]"
                 >
                   {submitting ? (
