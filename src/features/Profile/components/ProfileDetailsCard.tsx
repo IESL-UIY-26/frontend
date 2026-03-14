@@ -2,6 +2,13 @@ import { Loader2, UserRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import type { IMyProfile, IMyProfileForm } from '../types/profile.types';
 
@@ -41,7 +48,15 @@ export const ProfileDetailsCard = ({ profile, form, onFormChange, onSave, isSavi
           </div>
           <div className="space-y-1.5">
             <Label>Gender</Label>
-            <Input value={form.gender} onChange={(e) => onFormChange({ ...form, gender: e.target.value })} />
+            <Select onValueChange={(v) => onFormChange({ ...form, gender: v })} value={form.gender}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Male">Male</SelectItem>
+                <SelectItem value="Female">Female</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-1.5">
             <Label>Address</Label>
