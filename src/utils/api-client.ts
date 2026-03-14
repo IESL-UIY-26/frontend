@@ -58,6 +58,19 @@ const api = {
     return res.json() as Promise<{ data: T }>;
   },
 
+  // Send multipart/form-data without forcing JSON content-type.
+  postForm: async <T>(path: string, formData: FormData): Promise<{ data: T }> => {
+    const res = await fetch(`${API_URL}${path}`, {
+      method: 'POST',
+      headers: await buildHeaders(false),
+      body: formData,
+    });
+    if (!res.ok) {
+      await throwApiError(res, 'POST', path);
+    }
+    return res.json() as Promise<{ data: T }>;
+  },
+
   patch: async <T>(path: string, body?: unknown): Promise<{ data: T }> => {
     const res = await fetch(`${API_URL}${path}`, {
       method: 'PATCH',

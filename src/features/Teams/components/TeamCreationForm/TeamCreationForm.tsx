@@ -4,6 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { teamCreationSchema, type TeamCreationFormValues } from '../../dtos/teams.dto';
 import { useTeamCreation } from '../../hooks/use-team-creation';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
+import api from '@/utils/api-client';
+import { toast } from 'sonner';
 import type { IUserSearchResult } from '../../types/teams.types';
 
 import { Button } from '@/components/ui/button';
@@ -198,29 +200,26 @@ function StepIndicator({ current }: { current: number }) {
           <React.Fragment key={step.id}>
             <div className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-                  done
-                    ? 'bg-uiy-blue text-white'
-                    : active
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${done
+                  ? 'bg-uiy-blue text-white'
+                  : active
                     ? 'bg-uiy-blue text-white ring-4 ring-blue-100'
                     : 'bg-gray-100 text-gray-400'
-                }`}
+                  }`}
               >
                 {done ? <CheckCircle2 className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
               </div>
               <span
-                className={`text-xs mt-1 font-medium ${
-                  active ? 'text-uiy-blue' : done ? 'text-uiy-blue' : 'text-gray-400'
-                }`}
+                className={`text-xs mt-1 font-medium ${active ? 'text-uiy-blue' : done ? 'text-uiy-blue' : 'text-gray-400'
+                  }`}
               >
                 {step.label}
               </span>
             </div>
             {idx < STEPS.length - 1 && (
               <div
-                className={`h-0.5 w-12 sm:w-20 mx-1 mt-[-1.25rem] transition-colors duration-200 ${
-                  step.id < current ? 'bg-uiy-blue' : 'bg-gray-200'
-                }`}
+                className={`h-0.5 w-12 sm:w-20 mx-1 mt-[-1.25rem] transition-colors duration-200 ${step.id < current ? 'bg-uiy-blue' : 'bg-gray-200'
+                  }`}
               />
             )}
           </React.Fragment>
@@ -233,14 +232,21 @@ function StepIndicator({ current }: { current: number }) {
 // ─── Member card ──────────────────────────────────────────────────────────────
 
 function MemberCard({
+  memberKey,
   index,
   form,
   onRemove,
+  imageFileId,
+  onImageFileIdChange,
 }: {
+  memberKey: string;
   index: number;
   form: ReturnType<typeof useForm<TeamCreationFormValues>>;
   onRemove: () => void;
+  imageFileId?: string;
+  onImageFileIdChange: (memberKey: string, fileId?: string) => void;
 }) {
+  const [uploading, setUploading] = useState(false);
   const fullName = form.watch(`members.${index}.full_name`);
   const email = form.watch(`members.${index}.email`);
 
@@ -294,20 +300,87 @@ function MemberCard({
             </FormItem>
           )}
         />
-        <FormField
+      </div>
+          <FormField
           control={form.control}
           name={`members.${index}.university_id_image`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs">Uni ID Image URL</FormLabel>
+              <FormLabel className="text-xs">University ID Image</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="https://…" className="h-9 text-sm" />
+                <Input {...field} type="hidden" />
               </FormControl>
+              <div className="flex items-center gap-3 flex-wrap">
+                <input
+                  id={`member-file-${index}`}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    if (!f) return;
+                    setUploading(true);
+                    try {
+                      const fd = new FormData();
+                      fd.append('file', f);
+                      const res = await api.postForm<{ url: string; fileId: string }>('/api/uploads/temp', fd);
+                      if (res.data?.url) {
+                        if (imageFileId && imageFileId !== res.data.fileId) {
+                          try {
+                            await api.delete(`/api/uploads/temp/${encodeURIComponent(imageFileId)}`);
+                          } catch {
+                            // best-effort old temp file cleanup
+                          }
+                        }
+                        field.onChange(res.data.url);
+                        onImageFileIdChange(memberKey, res.data.fileId);
+                      }
+                    } catch (err) {
+                      const message = err instanceof Error ? err.message : 'Failed to upload image';
+                      toast.error(message);
+                    } finally {
+                      setUploading(false);
+                    }
+                  }}
+                />
+
+                <label htmlFor={`member-file-${index}`} className="inline-flex items-center px-2 py-1 bg-uiy-blue/10 text-uiy-blue rounded text-xs cursor-pointer">
+                  {uploading ? 'Uploading…' : 'Upload'}
+                </label>
+
+                {field.value && (
+                  <div className="relative">
+                    <img
+                      src={field.value}
+                      alt={`${fullName} id`}
+                      className="w-32 h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          if (imageFileId) {
+                            await api.delete(`/api/uploads/temp/${encodeURIComponent(imageFileId)}`);
+                          }
+                        } catch (err) {
+                          const message = err instanceof Error ? err.message : 'Failed to delete image';
+                          toast.error(message);
+                        } finally {
+                          field.onChange('');
+                          onImageFileIdChange(memberKey, undefined);
+                        }
+                      }}
+                      className="absolute top-1 right-1 inline-flex items-center justify-center rounded-md border border-red-200 bg-white/95 px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
               <FormMessage className="text-xs" />
             </FormItem>
           )}
         />
-      </div>
     </div>
   );
 }
@@ -353,6 +426,9 @@ export function TeamCreationForm() {
   const [step, setStep] = useState(savedDraft?.step ?? 1);
   const [showCoSupervisor, setShowCoSupervisor] = useState(savedDraft?.showCoSupervisor ?? false);
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [leaderUploading, setLeaderUploading] = useState(false);
+  const [leaderImageFileId, setLeaderImageFileId] = useState<string | undefined>(undefined);
+  const [memberImageFileIds, setMemberImageFileIds] = useState<Record<string, string>>({});
 
   const form = useForm<TeamCreationFormValues>({
     resolver: zodResolver(teamCreationSchema),
@@ -412,6 +488,17 @@ export function TeamCreationForm() {
 
   const goBack = () => setStep((s) => Math.max(s - 1, 1));
 
+  const setMemberImageFileId = (memberKey: string, fileId?: string) => {
+    setMemberImageFileIds((prev) => {
+      if (!fileId) {
+        const next = { ...prev };
+        delete next[memberKey];
+        return next;
+      }
+      return { ...prev, [memberKey]: fileId };
+    });
+  };
+
   // ── Add member from search ─────────────────────────────────────────────────
 
   const addMember = (user: IUserSearchResult) => {
@@ -453,7 +540,7 @@ export function TeamCreationForm() {
         <StepIndicator current={step} />
 
         <Form {...form}>
-          <form 
+          <form
             onSubmit={(e) => e.preventDefault()}
             onKeyDown={(e) => {
               if (e.key === 'Enter') e.preventDefault();
@@ -605,7 +692,7 @@ export function TeamCreationForm() {
                       control={form.control}
                       name="leader_iesl_id"
                       render={({ field }) => (
-                        <FormItem> 
+                        <FormItem>
                           <FormLabel>IESL Member ID</FormLabel>
                           <FormControl>
                             <Input
@@ -636,20 +723,90 @@ export function TeamCreationForm() {
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="leader_university_id_image"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Uni ID Image URL</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="https://…" className="h-10" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+
                   </div>
+
+                  <FormField
+                    control={form.control}
+                    name="leader_university_id_image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>University ID Image</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="hidden" />
+                        </FormControl>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <div className="flex items-center gap-2">
+                            <input
+                              id="leader-file"
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const f = e.target.files?.[0];
+                                if (!f) return;
+                                setLeaderUploading(true);
+                                try {
+                                  const fd = new FormData();
+                                  fd.append('file', f);
+                                  const res = await api.postForm<{ url: string; fileId: string }>('/api/uploads/temp', fd);
+                                  if (res.data?.url) {
+                                    if (leaderImageFileId && leaderImageFileId !== res.data.fileId) {
+                                      try {
+                                        await api.delete(`/api/uploads/temp/${encodeURIComponent(leaderImageFileId)}`);
+                                      } catch {
+                                        // best-effort old temp file cleanup
+                                      }
+                                    }
+                                    field.onChange(res.data.url);
+                                    setLeaderImageFileId(res.data.fileId);
+                                  }
+                                } catch (err) {
+                                  const message = err instanceof Error ? err.message : 'Failed to upload image';
+                                  toast.error(message);
+                                } finally {
+                                  setLeaderUploading(false);
+                                }
+                              }}
+                            />
+                            <label htmlFor="leader-file" className="inline-flex items-center px-2 py-1 bg-uiy-blue/10 text-uiy-blue rounded text-xs cursor-pointer">
+                              {leaderUploading ? 'Uploading…' : 'Upload'}
+                            </label>
+
+                            {field.value && (
+                              <div className="relative">
+                                <img
+                                  src={field.value}
+                                  alt="leader id"
+                                  className="w-32 h-24 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    try {
+                                      if (leaderImageFileId) {
+                                        await api.delete(`/api/uploads/temp/${encodeURIComponent(leaderImageFileId)}`);
+                                      }
+                                    } catch (err) {
+                                      const message = err instanceof Error ? err.message : 'Failed to delete image';
+                                      toast.error(message);
+                                    } finally {
+                                      field.onChange('');
+                                      setLeaderImageFileId(undefined);
+                                    }
+                                  }}
+                                  className="absolute top-1 right-1 inline-flex items-center justify-center rounded-md border border-red-200 bg-white/95 px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -724,11 +881,10 @@ export function TeamCreationForm() {
                                 type="button"
                                 disabled={blocked}
                                 onClick={() => addMember(user)}
-                                className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${
-                                  blocked
-                                    ? 'opacity-50 cursor-not-allowed bg-gray-50'
-                                    : 'hover:bg-blue-50 cursor-pointer'
-                                }`}
+                                className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${blocked
+                                  ? 'opacity-50 cursor-not-allowed bg-gray-50'
+                                  : 'hover:bg-blue-50 cursor-pointer'
+                                  }`}
                               >
                                 <div className="w-8 h-8 rounded-full bg-uiy-blue/10 flex items-center justify-center text-uiy-blue font-semibold text-sm flex-shrink-0">
                                   {user.full_name.charAt(0).toUpperCase()}
@@ -777,9 +933,12 @@ export function TeamCreationForm() {
                         {fields.map((field, index) => (
                           <MemberCard
                             key={field.id}
+                            memberKey={field.id}
                             index={index}
                             form={form}
                             onRemove={() => remove(index)}
+                            imageFileId={memberImageFileIds[field.id]}
+                            onImageFileIdChange={setMemberImageFileId}
                           />
                         ))}
                       </div>
