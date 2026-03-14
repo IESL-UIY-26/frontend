@@ -41,7 +41,7 @@ export const useTeamCreation = () => {
     debounceRef.current = setTimeout(async () => {
       setSearchLoading(true);
       try {
-        const results = await usersAPI.searchByEmail(value);
+        const results = await usersAPI.search(value);
         setSearchResults(results);
       } catch {
         toast.error('User search failed');

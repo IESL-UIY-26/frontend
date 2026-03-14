@@ -673,7 +673,7 @@ export function TeamCreationForm() {
                     {/* Search box */}
                     <div className="relative">
                       <Label className="text-sm font-medium text-gray-700 mb-1 block">
-                        Search team members by email
+                        Search team members by name or email
                       </Label>
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -689,7 +689,7 @@ export function TeamCreationForm() {
                               e.preventDefault();
                             }
                           }}
-                          placeholder="Type email to search registered users..."
+                          placeholder="Type name or email to search registered users..."
                           className="h-10 pl-9 pr-9"
                         />
                         <div className="absolute inset-y-0 right-3 flex items-center">
@@ -753,7 +753,7 @@ export function TeamCreationForm() {
 
                       {showSearchResults && searchQuery.length >= 2 && !searchLoading && searchResults.length === 0 && (
                         <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-sm text-gray-500">
-                          No registered users found for "{searchQuery}"
+                          No registered users found by name or email for "{searchQuery}"
                         </div>
                       )}
                     </div>
