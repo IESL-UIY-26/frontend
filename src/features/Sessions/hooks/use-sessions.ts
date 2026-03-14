@@ -4,23 +4,30 @@ import { toast } from 'sonner';
 import { ApiError } from '@/utils/api-client';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { sessionsAPI } from '../api/sessions.api';
-import type { IMyRegistration } from '../types/sessions.types';
+import type { IGetAvailableSessionsResult, IMyRegistration } from '../types/sessions.types';
 
-export const useSessions = () => {
+export const useSessions = (page: number, date = '') => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
   const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
   const {
-    data: sessions = [],
+    data: sessionsData,
     isLoading: sessionsLoading,
     error: sessionsError,
   } = useQuery({
-    queryKey: ['available-sessions'],
-    queryFn: () => sessionsAPI.getAvailableSessions(),
+    queryKey: ['available-sessions', page, date],
+    queryFn: () =>
+      date ? sessionsAPI.searchSessionsByDate(date, page) : sessionsAPI.getAvailableSessions(page),
     staleTime: 5 * 60 * 1000,
   });
+
+  const sessions = sessionsData?.sessions ?? [];
+  const pagination = sessionsData?.pagination;
+  const totalPages = pagination?.totalPages ?? 0;
+  const hasPreviousPage = page > 1;
+  const hasNextPage = page < totalPages;
 
   const {
     data: myRegistrations = [],
@@ -53,7 +60,11 @@ export const useSessions = () => {
 
   const error = useMemo(() => {
     if (!sessionsError) return null;
-    if (sessionsError instanceof ApiError && sessionsError.status === 404 && sessionsError.path === '/api/sessions/available') {
+    if (
+      sessionsError instanceof ApiError &&
+      sessionsError.status === 404 &&
+      sessionsError.path.startsWith('/api/sessions/available')
+    ) {
       return 'Sessions service is not available right now (endpoint not found). Please contact admin or try again later.';
     }
     return sessionsError instanceof Error ? sessionsError.message : 'Failed to load sessions';
@@ -88,6 +99,9 @@ export const useSessions = () => {
 
   return {
     sessions,
+    totalPages,
+    hasPreviousPage,
+    hasNextPage,
     loading,
     error,
     registeredIds,

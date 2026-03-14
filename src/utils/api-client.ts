@@ -38,6 +38,14 @@ const api = {
     return res.json() as Promise<{ data: T }>;
   },
 
+  getRaw: async <T>(path: string): Promise<T> => {
+    const res = await fetch(`${API_URL}${path}`, { headers: await buildHeaders() });
+    if (!res.ok) {
+      await throwApiError(res, 'GET', path);
+    }
+    return res.json() as Promise<T>;
+  },
+
   post: async <T>(path: string, body?: unknown): Promise<{ data: T }> => {
     const res = await fetch(`${API_URL}${path}`, {
       method: 'POST',
