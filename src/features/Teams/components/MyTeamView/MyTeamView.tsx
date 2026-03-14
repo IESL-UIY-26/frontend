@@ -24,6 +24,7 @@ import {
   Pencil,
   Plus,
   ExternalLink,
+  ImageOff,
 } from 'lucide-react';
 
 function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
@@ -48,6 +49,8 @@ export function MyTeamView() {
   const [projectsError, setProjectsError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [editingProjectId, setEditingProjectId] = React.useState<string | null>(null);
+  const [projectImageUploading, setProjectImageUploading] = React.useState(false);
+  const [projectImageFileId, setProjectImageFileId] = React.useState<string | undefined>(undefined);
   const [projectForm, setProjectForm] = React.useState({
     title: '',
     description: '',
@@ -73,6 +76,7 @@ export function MyTeamView() {
       pdf: '',
       github_url: '',
     });
+    setProjectImageFileId(undefined);
     setEditingProjectId(null);
   };
 
@@ -158,6 +162,7 @@ export function MyTeamView() {
       pdf: project.pdf ?? '',
       github_url: project.github_url ?? '',
     });
+    setProjectImageFileId(undefined);
   };
 
   if (authLoading || teamLoading) {
@@ -339,6 +344,23 @@ export function MyTeamView() {
                           </Button>
                         )}
                       </div>
+
+                      <div className="overflow-hidden rounded-lg border border-gray-200 bg-gray-100">
+                        {project.image_url ? (
+                          <img
+                            src={project.image_url}
+                            alt={`${project.title} preview`}
+                            className="h-64 w-full object-cover"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="h-64 w-full flex flex-col items-center justify-center gap-2 text-gray-500 bg-gradient-to-b from-gray-50 to-gray-100">
+                            <ImageOff className="w-5 h-5 text-gray-400" />
+                            <span className="text-xs font-medium">No image available</span>
+                          </div>
+                        )}
+                      </div>
+
                       {project.description && (
                         <p className="text-xs text-gray-600">{project.description}</p>
                       )}
@@ -401,8 +423,89 @@ export function MyTeamView() {
                       <Input
                         placeholder="Image URL"
                         value={projectForm.image_url}
-                        onChange={(e) => setProjectForm((prev) => ({ ...prev, image_url: e.target.value }))}
+                        readOnly
+                        className="hidden"
                       />
+
+                      <div className="space-y-2">
+                        <p className="text-xs text-gray-600">Project image</p>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <input
+                            id="project-image-file"
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const f = e.target.files?.[0];
+                              if (!f || !myTeam?.id) return;
+
+                              setProjectImageUploading(true);
+                              try {
+                                const res = await projectsAPI.uploadProjectImage(myTeam.id, f);
+
+                                if (res?.url) {
+                                  if (projectImageFileId && projectImageFileId !== res.fileId) {
+                                    try {
+                                      await projectsAPI.deleteUploadedFile(projectImageFileId);
+                                    } catch {
+                                      // best effort cleanup of previous temp image
+                                    }
+                                  }
+
+                                  setProjectForm((prev) => ({ ...prev, image_url: res.url }));
+                                  setProjectImageFileId(res.fileId);
+                                }
+                              } catch (err) {
+                                toast({
+                                  title: 'Project image upload failed',
+                                  description: err instanceof Error ? err.message : 'Please try again',
+                                });
+                              } finally {
+                                setProjectImageUploading(false);
+                                e.currentTarget.value = '';
+                              }
+                            }}
+                          />
+
+                          <label
+                            htmlFor="project-image-file"
+                            className="inline-flex cursor-pointer items-center rounded-md bg-uiy-blue/10 px-3 py-2 text-xs font-medium text-uiy-blue"
+                          >
+                            {projectImageUploading ? 'Uploading...' : 'Upload image'}
+                          </label>
+
+                          {projectForm.image_url && (
+                            <div className="relative">
+                              <img
+                                src={projectForm.image_url}
+                                alt="project preview"
+                                className="w-40 h-28 rounded-lg border border-gray-200 object-cover shadow-sm"
+                              />
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  try {
+                                    if (projectImageFileId) {
+                                      await projectsAPI.deleteUploadedFile(projectImageFileId);
+                                    }
+                                  } catch (err) {
+                                    toast({
+                                      title: 'Image delete failed',
+                                      description: err instanceof Error ? err.message : 'Please try again',
+                                    });
+                                  } finally {
+                                    setProjectForm((prev) => ({ ...prev, image_url: '' }));
+                                    setProjectImageFileId(undefined);
+                                  }
+                                }}
+                                className="absolute right-1 top-1 rounded-md border border-red-200 bg-white/95 px-2 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       <div className="flex gap-2">
                         <Button type="submit" size="sm" disabled={submitting} className="whitespace-nowrap">
                           {submitting ? 'Saving...' : editingProjectId ? 'Update' : 'Create'}

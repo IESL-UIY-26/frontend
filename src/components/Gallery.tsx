@@ -88,7 +88,7 @@ const Gallery = () => {
                               href={src}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-uiy-accent flex items-center gap-1 text-sm mt-2"
+                              className="text-white flex items-center gap-1 text-sm mt-2"
                             >
                               <span>View full size</span>
                               <ExternalLink className="w-3 h-3" />

@@ -40,6 +40,18 @@ export const projectsAPI = {
     return response.data;
   },
 
+  uploadProjectImage: async (teamId: string, file: File): Promise<{ url: string; fileId: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('teamId', teamId);
+    const response = await api.postForm<{ url: string; fileId: string }>('/api/uploads/project-image', formData);
+    return response.data;
+  },
+
+  deleteUploadedFile: async (fileId: string): Promise<void> => {
+    await api.delete(`/api/uploads/temp/${encodeURIComponent(fileId)}`);
+  },
+
   createVote: async (projectId: string): Promise<void> => {
     await api.post(`/api/projects/${projectId}/vote`);
   },
