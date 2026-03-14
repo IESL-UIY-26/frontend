@@ -62,6 +62,8 @@ export function MyTeamView() {
     myTeam?.members.some((m) => m.user_id === user.id && m.role === 'LEADER')
   );
 
+  const hasProject = projects.length > 0;
+
   const resetProjectForm = () => {
     setProjectForm({
       title: '',
@@ -113,6 +115,14 @@ export function MyTeamView() {
     if (!payload.title) {
       toast({
         title: 'Project title is required',
+      });
+      return;
+    }
+
+    if (!editingProjectId && hasProject) {
+      toast({
+        title: 'A team can only have one project',
+        description: 'Edit the existing project instead of creating a new one.',
       });
       return;
     }
@@ -185,8 +195,8 @@ export function MyTeamView() {
   const regularMembers = myTeam.members.filter((m) => m.role === 'MEMBER');
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-6">
+    <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4 ">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <div className="text-center lg:text-left">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-uiy-blue/10 mb-4">
@@ -300,73 +310,15 @@ export function MyTeamView() {
               </CardContent>
             </Card>
           )}
-        </div>
 
-        <aside className="space-y-4">
           <Card className="shadow-sm lg:sticky lg:top-28">
             <CardHeader>
               <CardTitle className="text-base flex items-center gap-2">
                 <FolderOpen className="w-4 h-4 text-uiy-blue" />
-                Team Projects
-                <Badge variant="secondary" className="ml-auto text-xs">{projects.length}</Badge>
+                Project Details
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {isLeader && (
-                <form onSubmit={submitProject} className="space-y-3 border rounded-lg p-3 bg-gray-50">
-                  <p className="text-sm font-medium text-gray-800 flex items-center gap-2">
-                    {editingProjectId ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-                    {editingProjectId ? 'Edit Project' : 'Add Project'}
-                  </p>
-                  <Input
-                    placeholder="Project title"
-                    value={projectForm.title}
-                    onChange={(e) => setProjectForm((prev) => ({ ...prev, title: e.target.value }))}
-                    required
-                  />
-                  <Textarea
-                    placeholder="Project description"
-                    value={projectForm.description}
-                    onChange={(e) => setProjectForm((prev) => ({ ...prev, description: e.target.value }))}
-                  />
-                  <Input
-                    placeholder="GitHub URL"
-                    value={projectForm.github_url}
-                    onChange={(e) => setProjectForm((prev) => ({ ...prev, github_url: e.target.value }))}
-                  />
-                  <Input
-                    placeholder="YouTube URL"
-                    value={projectForm.youtube_link}
-                    onChange={(e) => setProjectForm((prev) => ({ ...prev, youtube_link: e.target.value }))}
-                  />
-                  <Input
-                    placeholder="PDF URL"
-                    value={projectForm.pdf}
-                    onChange={(e) => setProjectForm((prev) => ({ ...prev, pdf: e.target.value }))}
-                  />
-                  <Input
-                    placeholder="Image URL"
-                    value={projectForm.image_url}
-                    onChange={(e) => setProjectForm((prev) => ({ ...prev, image_url: e.target.value }))}
-                  />
-                  <div className="flex gap-2">
-                    <Button type="submit" size="sm" disabled={submitting} className="whitespace-nowrap">
-                      {submitting ? 'Saving...' : editingProjectId ? 'Update' : 'Create'}
-                    </Button>
-                    {editingProjectId && (
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={resetProjectForm}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                  </div>
-                </form>
-              )}
-
               {projectsLoading ? (
                 <div className="py-6 flex items-center justify-center">
                   <Loader2 className="w-5 h-5 animate-spin text-uiy-blue" />
@@ -374,7 +326,7 @@ export function MyTeamView() {
               ) : projectsError ? (
                 <p className="text-sm text-red-600">{projectsError}</p>
               ) : projects.length === 0 ? (
-                <p className="text-sm text-gray-500">No projects uploaded yet.</p>
+                <p className="text-sm text-gray-500">No project uploaded yet.</p>
               ) : (
                 <div className="space-y-3">
                   {projects.map((project) => (
@@ -382,14 +334,8 @@ export function MyTeamView() {
                       <div className="flex items-start justify-between gap-2">
                         <p className="font-medium text-gray-900 text-sm">{project.title}</p>
                         {isLeader && (
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            className="h-7 px-2"
-                            onClick={() => startEdit(project)}
-                          >
-                            <Pencil className="w-3 h-3" />
+                          <Button size="sm" onClick={() => startEdit(projects[0])}>
+                            Edit project
                           </Button>
                         )}
                       </div>
@@ -417,9 +363,72 @@ export function MyTeamView() {
                   ))}
                 </div>
               )}
+
+              {isLeader && (
+                <>
+                  {(!hasProject || editingProjectId) ? (
+                    <form onSubmit={submitProject} className="space-y-3 border rounded-lg p-3 bg-gray-50">
+                      <p className="text-sm font-medium text-gray-800 flex items-center gap-2">
+                        {editingProjectId ? <Pencil className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                        {editingProjectId ? 'Edit Project' : 'Add Project'}
+                      </p>
+                      <Input
+                        placeholder="Project title"
+                        value={projectForm.title}
+                        onChange={(e) => setProjectForm((prev) => ({ ...prev, title: e.target.value }))}
+                        required
+                      />
+                      <Textarea
+                        placeholder="Project description"
+                        value={projectForm.description}
+                        onChange={(e) => setProjectForm((prev) => ({ ...prev, description: e.target.value }))}
+                      />
+                      <Input
+                        placeholder="GitHub URL"
+                        value={projectForm.github_url}
+                        onChange={(e) => setProjectForm((prev) => ({ ...prev, github_url: e.target.value }))}
+                      />
+                      <Input
+                        placeholder="YouTube URL"
+                        value={projectForm.youtube_link}
+                        onChange={(e) => setProjectForm((prev) => ({ ...prev, youtube_link: e.target.value }))}
+                      />
+                      <Input
+                        placeholder="PDF URL"
+                        value={projectForm.pdf}
+                        onChange={(e) => setProjectForm((prev) => ({ ...prev, pdf: e.target.value }))}
+                      />
+                      <Input
+                        placeholder="Image URL"
+                        value={projectForm.image_url}
+                        onChange={(e) => setProjectForm((prev) => ({ ...prev, image_url: e.target.value }))}
+                      />
+                      <div className="flex gap-2">
+                        <Button type="submit" size="sm" disabled={submitting} className="whitespace-nowrap">
+                          {submitting ? 'Saving...' : editingProjectId ? 'Update' : 'Create'}
+                        </Button>
+                        {editingProjectId && (
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={resetProjectForm}
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
+                    </form>
+                  ) : (
+                    <div></div>
+                  )}
+                </>
+              )}
+
+
             </CardContent>
           </Card>
-        </aside>
+        </div>
       </div>
     </div>
   );
