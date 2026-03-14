@@ -7,7 +7,7 @@ import { UserRole } from '../enums/auth.enums';
 export const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { loading, dbUser } = useAuth();
 
-  if (loading) {
+  if (loading && !dbUser) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-uiy-darkblue via-uiy-blue to-uiy-accent">
         <Loader2 className="h-10 w-10 animate-spin text-white" />

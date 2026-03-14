@@ -24,6 +24,8 @@ const Navbar = () => {
   const { myTeam } = useTeamStatus();
   const location = useLocation();
   const isAdmin = dbUser?.role === UserRole.ADMIN;
+  // Show buttons immediately if we have user data, even if auth is still loading (from cache)
+  const showAuthButtons = user !== null && dbUser !== null;
 
   useEffect(() => {
     const handleNavigationStyles = () => {
@@ -107,7 +109,7 @@ const Navbar = () => {
               Sessions
             </Link>
 
-            {user && !authLoading && (
+            {user && showAuthButtons && (
               isAdmin ? (
                 <Link to="/admin" className="btn-primary whitespace-nowrap">Admin Dashboard</Link>
               ) : myTeam ? (
@@ -229,7 +231,7 @@ const Navbar = () => {
             </div>
           )}
 
-          {user && !authLoading && (
+          {user && showAuthButtons && (
             isAdmin ? (
               <Link
                 to="/admin"

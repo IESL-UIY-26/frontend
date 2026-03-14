@@ -120,7 +120,7 @@ export const useMyProfile = () => {
     }
   };
 
-  const loading = authLoading || profileLoading || registrationsLoading;
+  const loading = authLoading || (profileLoading && !profile) || (registrationsLoading && myRegistrations.length === 0);
   const isSaving = updateProfileMutation.isPending;
 
   return {

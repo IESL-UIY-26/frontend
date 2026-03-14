@@ -8,8 +8,9 @@ import { UserRole } from '@/features/Auth/enums/auth.enums';
 
 const Hero = () => {
   const { myTeam } = useTeamStatus();
-  const { user, dbUser } = useAuth();
+  const { user, dbUser, loading } = useAuth();
   const isAdmin = dbUser?.role === UserRole.ADMIN;
+  const authReady = !loading;
 
   return (
     <section id="home" className="min-h-screen relative flex items-center overflow-hidden">
@@ -50,7 +51,7 @@ const Hero = () => {
               Learn More
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
-            {user && (
+            {user && authReady && (
               isAdmin ? (
                 <Link to="/admin" className="btn-outline bg-transparent text-white border-white hover:bg-white hover:text-uiy-dark flex items-center justify-center whitespace-nowrap">
                   Admin Dashboard
