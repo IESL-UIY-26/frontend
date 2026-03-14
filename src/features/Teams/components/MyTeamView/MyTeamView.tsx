@@ -59,7 +59,6 @@ export function MyTeamView() {
   const [projectsLoading, setProjectsLoading] = React.useState(false);
   const [projectsError, setProjectsError] = React.useState<string | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
-  const [isEditingTeam, setIsEditingTeam] = React.useState(false);
   const [savingTeam, setSavingTeam] = React.useState(false);
   const [teamNameDraft, setTeamNameDraft] = React.useState('');
   const [universityIdDraft, setUniversityIdDraft] = React.useState('');
@@ -163,34 +162,6 @@ export function MyTeamView() {
       .finally(() => setUniversitiesLoading(false));
   }, [toast]);
 
-  const cancelTeamEdit = () => {
-    setTeamNameDraft(myTeam?.team_name ?? '');
-    setUniversityIdDraft(myTeam?.university_id ?? '');
-    setSupervisorDraft({
-      supervisor_name: myTeam?.supervisor?.supervisor_name ?? '',
-      supervisor_email: myTeam?.supervisor?.supervisor_email ?? '',
-      supervisor_contact_number: myTeam?.supervisor?.supervisor_contact_number ?? '',
-    });
-    setHasCoSupervisorDraft(!!myTeam?.coSupervisor);
-    setCoSupervisorDraft({
-      supervisor_name: myTeam?.coSupervisor?.supervisor_name ?? '',
-      supervisor_email: myTeam?.coSupervisor?.supervisor_email ?? '',
-      supervisor_contact_number: myTeam?.coSupervisor?.supervisor_contact_number ?? '',
-    });
-
-    const mappedDrafts: Record<string, MemberDraft> = {};
-    myTeam?.members.forEach((member) => {
-      mappedDrafts[member.id] = {
-        iesl_id: member.iesl_id ? String(member.iesl_id) : '',
-        department: member.department ?? '',
-        university_id_image: member.university_id_image ?? '',
-      };
-    });
-    setMemberDrafts(mappedDrafts);
-
-    setIsEditingTeam(false);
-  };
-
   const updateMemberDraft = (memberId: string, field: keyof MemberDraft, value: string) => {
     setMemberDrafts((prev) => ({
       ...prev,
@@ -279,7 +250,6 @@ export function MyTeamView() {
         }),
       });
       await refreshMyTeam();
-      setIsEditingTeam(false);
       toast({ title: 'Team details updated successfully' });
     } catch (err) {
       toast({
@@ -398,14 +368,16 @@ export function MyTeamView() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-uiy-blue/10 mb-4">
               <Users className="w-8 h-8 text-uiy-blue" />
             </div>
-            {isEditingTeam && isLeader ? (
+            {isLeader ? (
               <div className="space-y-3 max-w-xl">
+                <p className="text-xs font-medium text-gray-600">Team Name</p>
                 <Input
                   value={teamNameDraft}
                   onChange={(e) => setTeamNameDraft(e.target.value)}
-                  placeholder="Team name"
+                  placeholder="Team name (e.g. Innovators 2026)"
                   disabled={savingTeam}
                 />
+                <p className="text-xs font-medium text-gray-600">University</p>
                 <select
                   value={universityIdDraft}
                   onChange={(e) => setUniversityIdDraft(e.target.value)}
@@ -424,18 +396,6 @@ export function MyTeamView() {
               <>
                 <div className="flex items-center gap-3 justify-center lg:justify-start">
                   <h1 className="text-3xl font-display font-bold text-gray-900">{myTeam.team_name}</h1>
-                  {isLeader && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditingTeam(true)}
-                      className="gap-1"
-                    >
-                      <Pencil className="w-4 h-4" />
-                      Edit Team
-                    </Button>
-                  )}
                 </div>
                 <div className="flex items-center justify-center lg:justify-start gap-2 mt-2">
                   <GraduationCap className="w-4 h-4 text-gray-400" />
@@ -461,32 +421,40 @@ export function MyTeamView() {
                   <div className="w-12 h-12 rounded-full bg-uiy-blue flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                     {leader.user.full_name.charAt(0).toUpperCase()}
                   </div>
-                  {isEditingTeam && isLeader ? (
+                  {isLeader ? (
                     <div className="flex-1 grid sm:grid-cols-2 gap-3">
                       <InfoRow icon={<User className="w-4 h-4" />} label="Name" value={leader.user.full_name} />
                       <InfoRow icon={<Mail className="w-4 h-4" />} label="Email" value={leader.user.email} />
-                      <Input
-                        type="number"
-                        value={memberDrafts[leader.id]?.iesl_id ?? ''}
-                        onChange={(e) => updateMemberDraft(leader.id, 'iesl_id', e.target.value)}
-                        placeholder="Leader IESL ID"
-                        disabled={savingTeam}
-                      />
-                      <Input
-                        value={memberDrafts[leader.id]?.department ?? ''}
-                        onChange={(e) => updateMemberDraft(leader.id, 'department', e.target.value)}
-                        placeholder="Leader department"
-                        disabled={savingTeam}
-                      />
-                      <Input
-                        value={memberDrafts[leader.id]?.university_id_image ?? ''}
-                        onChange={(e) =>
-                          updateMemberDraft(leader.id, 'university_id_image', e.target.value)
-                        }
-                        placeholder="Leader university ID image URL"
-                        disabled={savingTeam}
-                        className="sm:col-span-2"
-                      />
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-gray-600">IESL Member ID</p>
+                        <Input
+                          type="number"
+                          value={memberDrafts[leader.id]?.iesl_id ?? ''}
+                          onChange={(e) => updateMemberDraft(leader.id, 'iesl_id', e.target.value)}
+                          placeholder="Leader IESL Member ID (e.g. 12345)"
+                          disabled={savingTeam}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-xs font-medium text-gray-600">Department</p>
+                        <Input
+                          value={memberDrafts[leader.id]?.department ?? ''}
+                          onChange={(e) => updateMemberDraft(leader.id, 'department', e.target.value)}
+                          placeholder="Leader department (e.g. Electrical Engineering)"
+                          disabled={savingTeam}
+                        />
+                      </div>
+                      <div className="space-y-1 sm:col-span-2">
+                        <p className="text-xs font-medium text-gray-600">University ID Image URL</p>
+                        <Input
+                          value={memberDrafts[leader.id]?.university_id_image ?? ''}
+                          onChange={(e) =>
+                            updateMemberDraft(leader.id, 'university_id_image', e.target.value)
+                          }
+                          placeholder="Leader university ID image URL (https://...)"
+                          disabled={savingTeam}
+                        />
+                      </div>
                     </div>
                   ) : (
                     <div className="flex-1 grid sm:grid-cols-2 gap-2">
@@ -522,32 +490,40 @@ export function MyTeamView() {
                       <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-semibold flex-shrink-0">
                         {member.user.full_name.charAt(0).toUpperCase()}
                       </div>
-                      {isEditingTeam && isLeader ? (
+                      {isLeader ? (
                         <div className="flex-1 grid sm:grid-cols-2 gap-3">
                           <InfoRow icon={<User className="w-4 h-4" />} label="Name" value={member.user.full_name} />
                           <InfoRow icon={<Mail className="w-4 h-4" />} label="Email" value={member.user.email} />
-                          <Input
-                            type="number"
-                            value={memberDrafts[member.id]?.iesl_id ?? ''}
-                            onChange={(e) => updateMemberDraft(member.id, 'iesl_id', e.target.value)}
-                            placeholder="IESL ID"
-                            disabled={savingTeam}
-                          />
-                          <Input
-                            value={memberDrafts[member.id]?.department ?? ''}
-                            onChange={(e) => updateMemberDraft(member.id, 'department', e.target.value)}
-                            placeholder="Department"
-                            disabled={savingTeam}
-                          />
-                          <Input
-                            value={memberDrafts[member.id]?.university_id_image ?? ''}
-                            onChange={(e) =>
-                              updateMemberDraft(member.id, 'university_id_image', e.target.value)
-                            }
-                            placeholder="University ID image URL"
-                            disabled={savingTeam}
-                            className="sm:col-span-2"
-                          />
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-gray-600">IESL Member ID</p>
+                            <Input
+                              type="number"
+                              value={memberDrafts[member.id]?.iesl_id ?? ''}
+                              onChange={(e) => updateMemberDraft(member.id, 'iesl_id', e.target.value)}
+                              placeholder="Member IESL Member ID (e.g. 67890)"
+                              disabled={savingTeam}
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-xs font-medium text-gray-600">Department</p>
+                            <Input
+                              value={memberDrafts[member.id]?.department ?? ''}
+                              onChange={(e) => updateMemberDraft(member.id, 'department', e.target.value)}
+                              placeholder="Member department (e.g. Computer Engineering)"
+                              disabled={savingTeam}
+                            />
+                          </div>
+                          <div className="space-y-1 sm:col-span-2">
+                            <p className="text-xs font-medium text-gray-600">University ID Image URL</p>
+                            <Input
+                              value={memberDrafts[member.id]?.university_id_image ?? ''}
+                              onChange={(e) =>
+                                updateMemberDraft(member.id, 'university_id_image', e.target.value)
+                              }
+                              placeholder="Member university ID image URL (https://...)"
+                              disabled={savingTeam}
+                            />
+                          </div>
                         </div>
                       ) : (
                         <div className="flex-1 grid sm:grid-cols-2 gap-2">
@@ -577,14 +553,16 @@ export function MyTeamView() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {isEditingTeam && isLeader ? (
+                {isLeader ? (
                   <div className="grid sm:grid-cols-2 gap-3">
+                    <p className="text-xs font-medium text-gray-600 sm:col-span-1">Supervisor Name</p>
+                    <p className="text-xs font-medium text-gray-600 sm:col-span-1">Supervisor Email</p>
                     <Input
                       value={supervisorDraft.supervisor_name}
                       onChange={(e) =>
                         setSupervisorDraft((prev) => ({ ...prev, supervisor_name: e.target.value }))
                       }
-                      placeholder="Supervisor name"
+                      placeholder="Supervisor full name (e.g. Dr. Jane Smith)"
                       disabled={savingTeam}
                     />
                     <Input
@@ -592,16 +570,17 @@ export function MyTeamView() {
                       onChange={(e) =>
                         setSupervisorDraft((prev) => ({ ...prev, supervisor_email: e.target.value }))
                       }
-                      placeholder="Supervisor email"
+                      placeholder="Supervisor email (e.g. supervisor@university.edu)"
                       type="email"
                       disabled={savingTeam}
                     />
+                    <p className="text-xs font-medium text-gray-600 sm:col-span-2">Supervisor Contact Number</p>
                     <Input
                       value={supervisorDraft.supervisor_contact_number}
                       onChange={(e) =>
                         setSupervisorDraft((prev) => ({ ...prev, supervisor_contact_number: e.target.value }))
                       }
-                      placeholder="Supervisor contact"
+                      placeholder="Supervisor contact number (e.g. +94 77 123 4567)"
                       disabled={savingTeam}
                     />
                   </div>
@@ -616,7 +595,7 @@ export function MyTeamView() {
             </Card>
           )}
 
-          {(myTeam.coSupervisor || (isEditingTeam && isLeader)) && (
+          {(myTeam.coSupervisor || isLeader) && (
             <Card className="shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -626,7 +605,7 @@ export function MyTeamView() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {isEditingTeam && isLeader ? (
+                {isLeader ? (
                   <div className="space-y-3">
                     <Button
                       type="button"
@@ -640,12 +619,14 @@ export function MyTeamView() {
 
                     {hasCoSupervisorDraft && (
                       <div className="grid sm:grid-cols-2 gap-3">
+                        <p className="text-xs font-medium text-gray-600 sm:col-span-1">Co-Supervisor Name</p>
+                        <p className="text-xs font-medium text-gray-600 sm:col-span-1">Co-Supervisor Email</p>
                         <Input
                           value={coSupervisorDraft.supervisor_name}
                           onChange={(e) =>
                             setCoSupervisorDraft((prev) => ({ ...prev, supervisor_name: e.target.value }))
                           }
-                          placeholder="Co-supervisor name"
+                          placeholder="Co-supervisor full name (e.g. Dr. John Doe)"
                           disabled={savingTeam}
                         />
                         <Input
@@ -653,16 +634,17 @@ export function MyTeamView() {
                           onChange={(e) =>
                             setCoSupervisorDraft((prev) => ({ ...prev, supervisor_email: e.target.value }))
                           }
-                          placeholder="Co-supervisor email"
+                          placeholder="Co-supervisor email (e.g. cosupervisor@university.edu)"
                           type="email"
                           disabled={savingTeam}
                         />
+                        <p className="text-xs font-medium text-gray-600 sm:col-span-2">Co-Supervisor Contact Number</p>
                         <Input
                           value={coSupervisorDraft.supervisor_contact_number}
                           onChange={(e) =>
                             setCoSupervisorDraft((prev) => ({ ...prev, supervisor_contact_number: e.target.value }))
                           }
-                          placeholder="Co-supervisor contact"
+                          placeholder="Co-supervisor contact number (e.g. +94 71 234 5678)"
                           disabled={savingTeam}
                         />
                       </div>
@@ -681,16 +663,8 @@ export function MyTeamView() {
             </Card>
           )}
 
-          {isEditingTeam && isLeader && (
-            <div className="flex items-center justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={cancelTeamEdit}
-                disabled={savingTeam}
-              >
-                Cancel
-              </Button>
+          {isLeader && (
+            <div className="flex items-center justify-end">
               <Button
                 type="button"
                 onClick={saveTeamDetails}
