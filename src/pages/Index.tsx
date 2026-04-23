@@ -1,19 +1,16 @@
-
-import React, { useEffect } from 'react';
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import About from '@/components/About';
-import Eligibility from '@/components/Eligibility';
-import Process from '@/components/Process';
-import Awards from '@/components/Awards';
-import Gallery from '@/components/Gallery';
-import FAQ from '@/components/FAQ';
-import ApplyNow from '@/components/ApplyNow';
-import Footer from '@/components/Footer';
-import ScrollToTop from '@/components/ScrollToTop';
-import Banner from '@/components/Banner';
-
-
+import React, { useEffect } from 'react'
+import Navbar from '@/components/Navbar'
+import Hero from '@/components/Hero'
+import About from '@/components/About'
+import Eligibility from '@/components/Eligibility'
+import Process from '@/components/Process'
+import Awards from '@/components/Awards'
+import Gallery from '@/components/Gallery'
+import FAQ from '@/components/FAQ'
+import ApplyNow from '@/components/ApplyNow'
+import Footer from '@/components/Footer'
+import ScrollToTop from '@/components/ScrollToTop'
+import Banner from '@/components/Banner'
 
 const Index = () => {
   useEffect(() => {
@@ -22,29 +19,29 @@ const Index = () => {
       root: null,
       rootMargin: '0px',
       threshold: 0.1,
-    };
+    }
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
+          entry.target.classList.add('is-visible')
         }
-      });
-    }, observerOptions);
+      })
+    }, observerOptions)
 
-    const revealElements = document.querySelectorAll('.reveal-animation');
-    revealElements.forEach((element) => observer.observe(element));
+    const revealElements = document.querySelectorAll('.reveal-animation')
+    revealElements.forEach((element) => observer.observe(element))
 
     return () => {
-      revealElements.forEach((element) => observer.unobserve(element));
-    };
-  }, []);
+      revealElements.forEach((element) => observer.unobserve(element))
+    }
+  }, [])
 
   return (
     <div className="min-h-screen w-full">
       <Navbar />
       <Hero />
-      <Banner />
+      {/* <Banner /> */}
       <About />
       <Eligibility />
       <Process />
@@ -55,7 +52,7 @@ const Index = () => {
       <Footer />
       <ScrollToTop />
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

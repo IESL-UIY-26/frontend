@@ -1,45 +1,56 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Calendar, File, ArrowRight, Download, Users } from 'lucide-react';
-import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext';
-import { useAuth } from '@/features/Auth/hooks/use-auth';
-import type { IMyTeam } from '@/features/Teams/types/teams.types';
+import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Calendar, File, ArrowRight, Download, Users } from 'lucide-react'
+import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
+import { useAuth } from '@/features/Auth/hooks/use-auth'
+import type { IMyTeam } from '@/features/Teams/types/teams.types'
 
-const StartApplicationButton: React.FC<{ myTeam: IMyTeam | null }> = ({ myTeam }) => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+const StartApplicationButton: React.FC<{ myTeam: IMyTeam | null }> = ({
+  myTeam,
+}) => {
+  const { user } = useAuth()
+  const navigate = useNavigate()
 
   const handleClick = () => {
     if (!user) {
-      navigate('/login');
-      return;
+      navigate('/login')
+      return
     }
     if (myTeam) {
-      navigate('/my-team');
-      return;
+      navigate('/my-team')
+      return
     }
-    navigate('/create-team');
-  };
+    navigate('/create-team')
+  }
 
   return (
-    <button type="button" onClick={handleClick} className="mt-8 btn-primary inline-flex items-center gap-2 group">
+    <button
+      type="button"
+      onClick={handleClick}
+      className="mt-8 btn-primary inline-flex items-center gap-2 group"
+    >
       Start Your Application
       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
     </button>
-  );
-};
+  )
+}
 
 const ApplyNow = () => {
-  const { myTeam } = useTeamStatus();
+  const { myTeam } = useTeamStatus()
 
   return (
     <section id="apply" className="py-24 bg-uiy-gray">
       <div className="section-container">
         <div className="max-w-3xl mx-auto text-center mb-16 reveal-animation">
-          <p className="text-sm font-semibold text-uiy-blue uppercase tracking-wider mb-3">Get Started</p>
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Ready to Apply?</h2>
+          <p className="text-sm font-semibold text-uiy-blue uppercase tracking-wider mb-3">
+            Get Started
+          </p>
+          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+            Ready to Apply?
+          </h2>
           <p className="text-lg text-gray-600">
-            Follow these steps to start your journey in the UIY 2026 competition and showcase your innovative engineering solution.
+            Follow these steps to start your journey in the UIY 2026 competition
+            and showcase your innovative engineering solution.
           </p>
         </div>
 
@@ -50,7 +61,7 @@ const ApplyNow = () => {
                 <h3 className="text-2xl font-bold">Application Checklist</h3>
                 <div className="flex flex-wrap gap-2">
                   <a
-                    href="https://uiy.iesl.lk/documents/UIY_Genaral_Instruction_2026_final.pdf"
+                    href="/documents/UIY_Genaral_Instruction_2026.docx"
                     className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -67,8 +78,13 @@ const ApplyNow = () => {
                     <span className="font-bold text-uiy-blue">1</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Verify Your Eligibility</h4>
-                    <p className="text-gray-600">Confirm you're an engineering registered undergraduate at one of the eligible universities.</p>
+                    <h4 className="font-semibold mb-1">
+                      Verify Your Eligibility
+                    </h4>
+                    <p className="text-gray-600">
+                      Confirm you're an engineering registered undergraduate at
+                      one of the eligible universities.
+                    </p>
                   </div>
                 </div>
                 {/*                 
@@ -87,8 +103,13 @@ const ApplyNow = () => {
                     <span className="font-bold text-uiy-blue">2</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Prepare Your Documents</h4>
-                    <p className="text-gray-600">Create your application, brief project report, and get the declaration letter.</p>
+                    <h4 className="font-semibold mb-1">
+                      Prepare Your Documents
+                    </h4>
+                    <p className="text-gray-600">
+                      Create your application, brief project report, and get the
+                      declaration letter.
+                    </p>
                     <div className="mt-2 flex flex-col gap-2">
                       <div className="flex items-center gap-2 text-gray-600">
                         <File className="w-4 h-4 text-uiy-blue" />
@@ -105,17 +126,19 @@ const ApplyNow = () => {
                     </div>
 
                     <div className="mt-4 space-y-2">
-                      <p className="text-sm font-medium text-gray-700">Download required documents:</p>
+                      <p className="text-sm font-medium text-gray-700">
+                        Download required documents:
+                      </p>
                       <div className="flex flex-wrap gap-2">
                         <a
-                          href="https://uiy.iesl.lk/documents/uiy-reoport-temp.doc"
+                          href="/documents/UIY_Report_temp.doc"
                           className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
                         >
                           <Download className="w-3 h-3" />
                           UIY Report Template
                         </a>
                         <a
-                          href="https://uiy.iesl.lk/documents/Declaration_Letter.docx"
+                          href="/documents/Declaration_Letter.docx"
                           className="inline-flex items-center gap-1 px-3 py-2 text-xs bg-uiy-blue text-white rounded-md hover:bg-uiy-darkblue transition-colors"
                         >
                           <Download className="w-3 h-3" />
@@ -123,7 +146,6 @@ const ApplyNow = () => {
                         </a>
                       </div>
                     </div>
-
                   </div>
                 </div>
 
@@ -132,11 +154,15 @@ const ApplyNow = () => {
                     <span className="font-bold text-uiy-blue">3</span>
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Submit Your Application</h4>
-                    <p className="text-gray-600">Submit all documents via the UIY website before August 24, 2026.</p>
+                    <h4 className="font-semibold mb-1">
+                      Submit Your Application
+                    </h4>
+                    <p className="text-gray-600">
+                      Submit all documents via the UIY website, 2026.
+                    </p>
                     <div className="mt-3 flex items-center gap-2 text-sm font-medium text-uiy-blue">
-                      <Calendar className="w-4 h-4" />
-                      <span>Deadline: August 24, 2026</span>
+                      {/* <Calendar className="w-4 h-4" />
+                      <span>Deadline: August 24, 2026</span> */}
                     </div>
                   </div>
                 </div>
@@ -147,7 +173,10 @@ const ApplyNow = () => {
                   <p className="text-sm font-medium text-green-800 mb-3">
                     You have already registered a team!
                   </p>
-                  <Link to="/my-team" className="btn-primary inline-flex items-center gap-2 group">
+                  <Link
+                    to="/my-team"
+                    className="btn-primary inline-flex items-center gap-2 group"
+                  >
                     <Users className="w-4 h-4" />
                     View My Team
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -165,35 +194,42 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>August 24, 2026</span>
+                    <span>Coming Soon</span>
                   </div>
                   <p className="font-medium">Application Deadline</p>
-                  <p className="text-sm text-gray-600 mt-1">Last day to submit your complete application package</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Last day to submit your complete application package
+                  </p>
                 </div>
 
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>August-September 2026</span>
+                    <span>Coming Soon</span>
                   </div>
                   <p className="font-medium">Preliminary Competition</p>
-                  <p className="text-sm text-gray-600 mt-1">Submission of video, brochure, and Q&A session</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Submission of video, brochure, and Q&A session
+                  </p>
                 </div>
 
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>October 2026</span>
+                    <span>Coming Soon</span>
                   </div>
                   <p className="font-medium">Final Competition & Awards</p>
-                  <p className="text-sm text-gray-600 mt-1">Physical event with prototype demonstrations</p>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Physical event with prototype demonstrations
+                  </p>
                 </div>
               </div>
 
               <div className="mt-8 bg-white/20 backdrop-blur-sm rounded-lg p-5 border border-white/30">
                 <p className="text-sm text-uiy-darkblue font-medium">
-                  "The journey of innovation begins with a single application. Take the first step today towards
-                  recognition and bringing your engineering solution to life."
+                  "The journey of innovation begins with a single application.
+                  Take the first step today towards recognition and bringing
+                  your engineering solution to life."
                 </p>
               </div>
             </div>
@@ -201,7 +237,7 @@ const ApplyNow = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default ApplyNow;
+export default ApplyNow
