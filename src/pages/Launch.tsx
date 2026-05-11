@@ -8,6 +8,7 @@ const Launch = () => {
   const { toast } = useToast();
   const [launched, setLaunched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLaunching, setIsLaunching] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; color: string; tx: number; ty: number }>>([]);
   const [fadeIn, setFadeIn] = useState(false);
@@ -31,7 +32,7 @@ const Launch = () => {
     // Play intro sound
     const audio = new Audio();
     audio.volume = 0.3;
-    
+
     return () => {
       clearTimeout(timer);
       audio.pause();
@@ -41,21 +42,21 @@ const Launch = () => {
   const createParticles = (x: number, y: number) => {
     const particleCount = 30;
     const newParticles = [];
-    
+
     for (let i = 0; i < particleCount; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = Math.random() * 100 + 50;
       const size = Math.floor(Math.random() * 5) + 2;
       const tx = Math.cos(angle) * speed;
       const ty = Math.sin(angle) * speed;
-      
+
       // Randomly choose colors from our theme
       const colors = ['#2f64a6', '#0C4A6E', '#FFFFFF', '#4B9CD3', '#8cc8f0'];
       const color = colors[Math.floor(Math.random() * colors.length)];
-      
+
       newParticles.push({
         id: Date.now() + i,
-        x, 
+        x,
         y,
         size,
         color,
@@ -63,9 +64,9 @@ const Launch = () => {
         ty
       });
     }
-    
+
     setParticles(newParticles);
-    
+
     // Remove particles after animation
     setTimeout(() => {
       setParticles([]);
@@ -79,25 +80,27 @@ const Launch = () => {
       const y = rect.top + rect.height / 2;
       createParticles(x, y);
     }
-    
+
     setLoading(true);
-    
+    setIsLaunching(true);
+
     // Play launch sound
     const audio = new Audio();
     audio.volume = 0.4;
-    audio.play().catch(() => {});
-    
+    audio.play().catch(() => { });
+
     setTimeout(() => {
       //setLaunched(true);
       setLoading(false);
+      setIsLaunching(false);
 
-      
+
       toast({
         title: "Launch Successful! 🚀",
         description: "Welcome to IESL UIY 2026",
         duration: 5000,
       });
-      
+
       // Optionally redirect after some seconds
       setTimeout(() => {
         window.location.href = '/';
@@ -123,12 +126,16 @@ const Launch = () => {
           } as React.CSSProperties}
         />
       ))}
-      
-      <div className="relative z-10 flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+
+      {isLaunching && (
+        <div className="fixed inset-0 z-40 bg-slate-950/30 pointer-events-auto" />
+      )}
+
+      <div className={`relative z-10 flex min-h-screen w-full flex-col items-center justify-center px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isLaunching ? 'blur-sm pointer-events-none' : 'pointer-events-auto'}`}>
         {/* Pre-launch content */}
         <AnimatePresence mode="wait">
           {!launched ? (
-            <motion.div 
+            <motion.div
               key="pre-launch"
               initial={{ opacity: 0 }}
               animate={{ opacity: fadeIn ? 1 : 0 }}
@@ -147,9 +154,9 @@ const Launch = () => {
                   <StarIcon className="h-14 w-14 text-uiy-blue" />
                 </div>
               </motion.div>
-              
+
               {/* Main heading with subtle animation */}
-              <motion.div 
+              <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, duration: 0.8 }}
@@ -166,18 +173,18 @@ const Launch = () => {
                   Institute of Engineers Sri Lanka - Undergraduate Inventor of the Year
                 </p>
               </motion.div>
-              
+
               {/* Description with staggered animation */}
-              <motion.p 
+              <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="max-w-2xl text-slate-600"
               >
-                Join us as we celebrate innovation, excellence, and the future of engineering in Sri Lanka. 
+                Join us as we celebrate innovation, excellence, and the future of engineering in Sri Lanka.
                 The IESL UIY 2026 is about to launch, recognizing the brightest undergraduate inventors.
               </motion.p>
-              
+
               {/* Launch button with elaborate animations */}
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
@@ -207,14 +214,14 @@ const Launch = () => {
                       </>
                     )}
                   </span>
-                  
+
                   {/* Button background animation */}
                   <span className="absolute -bottom-2 left-1/2 h-10 w-10 -translate-x-1/2 scale-0 rounded-full bg-white opacity-70 transition-transform duration-300 group-hover:scale-[6]"></span>
                 </button>
               </motion.div>
-              
+
               {/* Decorative elements */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.7 }}
                 transition={{ delay: 0.7, duration: 1 }}
@@ -222,8 +229,8 @@ const Launch = () => {
               >
                 <div className="h-full w-full rounded-full border-2 border-dashed border-uiy-blue"></div>
               </motion.div>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.7 }}
                 transition={{ delay: 0.8, duration: 1 }}
@@ -235,7 +242,7 @@ const Launch = () => {
             </motion.div>
           ) : (
             // Post-launch content
-            <motion.div 
+            <motion.div
               key="post-launch"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -243,7 +250,7 @@ const Launch = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
               className="flex max-w-7xl flex-col items-center justify-center space-y-8 py-10 text-center"
             >
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.2, duration: 0.8 }}
@@ -252,7 +259,7 @@ const Launch = () => {
                 <div className="absolute -z-10 h-40 w-40 animate-pulse-slow rounded-full bg-uiy-blue opacity-20"></div>
                 <AwardIcon className="h-20 w-20 text-uiy-blue" />
               </motion.div>
-              
+
               <motion.h1
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -261,7 +268,7 @@ const Launch = () => {
               >
                 Welcome to <span className="text-uiy-blue">IESL UIY 2026</span>
               </motion.h1>
-              
+
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -271,9 +278,9 @@ const Launch = () => {
                 The platform is now live! Explore the future of engineering innovation
                 and discover the brightest minds of Sri Lanka.
               </motion.p>
-              
+
               {/* Image Grid with staggered animation */}
-              <motion.div 
+              <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.5, duration: 0.8 }}
@@ -288,9 +295,9 @@ const Launch = () => {
                     className="group aspect-video overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-xl"
                   >
                     <div className="relative h-full w-full overflow-hidden">
-                      <img 
-                        src={image} 
-                        alt={`Engineering innovation ${index + 1}`} 
+                      <img
+                        src={image}
+                        alt={`Engineering innovation ${index + 1}`}
                         className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                         loading="lazy"
                       />
@@ -299,7 +306,7 @@ const Launch = () => {
                   </motion.div>
                 ))}
               </motion.div>
-              
+
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -308,10 +315,10 @@ const Launch = () => {
               >
                 <button className="group rounded-full bg-uiy-blue px-8 py-4 text-lg font-medium text-white shadow-lg transition-all duration-300 hover:bg-uiy-darkblue">
                   Explore Platform
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="ml-2 inline h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" 
-                    viewBox="0 0 20 20" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="ml-2 inline h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
+                    viewBox="0 0 20 20"
                     fill="currentColor"
                   >
                     <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -322,12 +329,12 @@ const Launch = () => {
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Background Elements */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
         {/* Top right gradient */}
         <div className="absolute right-0 top-0 -z-10 h-[30rem] w-[30rem] -translate-y-1/4 translate-x-1/4 rounded-full bg-gradient-to-b from-uiy-blue/10 to-transparent blur-3xl"></div>
-        
+
         {/* Bottom left gradient */}
         <div className="absolute bottom-0 left-0 -z-10 h-[40rem] w-[40rem] translate-y-1/4 -translate-x-1/4 rounded-full bg-gradient-to-t from-uiy-darkblue/10 to-transparent blur-3xl"></div>
       </div>
