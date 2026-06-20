@@ -105,7 +105,7 @@ const Eligibility = () => {
                     </li>
                     <li className="flex items-start gap-2">
                       <Check className="w-5 h-5 text-uiy-blue flex-shrink-0 mt-0.5" />
-                      <span>Project proposal (maximum 3 pages)</span>
+                      <span>Brief Project Overview</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <Check className="w-5 h-5 text-uiy-blue flex-shrink-0 mt-0.5" />

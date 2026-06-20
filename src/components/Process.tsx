@@ -6,10 +6,10 @@ const timelineData = [
     title: 'Application Phase',
     date: 'Coming Soon',
     description:
-      'Submit your application, project proposal, and declaration letter through the IESL-UIY website.',
+      'Submit your application, Brief Project Overview and declaration letter through the IESL-UIY website.',
     requirements: [
       'Completed application form',
-      'Project proposal (max 3 pages)',
+      'Brief Project Overview',
       'Declaration letter from department head',
     ],
   },
