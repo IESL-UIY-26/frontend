@@ -89,8 +89,7 @@ const Eligibility = () => {
                     2. Application Submission
                   </p>
                   <p className="text-gray-600">
-                    Applications must be submitted through the IESL-UIY website
-                    (https://uiy.iesl.lk).
+                    Applications must be submitted through the IESL-UIY website.
                   </p>
                 </div>
 
