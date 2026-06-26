@@ -5,33 +5,19 @@ import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
 import { useAuth } from '@/features/Auth/hooks/use-auth'
 import type { IMyTeam } from '@/features/Teams/types/teams.types'
 
+const REGISTER_URL = 'https://docs.google.com/spreadsheets/d/1bQrzUceRHNcA9UrlvCzzk1BjoWOf6JfPXXWf80Lz-9I/edit?usp=sharing'
+
 const StartApplicationButton: React.FC<{ myTeam: IMyTeam | null }> = ({
   myTeam,
 }) => {
-  const { user } = useAuth()
-  const navigate = useNavigate()
-
-  const handleClick = () => {
-    if (!user) {
-      navigate('/login')
-      return
-    }
-    if (myTeam) {
-      navigate('/my-team')
-      return
-    }
-    navigate('/create-team')
-  }
-
   return (
-    <button
-      type="button"
-      onClick={handleClick}
+    <a
+      href={REGISTER_URL}
       className="mt-8 btn-primary inline-flex items-center gap-2 group"
     >
       Start Your Application
       <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-    </button>
+    </a>
   )
 }
 

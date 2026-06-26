@@ -35,7 +35,7 @@ const Awards = () => {
             </div>
             <h3 className="text-2xl font-bold mb-2">First Place</h3>
             <p className="text-gray-300 mb-4">Recognition for outstanding innovation excellence</p>
-            <div className="text-3xl font-bold text-orange-400 mb-2">LKR 150,000</div>
+            <div className="text-3xl font-bold text-orange-400 mb-2">LKR 100,000</div>
             <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
           </div>
           
@@ -49,7 +49,7 @@ const Awards = () => {
             </div>
             <h3 className="text-2xl font-bold mb-2">Second Place</h3>
             <p className="text-gray-300 mb-4">Recognition for exceptional innovation</p>
-            <div className="text-3xl font-bold text-blue-400 mb-2">LKR 125,000</div>
+            <div className="text-3xl font-bold text-blue-400 mb-2">LKR 75,000</div>
             <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
           </div>
 
@@ -63,7 +63,7 @@ const Awards = () => {
             </div>
             <h3 className="text-2xl font-bold mb-2">Third Place</h3>
             <p className="text-gray-300 mb-4">Recognition for remarkable innovation</p>
-            <div className="text-3xl font-bold text-uiy-accent mb-2">LKR 100,000</div>
+            <div className="text-3xl font-bold text-uiy-accent mb-2">LKR 50,000</div>
             <p className="text-sm text-gray-400">Plus certificate and island-wide recognition</p>
           </div>
   

@@ -9,6 +9,8 @@ import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
+const REGISTER_URL = 'https://docs.google.com/spreadsheets/d/1bQrzUceRHNcA9UrlvCzzk1BjoWOf6JfPXXWf80Lz-9I/edit?usp=sharing'
+
 const navItems = [
   { name: 'Home', to: '/#home' },
   { name: 'About', to: '/#about' },
@@ -135,32 +137,16 @@ const Navbar = () => {
                 </Link>
               ))}
 
-            {/* {user ? (
-              <div className="flex items-center">
-                <Link to="/my-profile" className="flex items-center gap-2 focus:outline-none" aria-label="My Profile">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-uiy-blue text-white text-xs">
-                      {user.email?.[0].toUpperCase() ?? <User size={14} />}
-                    </AvatarFallback>
-                  </Avatar>
-                </Link>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/login"
-                  className={cn(
-                    "text-sm font-medium transition-colors hover:text-uiy-blue",
-                    isDark ? "text-uiy-dark" : "text-white"
-                  )}
-                >
-                  Sign In
-                </Link>
-                <Link to="/signup" className="btn-primary text-sm">
-                  Sign up
-                </Link>
-              </div>
-            )} */}
+            {!user && (
+              <a
+                href={REGISTER_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-primary text-sm whitespace-nowrap"
+              >
+                Register
+              </a>
+            )}
           </div>
 
           {/* Mobile Menu Toggle Button */}
@@ -229,20 +215,15 @@ const Navbar = () => {
             </>
           ) : (
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">
-              <Link
-                to="/login"
-                className="text-center py-3 text-lg font-medium text-uiy-blue border border-uiy-blue rounded-lg hover:bg-uiy-blue hover:text-white transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/signup"
+              <a
+                href={REGISTER_URL}
+                target="_blank"
+                rel="noreferrer"
                 className="btn-primary text-center"
                 onClick={() => setIsOpen(false)}
               >
-                Sign Up
-              </Link>
+                Register
+              </a>
             </div>
           )}
 
