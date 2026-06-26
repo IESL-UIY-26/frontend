@@ -8,19 +8,7 @@ import type {
 // Replace this with your deployed Google Apps Script Web App URL
 export const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwE3QF4wJU4az8HwTV1X9APUyEaI695LBFDDv-A7K8Mkhlw2jYiDAq30nl65iYfIzIVVA/exec';
 
-// The permanent hardcoded event that you want to keep
-const HARDCODED_SESSION: IAvailableSession = {
-  id: 'hardcoded-event-1',
-  title: 'Innovation with Purpose: Building Solutions That Society Needs',
-  description: 'We are honored to feature Sanjaya Elvitigala, CEO of eLearning.lk and a distinguished expert in LMS, AI & SaaS solutions.',
-  zoom_link: 'https://forms.gle/KvZtcTUcjGbK1pDb9',
-  session_date: '2026-06-24',
-  session_time: '7:00 P.M.',
-  duration_minutes: 120,
-  location: "Via zoom",
-  image_url: 'http://localhost:8080/images/flyer.jpeg',
-  is_past:true,
-};
+
 
 export const googleSheetsAPI = {
   getAvailableSessions: async (page = 1): Promise<IGetAvailableSessionsResult> => {
@@ -45,8 +33,8 @@ export const googleSheetsAPI = {
         }
       }
       
-      // Combine hardcoded session with fetched sessions
-      const allSessions = [HARDCODED_SESSION, ...sheetsSessions];
+      // Use only fetched sessions
+      const allSessions = [...sheetsSessions];
       
       // Simple pagination logic
       const limit = 10;
@@ -66,10 +54,10 @@ export const googleSheetsAPI = {
       };
     } catch (error) {
       console.error('Failed to fetch sessions from Google Sheets:', error);
-      // Fallback to hardcoded only
+      // Fallback to empty
       return {
-        sessions: [HARDCODED_SESSION],
-        pagination: { page: 1, limit: 10, total: 1, totalPages: 1 },
+        sessions: [],
+        pagination: { page: 1, limit: 10, total: 0, totalPages: 1 },
       };
     }
   },
@@ -94,7 +82,7 @@ export const googleSheetsAPI = {
         }
       }
       
-      const allSessions = [HARDCODED_SESSION, ...sheetsSessions];
+      const allSessions = [...sheetsSessions];
       const filteredSessions = allSessions.filter(s => {
         // Parse date to be safe or just do simple string includes
         return s.session_date.includes(date);
@@ -118,10 +106,9 @@ export const googleSheetsAPI = {
     } catch (error) {
        console.error('Failed to search sessions from Google Sheets:', error);
        // Fallback
-       const filtered = [HARDCODED_SESSION].filter(s => s.session_date.includes(date));
        return {
-         sessions: filtered,
-         pagination: { page: 1, limit: 10, total: filtered.length, totalPages: filtered.length === 0 ? 1 : 1 },
+         sessions: [],
+         pagination: { page: 1, limit: 10, total: 0, totalPages: 1 },
        };
     }
   },
