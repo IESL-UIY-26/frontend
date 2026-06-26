@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { ApiError } from '@/utils/api-client';
 import { useAuth } from '@/features/Auth/hooks/use-auth';
 import { sessionsAPI } from '../api/sessions.api';
+import { googleSheetsAPI } from '../api/google-sheets.api';
 import type { IGetAvailableSessionsResult, IMyRegistration } from '../types/sessions.types';
 
 export const useSessions = (page: number, date = '') => {
@@ -19,7 +20,7 @@ export const useSessions = (page: number, date = '') => {
   } = useQuery({
     queryKey: ['available-sessions', page, date],
     queryFn: () =>
-      date ? sessionsAPI.searchSessionsByDate(date, page) : sessionsAPI.getAvailableSessions(page),
+      date ? googleSheetsAPI.searchSessionsByDate(date, page) : googleSheetsAPI.getAvailableSessions(page),
     staleTime: 5 * 60 * 1000,
   });
 

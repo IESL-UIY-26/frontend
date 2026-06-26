@@ -1,6 +1,6 @@
 import Navbar from '@/components/Navbar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,31 +17,37 @@ import { useState } from 'react';
 import { usePageQueryParam } from '@/hooks/use-page-query-param';
 import { useClampPage } from '@/hooks/use-clamp-page';
 
+const SessionCardSkeleton = () => (
+  <div className="rounded-xl overflow-hidden shadow-lg bg-white h-full flex flex-col animate-pulse">
+    <div className="w-full bg-slate-900 flex justify-center h-[350px]"></div>
+    <div className="p-4 space-y-3 flex-1 flex flex-col">
+      <div className="text-center flex flex-col items-center">
+        <div className="h-3 bg-gray-200 rounded w-1/3 mb-2" />
+        <div className="h-6 bg-gray-200 rounded w-3/4 mb-1" />
+        <div className="h-4 bg-gray-200 rounded w-full mt-2" />
+        <div className="h-4 bg-gray-200 rounded w-5/6 mt-1" />
+      </div>
+      <div className="flex items-center justify-center gap-4 pt-1 mt-auto">
+        <div className="h-4 bg-gray-200 rounded w-20" />
+        <div className="h-4 bg-gray-200 rounded w-20" />
+      </div>
+      <div className="pt-3 flex justify-center">
+        <div className="h-8 bg-gray-200 rounded-full w-32" />
+      </div>
+    </div>
+  </div>
+);
+
 const Sessions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { page, setPage } = usePageQueryParam(searchParams, setSearchParams);
+  
+  // We no longer pass date since it's removed
   const { sessions, totalPages, hasPreviousPage, hasNextPage, loading, error, registeredIds, togglingIds, toggleRegistration } =
-    useSessions(page, searchParams.get('date') ?? '');
+    useSessions(page, '');
 
-  const date = searchParams.get('date') ?? '';
-
-  const setDate = useCallback(
-    (newDate: string) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          if (newDate) next.set('date', newDate);
-          else next.delete('date');
-          next.set('page', '1');
-          return next;
-        },
-        { replace: true }
-      );
-    },
-    [setSearchParams]
-  );
   const [feedbackDialog, setFeedbackDialog] = useState<{
     open: boolean;
     sessionId: string | null;
@@ -178,62 +184,44 @@ const Sessions = () => {
       <Navbar />
       <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
         <div className="max-w-6xl mx-auto space-y-6">
-          <div className="text-center">
+          <div className="text-center pb-4">
             <h1 className="text-3xl font-display font-bold text-gray-900">Available Sessions</h1>
-            <p className="text-gray-500 mt-2">Browse all upcoming public sessions</p>
-          </div>
-
-          <div className="relative max-w-xs mx-auto">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-            <Input
-              type="date"
-              className="pl-9 pr-9"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-            {date && (
-              <button
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                onClick={() => setDate('')}
-                aria-label="Clear date filter"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
+            <p className="text-gray-500 mt-2">Browse all upcoming sessions and guest speakers</p>
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-uiy-blue" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto w-full">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-full">
+                  <SessionCardSkeleton />
+                </div>
+              ))}
             </div>
           ) : error ? (
-            <Card>
-              <CardContent className="py-8 text-center text-red-600">{error}</CardContent>
-            </Card>
+            <div className="bg-white p-8 rounded-xl shadow-sm text-center text-red-600 max-w-2xl mx-auto">{error}</div>
           ) : sessions.length === 0 ? (
-            <Card>
-              <CardContent className="py-10 text-center text-gray-500">
-                {date ? `No sessions found for ${date}.` : 'No available sessions right now.'}
-              </CardContent>
-            </Card>
+            <div className="bg-white p-10 rounded-xl shadow-sm text-center text-gray-500 max-w-2xl mx-auto">
+              No available sessions right now.
+            </div>
           ) : (
             <>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto w-full">
                 {sessions.map((session) => (
-                  <SessionCard
-                    key={session.id}
-                    session={session}
-                    isLoggedIn={!!user}
-                    registered={registeredIds.has(session.id)}
-                    toggling={togglingIds.has(session.id)}
-                    canGiveFeedback={!!user && registeredIds.has(session.id)}
-                    onFeedbackClick={() => void openFeedbackDialog(session.id, session.title)}
-                    onToggle={
-                      user
-                        ? () => toggleRegistration(session.id, registeredIds.has(session.id))
-                        : () => handleNotLoggedIn(session.id)
-                    }
-                  />
+                  <div key={session.id} className="w-full">
+                    <SessionCard
+                      session={session}
+                      isLoggedIn={!!user}
+                      registered={registeredIds.has(session.id)}
+                      toggling={togglingIds.has(session.id)}
+                      canGiveFeedback={!!user && registeredIds.has(session.id)}
+                      onFeedbackClick={() => void openFeedbackDialog(session.id, session.title)}
+                      onToggle={
+                        user
+                          ? () => toggleRegistration(session.id, registeredIds.has(session.id))
+                          : () => handleNotLoggedIn(session.id)
+                      }
+                    />
+                  </div>
                 ))}
               </div>
 

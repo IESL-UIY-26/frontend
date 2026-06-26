@@ -23,11 +23,13 @@ import SessionTemp from './pages/SessionTemp'
 import { AdminGuard } from '@/features/Auth/components/AdminGuard'
 import { UserGuard } from '@/features/Auth/components/UserGuard'
 import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext'
+import { googleSheetsAPI } from '@/features/Sessions/api/google-sheets.api'
+import { useEffect } from 'react'
 
 const queryClient = new QueryClient()
 
 const App = () => {
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState<boolean | null>(null);
   const [keyInput, setKeyInput] = useState('');
   const [error, setError] = useState('');
   const [isLaunching, setIsLaunching] = useState(false);
@@ -36,12 +38,19 @@ const App = () => {
   const [logoStyle, setLogoStyle] = useState({ top: '0px', left: '0px', width: '96px', height: '96px', opacity: 0 });
   const logoRef = useRef<HTMLImageElement>(null);
   const REQUIRED_KEY = 'admin'; // You can change this key
+  
+  useEffect(() => {
+    googleSheetsAPI.checkLaunchStatus().then(status => setIsUnlocked(status));
+  }, []);
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
     if (keyInput === REQUIRED_KEY) {
       setIsLaunching(true);
       setError('');
+
+      // Update Google Sheets so it stays unlocked for everyone
+      googleSheetsAPI.setLaunchStatus(true).catch(console.error);
 
       if (logoRef.current) {
         const rect = logoRef.current.getBoundingClientRect();
@@ -67,6 +76,14 @@ const App = () => {
       setError('Wrong key access denied');
     }
   };
+
+  if (isUnlocked === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <div className="w-10 h-10 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -201,7 +218,7 @@ const App = () => {
                     />
                     <Route path="/my-profile" element={<MyProfile />} />
                     <Route path="/projects" element={<Projects />} />
-                    <Route path="/sessions" element={<SessionTemp />} />
+                    <Route path="/sessions" element={<Sessions />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

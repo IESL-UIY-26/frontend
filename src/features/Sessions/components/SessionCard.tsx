@@ -1,7 +1,5 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays, CheckCircle2, Clock3, ExternalLink, Loader2, User2 } from 'lucide-react';
+import { ArrowRight, Calendar, CheckCircle2, ExternalLink, Loader2, MapPin } from 'lucide-react';
 import type { IAvailableSession } from '../types/sessions.types';
 
 interface SessionCardProps {
@@ -14,18 +12,36 @@ interface SessionCardProps {
   onFeedbackClick?: () => void;
 }
 
-const formatDate = (isoDate: string) =>
-  new Date(isoDate).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
+const formatDate = (isoDate: string) => {
+  try {
+    const date = new Date(isoDate);
+    if (isNaN(date.getTime())) return isoDate; // return raw if not a valid Date
+    const day = date.getDate();
+    let suffix = 'th';
+    if (day === 1 || day === 21 || day === 31) suffix = 'st';
+    else if (day === 2 || day === 22) suffix = 'nd';
+    else if (day === 3 || day === 23) suffix = 'rd';
+    
+    const month = date.toLocaleDateString('en-GB', { month: 'short' });
+    return `${day}${suffix} ${month}`;
+  } catch (e) {
+    return isoDate;
+  }
+};
 
-const formatTime = (isoTime: string) =>
-  new Date(isoTime).toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+const formatTime = (isoTime: string) => {
+  try {
+    if (!isoTime) return '';
+    // If it's already a formatted string like "7:00 P.M.", return it
+    if (!isoTime.includes('T')) return isoTime;
+    return new Date(isoTime).toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch (e) {
+    return isoTime;
+  }
+};
 
 export const SessionCard = ({
   session,
@@ -37,69 +53,87 @@ export const SessionCard = ({
   onFeedbackClick,
 }: SessionCardProps) => {
   return (
-    <Card className="shadow-sm flex flex-col">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <CardTitle className="text-lg">{session.title}</CardTitle>
-          <Badge variant="secondary">{session.duration_minutes} min</Badge>
+    <div className="rounded-xl overflow-hidden shadow-lg bg-white h-full flex flex-col">
+      {/* Flyer Image Section */}
+      <div className="w-full bg-slate-900 flex justify-center h-48 sm:h-56">
+        <img
+          src={session.image_url || "/images/flyer.jpeg"}
+          alt={session.title}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Content Section */}
+      <div className="p-4 space-y-3 flex-1 flex flex-col">
+        <div className="text-center">
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-uiy-blue mb-1">
+            Inventor Chronicles 2.0
+          </p>
+          <h1 className="text-lg font-bold text-gray-900 leading-tight">
+            {session.title}
+          </h1>
+          {session.description && (
+            <p className="mt-1.5 text-xs text-gray-600">
+              {session.description}
+            </p>
+          )}
         </div>
-        {session.description && <p className="text-sm text-gray-700">{session.description}</p>}
-      </CardHeader>
 
-      <CardContent className="space-y-3 flex-1">
-        <div className="grid gap-2 text-sm text-gray-600">
-          <p className="inline-flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-uiy-blue" />
-            <span className="font-medium">Date:</span> {formatDate(session.session_date)}
-          </p>
-          <p className="inline-flex items-center gap-2">
-            <Clock3 className="w-4 h-4 text-uiy-blue" />
-            <span className="font-medium">Time:</span> {formatTime(session.session_time)}
-          </p>
-          <p className="inline-flex items-center gap-2">
-            <User2 className="w-4 h-4 text-uiy-blue" />
-            <span className="font-medium">Host:</span> {session.host_name || 'TBA'}
-          </p>
+        <div className="flex flex-col items-center gap-1.5 pt-1 text-xs text-gray-700 mt-auto w-full">
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-uiy-blue shrink-0" />
+            <span className="font-semibold text-gray-900 whitespace-nowrap">
+              {formatDate(session.session_date)}
+            </span>
+            <span className="text-gray-400 hidden sm:inline">•</span>
+            <span className="font-semibold text-gray-900 whitespace-nowrap">
+              {formatTime(session.session_time)}
+            </span>
+          </div>
+          <div className="flex items-center justify-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-uiy-blue shrink-0" />
+            <span className="font-semibold text-gray-900 whitespace-nowrap">
+              {session.zoom_link && session.zoom_link !== 'null' ? 'Via Zoom' : 'Physical'}
+            </span>
+          </div>
         </div>
 
-        {/* Zoom link is only visible to registered participants */}
-        {isLoggedIn && registered && session.zoom_link && (
-          <a
-            href={session.zoom_link}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm text-uiy-blue inline-flex items-center gap-1 hover:underline"
-          >
-            Join Session <ExternalLink className="w-3 h-3" />
-          </a>
-        )}
-      </CardContent>
-
-      <CardFooter className="pt-0">
-        <div className="w-full flex gap-2">
+        <div className="pt-3 text-center flex flex-col items-center gap-2">
           <Button
             size="sm"
             variant={isLoggedIn && registered ? 'outline' : 'default'}
-            className={canGiveFeedback ? 'flex-1' : isLoggedIn && registered ? 'w-full' : 'w-full bg-uiy-blue hover:bg-uiy-darkblue'}
+            className={isLoggedIn && registered ? 'w-full max-w-[200px] h-8 text-xs rounded-full' : 'inline-flex items-center justify-center gap-2 rounded-full bg-uiy-blue px-4 py-1.5 h-8 text-xs font-semibold text-white shadow-md transition hover:bg-uiy-darkblue'}
             disabled={toggling}
             onClick={onToggle}
           >
             {toggling ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : isLoggedIn && registered ? (
-              <><CheckCircle2 className="w-4 h-4 mr-1.5 text-green-600" />Registered &mdash; Cancel</>
+              <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-600" />Registered &mdash; Cancel</>
             ) : (
-              'Register'
+              <>Register now <ArrowRight className="w-3.5 h-3.5" /></>
             )}
           </Button>
 
           {canGiveFeedback && (
-            <Button size="sm" variant="secondary" className="flex-1" onClick={onFeedbackClick}>
+            <Button size="sm" variant="secondary" className="w-full max-w-[200px] h-8 text-xs rounded-full" onClick={onFeedbackClick}>
               Feedback
             </Button>
           )}
+          
+          {isLoggedIn && registered && session.zoom_link && session.zoom_link !== 'null' && (
+            <a
+              href={session.zoom_link}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs font-medium text-uiy-blue inline-flex items-center gap-1 hover:underline mt-1"
+            >
+              Join Session Link <ExternalLink className="w-3 h-3" />
+            </a>
+          )}
         </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
+
