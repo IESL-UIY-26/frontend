@@ -37,7 +37,7 @@ const App = () => {
   const [flyLogo, setFlyLogo] = useState(false);
   const [logoStyle, setLogoStyle] = useState({ top: '0px', left: '0px', width: '96px', height: '96px', opacity: 0 });
   const logoRef = useRef<HTMLImageElement>(null);
-  const REQUIRED_KEY = 'admin'; // You can change this key
+  const REQUIRED_KEY = 'uiy2026'; // You can change this key
   
   useEffect(() => {
     googleSheetsAPI.checkLaunchStatus().then(status => setIsUnlocked(status));

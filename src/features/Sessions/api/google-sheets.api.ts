@@ -11,14 +11,15 @@ export const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycb
 // The permanent hardcoded event that you want to keep
 const HARDCODED_SESSION: IAvailableSession = {
   id: 'hardcoded-event-1',
-  title: 'IESL UIY Grand Finale',
-  description: 'Physical event featuring the top innovations with prototype demonstrations.',
-  zoom_link: null, // No zoom link for physical events
-  session_date: '2026-08-15',
-  session_time: '2026-08-15T09:00:00Z',
-  duration_minutes: 240,
-  host_name: 'IESL Committee',
-  image_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=80',
+  title: 'Innovation with Purpose: Building Solutions That Society Needs',
+  description: 'We are honored to feature Sanjaya Elvitigala, CEO of eLearning.lk and a distinguished expert in LMS, AI & SaaS solutions.',
+  zoom_link: 'https://forms.gle/KvZtcTUcjGbK1pDb9',
+  session_date: '2026-06-24',
+  session_time: '7:00 P.M.',
+  duration_minutes: 120,
+  location: "Via zoom",
+  image_url: 'http://localhost:8080/images/flyer.jpeg',
+  is_past:true,
 };
 
 export const googleSheetsAPI = {
@@ -37,7 +38,9 @@ export const googleSheetsAPI = {
             ...s,
             id: String(s.id),
             session_date: String(s.session_date || ''),
-            session_time: String(s.session_time || '')
+            session_time: String(s.session_time || ''),
+            location: s.location || null,
+            is_past: s.is_past === true || String(s.is_past).toLowerCase() === 'true'
           }));
         }
       }
@@ -84,7 +87,9 @@ export const googleSheetsAPI = {
             ...s,
             id: String(s.id),
             session_date: String(s.session_date || ''),
-            session_time: String(s.session_time || '')
+            session_time: String(s.session_time || ''),
+            location: s.location || null,
+            is_past: s.is_past === true || String(s.is_past).toLowerCase() === 'true'
           }));
         }
       }

@@ -6,8 +6,10 @@ export interface IAvailableSession {
   session_date: string;
   session_time: string;
   duration_minutes: number;
-  host_name: string | null;
+  host_name?: string | null;
   image_url?: string | null;
+  location?: string | null;
+  is_past?: boolean;
 }
 
 export interface IMyRegistration {
