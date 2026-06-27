@@ -117,7 +117,7 @@ const Navbar = () => {
                 isDark ? 'text-uiy-dark' : 'text-white',
               )}
             >
-              Sessions
+              Updates
             </Link>
 
             {user &&
