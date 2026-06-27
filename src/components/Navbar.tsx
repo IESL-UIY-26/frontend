@@ -9,7 +9,9 @@ import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
-const REGISTER_URL = 'https://docs.google.com/spreadsheets/d/1bQrzUceRHNcA9UrlvCzzk1BjoWOf6JfPXXWf80Lz-9I/edit?usp=sharing'
+// replace with actual google form when you have it
+const REGISTER_URL = 'https://iesl-uiy-26.vercel.app/'
+
 
 const navItems = [
   { name: 'Home', to: '/#home' },
