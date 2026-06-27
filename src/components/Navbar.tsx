@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
 // replace with actual google form when you have it
-const REGISTER_URL = 'https://iesl-uiy-26.vercel.app/'
+const REGISTER_URL = 'https://forms.gle/Q8zkURGRB2oN27L17'
 
 
 const navItems = [
