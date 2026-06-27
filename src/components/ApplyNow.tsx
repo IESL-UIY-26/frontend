@@ -6,7 +6,7 @@ import { useAuth } from '@/features/Auth/hooks/use-auth'
 import type { IMyTeam } from '@/features/Teams/types/teams.types'
 
 // replace with google form when have it 
-const REGISTER_URL = 'https://iesl-uiy-26.vercel.app/'
+const REGISTER_URL = 'https://forms.gle/Q8zkURGRB2oN27L17'
 
 const StartApplicationButton: React.FC<{ myTeam: IMyTeam | null }> = ({
   myTeam,
