@@ -5,7 +5,8 @@ import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
 import { useAuth } from '@/features/Auth/hooks/use-auth'
 import type { IMyTeam } from '@/features/Teams/types/teams.types'
 
-const REGISTER_URL = 'https://docs.google.com/spreadsheets/d/1bQrzUceRHNcA9UrlvCzzk1BjoWOf6JfPXXWf80Lz-9I/edit?usp=sharing'
+// replace with google form when have it 
+const REGISTER_URL = 'https://iesl-uiy-26.vercel.app/'
 
 const StartApplicationButton: React.FC<{ myTeam: IMyTeam | null }> = ({
   myTeam,
