@@ -185,8 +185,8 @@ const Sessions = () => {
       <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="text-center pb-4">
-            <h1 className="text-3xl font-display font-bold text-gray-900">Available Sessions</h1>
-            <p className="text-gray-500 mt-2">Browse all upcoming sessions and guest speakers</p>
+            <h1 className="text-3xl font-display font-bold text-gray-900">Latest Updates</h1>
+            <p className="text-gray-500 mt-2">Browse all the latest updates on insightful sessions, events and many more</p>
           </div>
 
           {loading ? (
@@ -201,7 +201,7 @@ const Sessions = () => {
             <div className="bg-white p-8 rounded-xl shadow-sm text-center text-red-600 max-w-2xl mx-auto">{error}</div>
           ) : sessions.length === 0 ? (
             <div className="bg-white p-10 rounded-xl shadow-sm text-center text-gray-500 max-w-2xl mx-auto">
-              No available sessions right now.
+              No new updates right now.
             </div>
           ) : (
             <>
