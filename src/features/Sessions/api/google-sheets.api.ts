@@ -28,13 +28,14 @@ export const googleSheetsAPI = {
             session_date: String(s.session_date || ''),
             session_time: String(s.session_time || ''),
             location: s.location || null,
-            is_past: s.is_past === true || String(s.is_past).toLowerCase() === 'true'
+            is_past: s.is_past === true || String(s.is_past).toLowerCase() === 'true',
+            registration_link: s.registration_link || s.url || s.link || s.Registration_Link || s['Registration Link'] || null
           }));
         }
       }
       
-      // Use only fetched sessions
-      const allSessions = [...sheetsSessions];
+      // Use only fetched sessions and reverse to show latest first
+      const allSessions = [...sheetsSessions].reverse();
       
       // Simple pagination logic
       const limit = 10;
@@ -77,12 +78,14 @@ export const googleSheetsAPI = {
             session_date: String(s.session_date || ''),
             session_time: String(s.session_time || ''),
             location: s.location || null,
-            is_past: s.is_past === true || String(s.is_past).toLowerCase() === 'true'
+            is_past: s.is_past === true || String(s.is_past).toLowerCase() === 'true',
+            registration_link: s.registration_link || s.url || s.link || s.Registration_Link || s['Registration Link'] || null
           }));
         }
       }
       
-      const allSessions = [...sheetsSessions];
+      // Reverse to show latest first
+      const allSessions = [...sheetsSessions].reverse();
       const filteredSessions = allSessions.filter(s => {
         // Parse date to be safe or just do simple string includes
         return s.session_date.includes(date);

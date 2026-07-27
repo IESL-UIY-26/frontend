@@ -19,7 +19,7 @@ import { useClampPage } from '@/hooks/use-clamp-page';
 
 const SessionCardSkeleton = () => (
   <div className="rounded-xl overflow-hidden shadow-lg bg-white h-full flex flex-col animate-pulse">
-    <div className="w-full bg-slate-900 flex justify-center h-[350px]"></div>
+    <div className="w-full bg-uiy-blue/20 flex justify-center aspect-[2/3]"></div>
     <div className="p-4 space-y-3 flex-1 flex flex-col">
       <div className="text-center flex flex-col items-center">
         <div className="h-3 bg-gray-200 rounded w-1/3 mb-2" />
