@@ -21,7 +21,7 @@ const formatDate = (isoDate: string) => {
     if (day === 1 || day === 21 || day === 31) suffix = 'st';
     else if (day === 2 || day === 22) suffix = 'nd';
     else if (day === 3 || day === 23) suffix = 'rd';
-    
+
     const month = date.toLocaleDateString('en-GB', { month: 'short' });
     return `${day}${suffix} ${month}`;
   } catch (e) {
@@ -55,11 +55,11 @@ export const SessionCard = ({
   return (
     <div className="rounded-xl overflow-hidden shadow-lg bg-white h-full flex flex-col">
       {/* Flyer Image Section */}
-      <div className="w-full bg-slate-900 flex justify-center h-48 sm:h-56">
+      <div className="w-full bg-uiy-blue flex justify-center items-center aspect-[2/2.89]">
         <img
           src={session.image_url || "/images/flyer.jpeg"}
           alt={session.title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
       </div>
 
@@ -104,15 +104,28 @@ export const SessionCard = ({
           <div className="text-center flex flex-col items-center gap-2">
             <Button
               size="sm"
-              variant={isLoggedIn && registered ? 'outline' : 'default'}
-              className={isLoggedIn && registered ? 'w-full max-w-[200px] h-8 text-xs rounded-full' : 'inline-flex items-center justify-center gap-2 rounded-full bg-uiy-blue px-4 py-1.5 h-8 text-xs font-semibold text-white shadow-md transition hover:bg-uiy-darkblue'}
+              variant={(isLoggedIn && registered && (!session.registration_link && !session.zoom_link)) ? 'outline' : 'default'}
+              className={(isLoggedIn && registered && (!session.registration_link && !session.zoom_link)) ? 'w-full max-w-[200px] h-8 text-xs rounded-full' : 'inline-flex items-center justify-center gap-2 rounded-full bg-uiy-blue px-4 py-1.5 h-8 text-xs font-semibold text-white shadow-md transition hover:bg-uiy-darkblue'}
               disabled={toggling || session.is_past}
-              onClick={onToggle}
+              onClick={() => {
+                const linkToOpen = session.registration_link || session.zoom_link;
+                if (linkToOpen && linkToOpen !== 'null') {
+                  let url = linkToOpen;
+                  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                  }
+                  window.open(url, '_blank', 'noopener,noreferrer');
+                } else if (onToggle) {
+                  onToggle();
+                }
+              }}
             >
               {toggling ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : session.is_past ? (
                 <>Registration Ended</>
+              ) : ((session.registration_link && session.registration_link !== 'null') || (session.zoom_link && session.zoom_link !== 'null')) ? (
+                <>Register now <ArrowRight className="w-3.5 h-3.5" /></>
               ) : isLoggedIn && registered ? (
                 <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-600" />Registered &mdash; Cancel</>
               ) : (
@@ -125,7 +138,7 @@ export const SessionCard = ({
                 Feedback
               </Button>
             )}
-            
+
             {isLoggedIn && registered && session.zoom_link && session.zoom_link !== 'null' && (
               <a
                 href={session.zoom_link}

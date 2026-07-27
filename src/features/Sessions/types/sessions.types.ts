@@ -10,6 +10,7 @@ export interface IAvailableSession {
   image_url?: string | null;
   location?: string | null;
   is_past?: boolean;
+  registration_link?: string | null;
 }
 
 export interface IMyRegistration {
