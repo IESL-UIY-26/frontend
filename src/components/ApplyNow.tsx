@@ -181,7 +181,7 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>Coming Soon</span>
+                    <span>15th August, 2026</span>
                   </div>
                   <p className="font-medium">Application Deadline</p>
                   <p className="text-sm text-gray-600 mt-1">
