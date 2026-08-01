@@ -120,6 +120,16 @@ const Navbar = () => {
               Updates
             </Link>
 
+            <Link
+              to="/our-team"
+              className={cn(
+                'text-sm font-medium transition-all duration-300 hover:text-uiy-blue relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-uiy-blue after:transition-all after:duration-300 hover:after:w-full',
+                isDark ? 'text-uiy-dark' : 'text-white',
+              )}
+            >
+              Our Team
+            </Link>
+
             {user &&
               showAuthButtons &&
               (isAdmin ? (
@@ -203,6 +213,14 @@ const Navbar = () => {
             className="py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
           >
             Sessions
+          </Link>
+
+          <Link
+            to="/our-team"
+            onClick={() => setIsOpen(false)}
+            className="py-4 text-lg font-medium text-uiy-dark border-b border-gray-100 hover:text-uiy-blue transition-colors"
+          >
+            Our Team
           </Link>
 
           {user ? (
