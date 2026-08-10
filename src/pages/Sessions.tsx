@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -180,9 +181,9 @@ const Sessions = () => {
   useClampPage(page, totalPages, setPage, !loading && !error);
 
   return (
-    <>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      <div className="min-h-screen bg-gray-50 pt-28 pb-10 px-4">
+      <div className="flex-grow pt-28 pb-10 px-4">
         <div className="max-w-6xl mx-auto space-y-6">
           <div className="text-center pb-4">
             <h1 className="text-3xl font-display font-bold text-gray-900">Latest Updates</h1>
@@ -242,6 +243,7 @@ const Sessions = () => {
           )}
         </div>
       </div>
+      <Footer />
 
       <Dialog
         open={feedbackDialog.open}
@@ -315,7 +317,7 @@ const Sessions = () => {
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 

@@ -20,6 +20,7 @@ import Projects from './pages/Projects'
 import Sessions from './pages/Sessions'
 import MyProfile from './pages/MyProfile'
 import SessionTemp from './pages/SessionTemp'
+import OurTeam from './pages/OurTeam'
 import { AdminGuard } from '@/features/Auth/components/AdminGuard'
 import { UserGuard } from '@/features/Auth/components/UserGuard'
 import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext'
@@ -219,6 +220,7 @@ const App = () => {
                     <Route path="/my-profile" element={<MyProfile />} />
                     <Route path="/projects" element={<Projects />} />
                     <Route path="/sessions" element={<Sessions />} />
+                    <Route path="/our-team" element={<OurTeam />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
