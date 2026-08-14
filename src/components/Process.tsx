@@ -4,9 +4,9 @@ import { Calendar, ArrowDown, CheckCircle } from 'lucide-react'
 const timelineData = [
   {
     title: 'Application Phase',
-    date: '15th August, 2026',
+    date: '31st August, 2026',
     description:
-      'Submit your application, Brief Project Overview and declaration letter through the IESL-UIY website before 15th August, 2026.',
+      'Submit your application, Brief Project Overview and declaration letter through the IESL-UIY website before the deadline',
     requirements: [
       'Completed application form',
       'Brief Project Overview',

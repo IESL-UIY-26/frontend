@@ -92,7 +92,7 @@ const About = () => {
           <div className="relative reveal-animation" style={{ animationDelay: '0.2s' }}>
             <div className="rounded-xl overflow-hidden shadow-xl">
               <img 
-                src="/images/uiy-event.jpg" 
+                src="/images/img0.jpg" 
                 alt="Engineering students collaborating" 
                 className="w-full h-auto object-cover" 
               />
