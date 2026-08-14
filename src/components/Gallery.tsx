@@ -14,11 +14,18 @@ import { Card, CardContent } from '@/components/ui/card'
 
 const Gallery = () => {
   const images = [
-    '/images/new_images/img1.jpg',
-    '/images/new_images/img2.jpg',
+    '/images/new_images/img6.jpg',
     '/images/new_images/img3.jpg',
+    '/images/new_images/img7.jpg',
     '/images/new_images/img4.jpg',
     '/images/new_images/img5.jpg',
+    '/images/new_images/img2.jpg',
+    '/images/new_images/img8.jpg',
+    '/images/new_images/img9.jpg',
+    '/images/new_images/img10.jpg',
+    '/images/new_images/img11.jpg',
+    '/images/new_images/img12.jpg',
+    '/images/new_images/img13.jpg',
   ]
 
   // duplicate images for smoother infinite loop
@@ -73,9 +80,7 @@ const Gallery = () => {
 
                           {/* Hover overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-uiy-dark/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                            <p className="text-white font-medium text-sm">
-                              Image {index + 1}
-                            </p>
+                            
 
                             <a
                               href={src}
