@@ -8,6 +8,7 @@ import { UserRole } from '@/features/Auth/enums/auth.enums'
 import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
+import { useSiteStatus } from '@/context/SiteStatusContext'
 
 // replace with actual google form when you have it
 const REGISTER_URL = 'https://forms.gle/Q8zkURGRB2oN27L17'
@@ -27,6 +28,7 @@ const Navbar = () => {
   const { user, dbUser, loading: authLoading, signOut } = useAuth()
   const { myTeam } = useTeamStatus()
   const location = useLocation()
+  const { isRegOver } = useSiteStatus()
   const isAdmin = dbUser?.role === UserRole.ADMIN
   // Show buttons immediately if we have user data, even if auth is still loading (from cache)
   const showAuthButtons = user !== null && dbUser !== null
@@ -144,12 +146,14 @@ const Navbar = () => {
                   My Team
                 </Link>
               ) : (
-                <Link to="/#apply" className="btn-primary whitespace-nowrap">
-                  Apply Now
-                </Link>
+                !isRegOver && (
+                  <Link to="/#apply" className="btn-primary whitespace-nowrap">
+                    Apply Now
+                  </Link>
+                )
               ))}
 
-            {!user && (
+            {!user && !isRegOver && (
               <a
                 href={REGISTER_URL}
                 target="_blank"
@@ -235,15 +239,21 @@ const Navbar = () => {
             </>
           ) : (
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">
-              <a
-                href={REGISTER_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-primary text-center"
-                onClick={() => setIsOpen(false)}
-              >
-                Register
-              </a>
+              {!isRegOver ? (
+                <a
+                  href={REGISTER_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-primary text-center"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Register
+                </a>
+              ) : (
+                <div className="text-center text-sm font-medium text-red-500 bg-red-50 py-3 rounded-md">
+                  Registration Closed
+                </div>
+              )}
             </div>
           )}
 
@@ -267,13 +277,15 @@ const Navbar = () => {
                 My Team
               </Link>
             ) : (
-              <Link
-                to="/#apply"
-                className="btn-primary mt-8 text-center whitespace-nowrap"
-                onClick={() => setIsOpen(false)}
-              >
-                Apply Now
-              </Link>
+              !isRegOver && (
+                <Link
+                  to="/#apply"
+                  className="btn-primary mt-8 text-center whitespace-nowrap"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Apply Now
+                </Link>
+              )
             ))}
 
           {user && (

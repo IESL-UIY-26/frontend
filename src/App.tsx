@@ -26,11 +26,13 @@ import { UserGuard } from '@/features/Auth/components/UserGuard'
 import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext'
 import { googleSheetsAPI } from '@/features/Sessions/api/google-sheets.api'
 import { useEffect } from 'react'
+import { SiteStatusProvider } from '@/context/SiteStatusContext'
 
 const queryClient = new QueryClient()
 
 const App = () => {
   const [isUnlocked, setIsUnlocked] = useState<boolean | null>(null);
+  const [isRegOver, setIsRegOver] = useState<boolean>(false);
   const [keyInput, setKeyInput] = useState('');
   const [error, setError] = useState('');
   const [isLaunching, setIsLaunching] = useState(false);
@@ -41,7 +43,10 @@ const App = () => {
   const REQUIRED_KEY = 'uiy2026'; // You can change this key
   
   useEffect(() => {
-    googleSheetsAPI.checkLaunchStatus().then(status => setIsUnlocked(status));
+    googleSheetsAPI.checkLaunchStatus().then(status => {
+      setIsUnlocked(status.is_launched);
+      setIsRegOver(status.is_reg_over);
+    });
   }, []);
 
   const handleUnlock = (e: React.FormEvent) => {
@@ -179,7 +184,8 @@ const App = () => {
         </>
       )}
       <div className={!isUnlocked ? "blur-md pointer-events-none select-none h-screen overflow-hidden" : ""}>
-        <QueryClientProvider client={queryClient}>
+        <SiteStatusProvider isRegOver={isRegOver}>
+          <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -228,7 +234,8 @@ const App = () => {
               </AuthProvider>
             </BrowserRouter>
           </TooltipProvider>
-        </QueryClientProvider>
+            </QueryClientProvider>
+          </SiteStatusProvider>
       </div>
     </>
   )

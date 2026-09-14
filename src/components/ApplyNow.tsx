@@ -4,6 +4,7 @@ import { Calendar, File, ArrowRight, Download, Users } from 'lucide-react'
 import { useTeamStatus } from '@/features/Teams/context/TeamStatusContext'
 import { useAuth } from '@/features/Auth/hooks/use-auth'
 import type { IMyTeam } from '@/features/Teams/types/teams.types'
+import { useSiteStatus } from '@/context/SiteStatusContext'
 
 // replace with google form when have it 
 const REGISTER_URL = 'https://forms.gle/Q8zkURGRB2oN27L17'
@@ -24,6 +25,7 @@ const StartApplicationButton: React.FC<{ myTeam: IMyTeam | null }> = ({
 
 const ApplyNow = () => {
   const { myTeam } = useTeamStatus()
+  const { isRegOver } = useSiteStatus()
 
   return (
     <section id="apply" className="py-24 bg-uiy-gray">
@@ -169,6 +171,12 @@ const ApplyNow = () => {
                     <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
+              ) : isRegOver ? (
+                <div className="mt-8 p-4 bg-red-50 border border-red-200 rounded-lg text-center">
+                  <p className="text-sm font-medium text-red-800">
+                    Registration for UIY 2026 is now closed.
+                  </p>
+                </div>
               ) : (
                 <StartApplicationButton myTeam={myTeam} />
               )}
@@ -181,7 +189,7 @@ const ApplyNow = () => {
                 <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-sm">
                   <div className="text-sm font-medium text-uiy-blue mb-1 flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>31st August, 2026</span>
+                    <span>20th September, 2026</span>
                   </div>
                   <p className="font-medium">Application Deadline</p>
                   <p className="text-sm text-gray-600 mt-1">
