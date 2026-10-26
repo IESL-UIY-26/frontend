@@ -11,6 +11,7 @@ import ApplyNow from '@/components/ApplyNow'
 import Footer from '@/components/Footer'
 import ScrollToTop from '@/components/ScrollToTop'
 import Banner from '@/components/Banner'
+import { WinnerBannerModal } from '@/components/WinnerBannerModal'
 
 const Index = () => {
   useEffect(() => {
@@ -39,6 +40,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen w-full">
+      <WinnerBannerModal />
       <Navbar />
       <Hero />
       {/* <Banner /> */}

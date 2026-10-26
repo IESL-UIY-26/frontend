@@ -14,8 +14,12 @@ import { Card, CardContent } from '@/components/ui/card'
 
 const Gallery = () => {
   const images = [
-    '/images/new_images/img6.jpg',
     '/images/new_images/img3.jpg',
+    '/images/new_images/1st.jpeg',
+    '/images/new_images/2nd.jpeg',
+    '/images/new_images/3rd.jpeg',
+    '/images/new_images/img24.jpg',
+    '/images/new_images/img6.jpg',
     '/images/new_images/img7.jpg',
     '/images/new_images/img4.jpg',
     '/images/new_images/img5.jpg',
@@ -80,7 +84,7 @@ const Gallery = () => {
 
                           {/* Hover overlay */}
                           <div className="absolute inset-0 bg-gradient-to-t from-uiy-dark/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                            
+
 
                             <a
                               href={src}

@@ -55,7 +55,7 @@ export const SessionCard = ({
   return (
     <div className="rounded-xl overflow-hidden shadow-lg bg-white h-full flex flex-col">
       {/* Flyer Image Section */}
-      <div className="w-full bg-uiy-blue flex justify-center items-center aspect-[2/2.89]">
+      <div className="w-full bg-uiy-blue flex justify-center items-center aspect-square">
         <img
           src={session.image_url || "/images/flyer.jpeg"}
           alt={session.title}
@@ -75,63 +75,82 @@ export const SessionCard = ({
             {session.title}
           </h1>
           {session.description && (
-            <p className="mt-1.5 text-xs text-gray-600">
+            <p className="mt-1.5 text-xs text-gray-600 whitespace-pre-line">
               {session.description}
             </p>
           )}
         </div>
 
         <div className="mt-auto flex flex-col space-y-4">
-          <div className="flex flex-col items-center gap-1.5 text-xs text-gray-700 w-full">
-            <div className="flex flex-wrap items-center justify-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-uiy-blue shrink-0" />
-              <span className="font-semibold text-gray-900 whitespace-nowrap">
-                {formatDate(session.session_date)}
-              </span>
-              <span className="text-gray-400 hidden sm:inline">•</span>
-              <span className="font-semibold text-gray-900 whitespace-nowrap">
-                {formatTime(session.session_time)}
-              </span>
+          {((session.session_date && session.session_date.trim()) ||
+            (session.session_time && session.session_time.trim()) ||
+            (session.location && session.location.trim()) ||
+            (session.zoom_link && session.zoom_link !== 'null' && session.zoom_link.trim())) && (
+            <div className="flex flex-col items-center gap-1.5 text-xs text-gray-700 w-full">
+              {((session.session_date && session.session_date.trim()) ||
+                (session.session_time && session.session_time.trim())) && (
+                <div className="flex flex-wrap items-center justify-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-uiy-blue shrink-0" />
+                  {session.session_date && session.session_date.trim() && (
+                    <span className="font-semibold text-gray-900 whitespace-nowrap">
+                      {formatDate(session.session_date)}
+                    </span>
+                  )}
+                  {session.session_date && session.session_date.trim() && session.session_time && session.session_time.trim() && (
+                    <span className="text-gray-400 hidden sm:inline">•</span>
+                  )}
+                  {session.session_time && session.session_time.trim() && (
+                    <span className="font-semibold text-gray-900 whitespace-nowrap">
+                      {formatTime(session.session_time)}
+                    </span>
+                  )}
+                </div>
+              )}
+              {((session.location && session.location.trim()) ||
+                (session.zoom_link && session.zoom_link !== 'null' && session.zoom_link.trim())) && (
+                <div className="flex items-center justify-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-uiy-blue shrink-0" />
+                  <span className="font-semibold text-gray-900 whitespace-nowrap">
+                    {session.location && session.location.trim()
+                      ? session.location
+                      : (session.zoom_link && session.zoom_link !== 'null' ? 'Via Zoom' : 'Physical')}
+                  </span>
+                </div>
+              )}
             </div>
-            <div className="flex items-center justify-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-uiy-blue shrink-0" />
-              <span className="font-semibold text-gray-900 whitespace-nowrap">
-                {session.location ? session.location : (session.zoom_link && session.zoom_link !== 'null' ? 'Via Zoom' : 'Physical')}
-              </span>
-            </div>
-          </div>
+          )}
 
           <div className="text-center flex flex-col items-center gap-2">
-            <Button
-              size="sm"
-              variant={(isLoggedIn && registered && (!session.registration_link && !session.zoom_link)) ? 'outline' : 'default'}
-              className={(isLoggedIn && registered && (!session.registration_link && !session.zoom_link)) ? 'w-full max-w-[200px] h-8 text-xs rounded-full' : 'inline-flex items-center justify-center gap-2 rounded-full bg-uiy-blue px-4 py-1.5 h-8 text-xs font-semibold text-white shadow-md transition hover:bg-uiy-darkblue'}
-              disabled={toggling || session.is_past}
-              onClick={() => {
-                const linkToOpen = session.registration_link || session.zoom_link;
-                if (linkToOpen && linkToOpen !== 'null') {
-                  let url = linkToOpen;
-                  if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
+            {!session.is_past && (
+              <Button
+                size="sm"
+                variant={(isLoggedIn && registered && (!session.registration_link && !session.zoom_link)) ? 'outline' : 'default'}
+                className={(isLoggedIn && registered && (!session.registration_link && !session.zoom_link)) ? 'w-full max-w-[200px] h-8 text-xs rounded-full' : 'inline-flex items-center justify-center gap-2 rounded-full bg-uiy-blue px-4 py-1.5 h-8 text-xs font-semibold text-white shadow-md transition hover:bg-uiy-darkblue'}
+                disabled={toggling}
+                onClick={() => {
+                  const linkToOpen = session.registration_link || session.zoom_link;
+                  if (linkToOpen && linkToOpen !== 'null') {
+                    let url = linkToOpen;
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                      url = 'https://' + url;
+                    }
+                    window.open(url, '_blank', 'noopener,noreferrer');
+                  } else if (onToggle) {
+                    onToggle();
                   }
-                  window.open(url, '_blank', 'noopener,noreferrer');
-                } else if (onToggle) {
-                  onToggle();
-                }
-              }}
-            >
-              {toggling ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : session.is_past ? (
-                <>Registration Ended</>
-              ) : ((session.registration_link && session.registration_link !== 'null') || (session.zoom_link && session.zoom_link !== 'null')) ? (
-                <>Register now <ArrowRight className="w-3.5 h-3.5" /></>
-              ) : isLoggedIn && registered ? (
-                <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-600" />Registered &mdash; Cancel</>
-              ) : (
-                <>Register now <ArrowRight className="w-3.5 h-3.5" /></>
-              )}
-            </Button>
+                }}
+              >
+                {toggling ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : ((session.registration_link && session.registration_link !== 'null') || (session.zoom_link && session.zoom_link !== 'null')) ? (
+                  <>Register now <ArrowRight className="w-3.5 h-3.5" /></>
+                ) : isLoggedIn && registered ? (
+                  <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5 text-green-600" />Registered &mdash; Cancel</>
+                ) : (
+                  <>Register now <ArrowRight className="w-3.5 h-3.5" /></>
+                )}
+              </Button>
+            )}
 
             {canGiveFeedback && (
               <Button size="sm" variant="secondary" className="w-full max-w-[200px] h-8 text-xs rounded-full" onClick={onFeedbackClick}>
