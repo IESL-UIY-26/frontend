@@ -26,11 +26,80 @@ import { UserGuard } from '@/features/Auth/components/UserGuard'
 import { TeamStatusProvider } from '@/features/Teams/context/TeamStatusContext'
 import { googleSheetsAPI } from '@/features/Sessions/api/google-sheets.api'
 import { useEffect } from 'react'
+import { SiteStatusProvider } from '@/context/SiteStatusContext'
 
 const queryClient = new QueryClient()
+const ADMIN_PASSWORD = 'LSEi2o2&'
+
+const AdminPasswordGate = ({ children }: { children: React.ReactNode }) => {
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isAuthorized, setIsAuthorized] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('uiy_admin_access') === ADMIN_PASSWORD
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (password === ADMIN_PASSWORD) {
+      localStorage.setItem('uiy_admin_access', ADMIN_PASSWORD)
+      setIsAuthorized(true)
+      setError('')
+      return
+    }
+
+    setError('Incorrect admin password')
+  }
+
+  if (isAuthorized) {
+    return <>{children}</>
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4">
+      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl">
+        <div className="mb-6 text-center">
+          <p className="text-sm uppercase tracking-[0.2em] text-blue-400">Restricted access</p>
+          <h2 className="mt-3 text-2xl font-bold text-white">Admin authorization required</h2>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="admin-password" className="mb-2 block text-sm text-slate-300">
+              Password
+            </label>
+            <input
+              id="admin-password"
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                if (error) setError('')
+              }}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white placeholder:text-slate-500 focus:border-blue-500 focus:outline-none"
+              placeholder="Enter admin password"
+              autoComplete="off"
+            />
+          </div>
+
+          {error && <p className="text-sm text-red-400">{error}</p>}
+
+          <button
+            type="submit"
+            className="w-full rounded-xl bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-500"
+          >
+            Unlock page
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
 
 const App = () => {
   const [isUnlocked, setIsUnlocked] = useState<boolean | null>(null);
+  const [isRegOver, setIsRegOver] = useState<boolean>(false);
   const [keyInput, setKeyInput] = useState('');
   const [error, setError] = useState('');
   const [isLaunching, setIsLaunching] = useState(false);
@@ -41,7 +110,10 @@ const App = () => {
   const REQUIRED_KEY = 'uiy2026'; // You can change this key
   
   useEffect(() => {
-    googleSheetsAPI.checkLaunchStatus().then(status => setIsUnlocked(status));
+    googleSheetsAPI.checkLaunchStatus().then(status => {
+      setIsUnlocked(status.is_launched);
+      setIsRegOver(status.is_reg_over);
+    });
   }, []);
 
   const handleUnlock = (e: React.FormEvent) => {
@@ -179,7 +251,8 @@ const App = () => {
         </>
       )}
       <div className={!isUnlocked ? "blur-md pointer-events-none select-none h-screen overflow-hidden" : ""}>
-        <QueryClientProvider client={queryClient}>
+        <SiteStatusProvider isRegOver={isRegOver}>
+          <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -188,7 +261,7 @@ const App = () => {
                 <TeamStatusProvider>
                   <Routes>
                     <Route path="/" element={<Index />} />
-                    <Route path="/launch" element={<Launch />} />
+                    <Route path="/launch" element={<AdminPasswordGate><Launch /></AdminPasswordGate>} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
@@ -218,7 +291,7 @@ const App = () => {
                       }
                     />
                     <Route path="/my-profile" element={<MyProfile />} />
-                    <Route path="/projects" element={<Projects />} />
+                    <Route path="/projects" element={<AdminPasswordGate><Projects /></AdminPasswordGate>} />
                     <Route path="/sessions" element={<Sessions />} />
                     <Route path="/our-team" element={<OurTeam />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -228,7 +301,8 @@ const App = () => {
               </AuthProvider>
             </BrowserRouter>
           </TooltipProvider>
-        </QueryClientProvider>
+            </QueryClientProvider>
+          </SiteStatusProvider>
       </div>
     </>
   )

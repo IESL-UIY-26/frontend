@@ -4,7 +4,7 @@ import { Calendar, ArrowDown, CheckCircle } from 'lucide-react'
 const timelineData = [
   {
     title: 'Application Phase',
-    date: '31st August, 2026',
+    date: '20th September, 2026',
     description:
       'Submit your application, Brief Project Overview and declaration letter through the IESL-UIY website before the deadline',
     requirements: [
@@ -15,33 +15,39 @@ const timelineData = [
   },
   {
     title: 'Preliminary Competition',
-    subtitle: '*Subjected to change',
-    date: 'Coming Soon',
+    subtitle: 'At Faculty of Engineering, University of Moratuwa',
+    date: '11th of October, 2026',
     description:
-      'Selected candidates will submit additional materials and participate in a Q&A session.',
+      'Innovators will showcase and defend their projects before a judging panel, whose evaluations will determine the top 10 finalists advancing to the final round.',
     requirements: [
-      '3-minute video of the invention',
-      'Brochure of the invention',
-      'Q&A session',
+      'Presentation: Showcase the project to judges.',
+      'Viva: Defend the work in a Q&A.',
+      'Advancement: Top 10 proceed to finals',
     ],
   },
   {
-    title: 'Final Competition',
-    date: 'Coming Soon',
+    title: 'Final Demonstration',
+    subtitle: 'At Techno 2026 Engineering Exhibition, BMICH',
+    date: '16th, 17th & 18th of October, 2026',
     description:
-      'Physical event featuring the top innovations (max 6) with prototype demonstrations.',
+      'Top 10 innovators will be presenting their innovation at the Techno 2026 Engineering Exhibition to the general public and will be evaluated spontaneously by the officials for final placements.',
     requirements: [
-      'Physical prototype of the invention',
-      'Brief Project Report (max 10 pages)',
-      'Marketing video clip',
-      'Q&A session',
+      'Presentation to General Public',
+      'Spontaneous Evaluation',
+      'Winners Selection',
     ],
   },
   {
     title: 'Awards Ceremony',
-    date: 'Coming Soon',
+    subtitle: 'At Techno 2026 Engineering Exhibition, BMICH',
+    date: '18th of October, 2026',
     description:
-      'Recognition of the top inventors with prizes and certificates.',
+      'The top 3 winners will be revealed and awarded alongside the top 10 innovators at the IESL UIY 2026 closing ceremony during the Techno 2026 Engineering Exhibition.',
+    requirements: [
+      'Awarding of top 3 winners',
+      'Recognition of top 10 innovators',
+      'Closing ceremony',
+    ],
     highlight: true,
   },
 ]

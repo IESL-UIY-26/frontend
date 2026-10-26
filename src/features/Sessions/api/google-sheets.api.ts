@@ -116,18 +116,21 @@ export const googleSheetsAPI = {
     }
   },
 
-  checkLaunchStatus: async (): Promise<boolean> => {
+  checkLaunchStatus: async (): Promise<{ is_launched: boolean; is_reg_over: boolean }> => {
     try {
-      if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE') return true;
+      if (GOOGLE_APPS_SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE') return { is_launched: true, is_reg_over: false };
       const response = await fetch(GOOGLE_APPS_SCRIPT_URL);
       const data: any = await response.json();
       if (data && data.launch && data.launch.length > 0) {
-        return data.launch[0].is_launched === true || String(data.launch[0].is_launched).toLowerCase() === 'true';
+        return {
+          is_launched: data.launch[0].is_launched === true || String(data.launch[0].is_launched).toLowerCase() === 'true',
+          is_reg_over: data.launch[0].is_reg_over === true || String(data.launch[0].is_reg_over).toLowerCase() === 'true'
+        };
       }
-      return false; // Default to not launched if missing
+      return { is_launched: false, is_reg_over: false }; // Default to not launched if missing
     } catch (error) {
       console.error('Failed to check launch status:', error);
-      return true; // Fail open to not lock users out
+      return { is_launched: true, is_reg_over: false }; // Fail open to not lock users out
     }
   },
 
